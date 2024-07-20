@@ -192,8 +192,13 @@ public class TLAPlusFormatter {
 
     private void printOperatorDefinition(TreeNode node) {
         var indentSpace = node.one()[0].zero()[0].getImage().length() + " == ".length();
-        f.appendSp(node.one()[0].zero()[0]) // ident
-                .append(node.one()[1]) // ==
+        // node.one()[0].zero()[0] is the identifier.
+        // it my be followed by parameters.
+        for (var id : node.one()[0].zero()) {
+            basePrintTree(id);
+            if (id.getImage().equals(",")) f.space();
+        }
+        f.append(node.one()[1]) // ==
                 .increaseIndent(indentSpace)
                 .nl();
         basePrintTree(node.one()[2]);
@@ -265,11 +270,42 @@ public class TLAPlusFormatter {
     }
 
     private void conjDisjItem(TreeNode node) {
-        f.append(node.zero()[0]).space();
+        f.append(node.zero()[0]).space(); // "/\ "
+        f.increaseIndent(3);
         basePrintTree(node.zero()[1]);
+        f.decreaseIndent(3);
     }
 
+    private void ifThenElse(TreeNode node) {
+        var indet = "THEN ".length();
+        var z = node.zero();
+        var tokenIF = z[0];
+        var tokenIfBody = z[1];
+        var tokenThen = z[2];
+        var tokenThenBody = z[3];
+        var tokenElse = z[4];
+        var tokenElseBody = z[5];
+        f.append(tokenIF)
+                .increaseIndent(indet)
+                .nl();
+        basePrintTree(tokenIfBody); // cond
+        f.decreaseIndent(indet).nl()
+                .append(tokenThen)
+                .increaseIndent(indet)
+                .nl();
+        basePrintTree(tokenThenBody);
 
+        f.decreaseIndent(indet).nl()
+                .append(tokenElse)
+                .increaseIndent(indet)
+                .nl();
+        basePrintTree(tokenElseBody);
+
+        f.decreaseIndent(indet);
+    }
+    public void theorem(TreeNode node) {
+        f.append(node.zero()[0]);
+    }
     public void postfixExpr(TreeNode node) {
         f.append(node.zero()[0].zero()[1]).append(node.zero()[1].zero()[1]).space();
     }
@@ -287,8 +323,11 @@ public class TLAPlusFormatter {
         } else if (node.getImage().equals("N_DisjList") && node.getKind() == 344) {
             conjDisjList(node);
             return;
+        } else if (node.getImage().equals("N_IfThenElse") && node.getKind() == 369) {
+            ifThenElse(node);
+            return;
         }
-        System.out.println("Unhandled: " + node.getImage());
+        //System.out.println("Unhandled: " + node.getImage());
 
         if (!node.getImage().startsWith("N_")) {
             f.append(node).space();

@@ -3,8 +3,8 @@ package me.fponzi.tlaplusformatter;
 import tla2sany.st.TreeNode;
 
 public class FormattedSpec {
-    private final StringBuffer out;
-    private String indent = "";
+    final StringBuffer out;
+    String indent = "";
 
     public FormattedSpec() {
         out = new StringBuffer();

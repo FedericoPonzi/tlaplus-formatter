@@ -73,4 +73,57 @@ class TLAPlusFormatterTest {
         var received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
+
+    @Test
+    void testFormatIfThenElseConjList() throws FrontEndException, IOException {
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "EXTENDS Naturals\n" +
+                "CONSTANTS\n" +
+                "  Prisoner,\n" +
+                "  Counter\n" +
+                "VARIABLES\n" +
+                "  switchAUp, switchBUp,\n" +
+                "  timesSwitched,\n" +
+                "  count\n" +
+                "\n" +
+                "CounterStep ==\n" +
+                "  /\\ IF switchAUp\n" +
+                "       THEN /\\ switchAUp' = FALSE\n" +
+                "            /\\ UNCHANGED switchBUp\n" +
+                "            /\\ count' =  count + 1\n" +
+                "       ELSE /\\ switchBUp' = ~switchBUp\n" +
+                "            /\\ UNCHANGED <<switchAUp, count>>\n" +
+                "  /\\ UNCHANGED timesSwitched\n" +
+                "\n" +
+                "=============================================================================\n";
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "EXTENDS Naturals\n" +
+                "\n" +
+                "CONSTANTS \n" +
+                "          Prisoner, \n" +
+                "          Counter\n" +
+                "VARIABLES\n" +
+                "          switchAUp,\n" +
+                "          switchBUp,\n" +
+                "          timesSwitched,\n" +
+                "          count\n" +
+                "\n" +
+                "CounterStep ==\n" +
+                "               /\\ IF\n" +
+                "                       switchAUp \n" +
+                "                  THEN\n" +
+                "                       /\\ switchAUp' = FALSE \n" +
+                "                       /\\ UNCHANGED switchBUp \n" +
+                "                       /\\ count' = count + 1 \n" +
+                "                  ELSE\n" +
+                "                       /\\ switchBUp' = ~ switchBUp \n" +
+                "                       /\\ UNCHANGED << switchAUp , count >> \n" +
+                "               /\\ UNCHANGED timesSwitched \n" +
+                "\n" +
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
 }
