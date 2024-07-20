@@ -1,5 +1,9 @@
 package me.fponzi.tlaplusformatter;
 
+import me.fponzi.tlaplusformatter.exceptions.SanyAbortException;
+import me.fponzi.tlaplusformatter.exceptions.SanyException;
+import me.fponzi.tlaplusformatter.exceptions.SanySemanticException;
+import me.fponzi.tlaplusformatter.exceptions.SanySyntaxException;
 import org.apache.commons.io.output.WriterOutputStream;
 import tla2sany.drivers.FrontEndException;
 import tla2sany.drivers.SANY;
@@ -20,6 +24,7 @@ public class TLAPlusFormatter {
     // TODO: handle pre and post module comments/sections
     public FormattedSpec f;
     TreeNode root;
+
     public TLAPlusFormatter(File specPath) throws IOException, FrontEndException {
         root = getTreeNode(specPath.getAbsolutePath());
         format();
@@ -33,6 +38,8 @@ public class TLAPlusFormatter {
      * Create a new instance of the formatter from a string containing the spec.
      * The spec is written to a temporary file, which is then passed to SANY.
      * The temporary file is deleted after the formatting is complete.
+     * <p>
+     * Safety: The input spec should be called "Spec" otherwise SANY will complain.
      *
      * @param spec
      * @throws IOException
@@ -44,7 +51,7 @@ public class TLAPlusFormatter {
     private static File storeToTmp(String spec) throws IOException {
         File tmpFolder = Files.createTempDirectory("sanyimp").toFile();
         // write spec to tmpfolder:
-        File tmpFile = new File(tmpFolder, "spec.tla");
+        File tmpFile = new File(tmpFolder, "Spec.tla");
         // Write spec to tmpFile
         try (java.io.FileWriter writer = new java.io.FileWriter(tmpFile)) {
             writer.write(spec);
@@ -68,13 +75,36 @@ public class TLAPlusFormatter {
                 .setCharset(StandardCharsets.UTF_8)
                 .get();
 
-        var ret = SANY.frontEndMain(
+        SANY.frontEndMain(
                 specObj,
                 file.getAbsolutePath(),
                 new PrintStream(outStream)
         );
-        if(ret != 0) {
-            throw new FrontEndException("Parsing failed, errors:" + errBuf.toString());
+        ThrowOnError(specObj);
+    }
+
+    private static void ThrowOnError(SpecObj specObj) {
+        var initErrors = specObj.getInitErrors();
+        if (initErrors.isFailure()) {
+            throw new SanyAbortException(initErrors.toString());
+        }
+        var contextErrors = specObj.getGlobalContextErrors();
+        if (contextErrors.isFailure()) {
+            throw new SanyAbortException(contextErrors.toString());
+        }
+        var parseErrors = specObj.getParseErrors();
+        if (parseErrors.isFailure()) {
+            throw new SanySyntaxException(parseErrors.toString());
+        }
+        var semanticErrors = specObj.getSemanticErrors();
+        if (semanticErrors.isFailure()) {
+            throw new SanySemanticException(semanticErrors.toString());
+        }
+        // the error level is above zero, so SANY failed for an unknown reason
+        if (specObj.getErrorLevel() > 0) {
+            throw new SanyException(
+                    String.format("Unknown SANY error (error level=%d)", specObj.getErrorLevel())
+            );
         }
     }
 
@@ -110,6 +140,10 @@ public class TLAPlusFormatter {
     }
 
     private void printExtends(TreeNode node) {
+        if (node.zero() == null) {
+            // no extends defined in this module.
+            return;
+        }
         f.append(node.zero()[0]) // EXTENDS
                 .space();
         for (int i = 1; i < node.zero().length; i++) {
@@ -146,6 +180,10 @@ public class TLAPlusFormatter {
     }
 
     private void printBody(TreeNode node) {
+        if (node.zero() == null) {
+            // no body defined in this module.
+            return;
+        }
         for (var child : node.zero()) {
             if (child.getImage().equals("N_VariableDeclaration") && child.getKind() == 426) {
                 printVariables(child);
@@ -168,12 +206,24 @@ public class TLAPlusFormatter {
             } else if (child.getImage().equals("N_Body") && child.getKind() == 334) {
                 printBody(child);
             } else if (child.getImage().equals("N_EndModule") && child.getKind() == 345) {
-                f.nl().append(child.zero()[0]).nl();
+                f.append(child.zero()[0]).nl();
             } else {
                 System.err.println("Unhandled node: " + node.getImage());
                 basePrintTree(child);
             }
         }
+    }
+
+    public void printAssume(TreeNode node) {
+        f.append(node.zero()[0].zero()[0])
+                .space()
+                .increaseIndent("ASSUME ".length())
+                .nl();
+
+    }
+
+    public void conjList(TreeNode node) {
+
     }
 
     public void postfixExpr(TreeNode node) {
@@ -184,6 +234,8 @@ public class TLAPlusFormatter {
         if (node == null) {
             return;
         }
+        System.out.println("Unhandled: " + node.getImage());
+
         if (node.getImage().equals("N_PostfixExpr") && node.getKind() == 395) {
             postfixExpr(node);
             return;

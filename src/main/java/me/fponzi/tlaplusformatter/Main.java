@@ -30,7 +30,7 @@ public class Main {
             // Get the remaining arguments (positional arguments)
             String[] remainingArgs = cmd.getArgs();
 
-            if (remainingArgs.length != 2) {
+            if (remainingArgs.length != 1) {
                 System.err.println("Please provide exactly one file path as an argument.");
                 printHelp();
                 System.exit(1);
