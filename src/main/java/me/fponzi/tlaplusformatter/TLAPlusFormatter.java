@@ -26,6 +26,7 @@ public class TLAPlusFormatter {
     TreeNode root;
 
     public TLAPlusFormatter(File specPath) throws IOException, FrontEndException {
+        System.out.println("Input file: " + specPath);
         root = getTreeNode(specPath.getAbsolutePath());
         format();
     }
@@ -69,7 +70,7 @@ public class TLAPlusFormatter {
     }
 
     public static void loadSpecObject(SpecObj specObj, File file, StringWriter errBuf) throws IOException, FrontEndException {
-        var outStream = WriterOutputStream
+        WriterOutputStream outStream = WriterOutputStream
                 .builder()
                 .setWriter(errBuf)
                 .setCharset(StandardCharsets.UTF_8)
@@ -84,19 +85,19 @@ public class TLAPlusFormatter {
     }
 
     private static void ThrowOnError(SpecObj specObj) {
-        var initErrors = specObj.getInitErrors();
+        tla2sany.semantic.Errors initErrors = specObj.getInitErrors();
         if (initErrors.isFailure()) {
             throw new SanyAbortException(initErrors.toString());
         }
-        var contextErrors = specObj.getGlobalContextErrors();
+        tla2sany.semantic.Errors contextErrors = specObj.getGlobalContextErrors();
         if (contextErrors.isFailure()) {
             throw new SanyAbortException(contextErrors.toString());
         }
-        var parseErrors = specObj.getParseErrors();
+        tla2sany.semantic.Errors parseErrors = specObj.getParseErrors();
         if (parseErrors.isFailure()) {
             throw new SanySyntaxException(parseErrors.toString());
         }
-        var semanticErrors = specObj.getSemanticErrors();
+        tla2sany.semantic.Errors semanticErrors = specObj.getSemanticErrors();
         if (semanticErrors.isFailure()) {
             throw new SanySemanticException(semanticErrors.toString());
         }
@@ -119,23 +120,27 @@ public class TLAPlusFormatter {
     }
 
     public TreeNode getTreeNode(String specPath) throws IOException, FrontEndException {
-        var file = new File(specPath);
+        File file = new File(specPath);
         // create a string buffer to write SANY's error messages
         // use.toString() to retrieve the error messages
-        var errBuf = new StringWriter();
-        var parentDirPath = file.getAbsoluteFile().getParent();
+        StringWriter errBuf = new StringWriter();
+        String parentDirPath = file.getAbsoluteFile().getParent();
         // Resolver for filenames, patched for wired modules.
-        var filenameResolver = new SimpleFilenameToStream(parentDirPath);
-
+        System.out.println("Creating a smple file stream");
+        SimpleFilenameToStream filenameResolver = new SimpleFilenameToStream(parentDirPath);
+        System.out.println("SANY filename resolver created");
         // Set a unique tmpdir to avoid race-condition in SANY
         // TODO: RM once https://github.com/tlaplus/tlaplus/issues/688 is fixed
         System.setProperty("java.io.tmpdir", sanyTempDir().toString());
+        System.out.println("I'm going to call SANY now!!!");
 
         // call SANY
-        var specObj = new SpecObj(file.getAbsolutePath(), filenameResolver);
+        SpecObj specObj = new SpecObj(file.getAbsolutePath(), filenameResolver);
+        System.out.println("------- Created specObj");
+
         loadSpecObject(specObj, file, errBuf);
         Hashtable<String, ParseUnit> parseUnitContext = specObj.parseUnitContext;
-        var pu = parseUnitContext.get(specObj.getRootModule().getName().toString());
+        ParseUnit pu = parseUnitContext.get(specObj.getRootModule().getName().toString());
         return pu.getParseTree();
     }
 
@@ -157,13 +162,13 @@ public class TLAPlusFormatter {
 
     private void printConstants(TreeNode node) {
         System.out.println("CONSTANTS");
-        var constant = node.zero()[0].zero()[0];
-        var indent = constant.getImage().length() + 1;
+        TreeNode constant = node.zero()[0].zero()[0];
+        int indent = constant.getImage().length() + 1;
         f.append(constant).space().increaseIndent(indent).nl();
 
         // i=1 to skip CONSTANT[S] token
         for (int i = 1; i < node.zero().length; i++) {
-            var child = node.zero()[i];
+            TreeNode child = node.zero()[i];
             if (child.getImage().equals(",")) {
                 f.append(child).nl();
             } else {
@@ -175,7 +180,7 @@ public class TLAPlusFormatter {
 
     private void printVariables(TreeNode node) {
         System.err.println("Found variable.");
-        var indent = node.zero()[0].getImage().length() + 1;
+        int indent = node.zero()[0].getImage().length() + 1;
         f.append(node.zero()[0]); // VARIABLE
         f.increaseIndent(indent).nl();
         for (int i = 0; i < node.one().length; i++) {
@@ -191,10 +196,10 @@ public class TLAPlusFormatter {
     }
 
     private void printOperatorDefinition(TreeNode node) {
-        var indentSpace = node.one()[0].zero()[0].getImage().length() + " == ".length();
+        int indentSpace = node.one()[0].zero()[0].getImage().length() + " == ".length();
         // node.one()[0].zero()[0] is the identifier.
         // it my be followed by parameters.
-        for (var id : node.one()[0].zero()) {
+        for (TreeNode id : node.one()[0].zero()) {
             basePrintTree(id);
             if (id.getImage().equals(",")) f.space();
         }
@@ -210,7 +215,7 @@ public class TLAPlusFormatter {
             // no body defined in this module.
             return;
         }
-        for (var child : node.zero()) {
+        for (TreeNode child : node.zero()) {
             if (child.getImage().equals("N_VariableDeclaration") && child.getKind() == 426) {
                 printVariables(child);
             } else if (child.getImage().equals("N_OperatorDefinition") && child.getKind() == 389) {
@@ -229,7 +234,7 @@ public class TLAPlusFormatter {
     }
 
     public void printTree(TreeNode node) {
-        for (var child : node.zero()) {
+        for (TreeNode child : node.zero()) {
             if (child.getImage().equals("N_BeginModule") && child.getKind() == 333) {
                 printBeginModule(child);
             } else if (child.getImage().equals("N_Extends") && child.getKind() == 350) {
@@ -247,7 +252,7 @@ public class TLAPlusFormatter {
 
     public void printAssume(TreeNode node) {
         System.out.println("Found ASSUME");
-        var indent = "ASSUME ".length();
+        int indent = "ASSUME ".length();
         f.append(node.one()[0])
                 .space()
                 .increaseIndent(indent)
@@ -261,7 +266,7 @@ public class TLAPlusFormatter {
     public void conjDisjList(TreeNode node) {
         System.out.println("Found conjList or DisjList");
         for (int i = 0; i < node.zero().length; i++) {
-            var conjDisjItem = node.zero()[i];
+            TreeNode conjDisjItem = node.zero()[i];
             conjDisjItem(conjDisjItem);
             if (i < node.zero().length - 1) {
                 f.nl();
@@ -277,14 +282,14 @@ public class TLAPlusFormatter {
     }
 
     private void ifThenElse(TreeNode node) {
-        var indet = "THEN ".length();
-        var z = node.zero();
-        var tokenIF = z[0];
-        var tokenIfBody = z[1];
-        var tokenThen = z[2];
-        var tokenThenBody = z[3];
-        var tokenElse = z[4];
-        var tokenElseBody = z[5];
+        int indet = "THEN ".length();
+        TreeNode[] z = node.zero();
+        TreeNode tokenIF = z[0];
+        TreeNode tokenIfBody = z[1];
+        TreeNode tokenThen = z[2];
+        TreeNode tokenThenBody = z[3];
+        TreeNode tokenElse = z[4];
+        TreeNode tokenElseBody = z[5];
         f.append(tokenIF)
                 .increaseIndent(indet)
                 .nl();
@@ -308,9 +313,9 @@ public class TLAPlusFormatter {
         f.append(node.zero()[0]).
                 increaseIndent(4).nl(); // LET
         for (int i = 0; i < node.zero()[1].zero().length; i++) {
-            var child = node.zero()[1].zero()[i];
+            TreeNode child = node.zero()[1].zero()[i];
             basePrintTree(child);
-            if(i < node.zero()[1].zero().length - 1){
+            if (i < node.zero()[1].zero().length - 1) {
                 f.nl();
             }
         }
@@ -354,12 +359,12 @@ public class TLAPlusFormatter {
             f.append(node).space();
         }
         if (node.zero() != null) {
-            for (var child : node.zero()) {
+            for (TreeNode child : node.zero()) {
                 basePrintTree(child);
             }
         }
         if (node.one() != null) {
-            for (var child : node.one()) {
+            for (TreeNode child : node.one()) {
                 basePrintTree(child);
             }
         }

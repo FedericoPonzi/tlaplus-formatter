@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>TLA+ Formatter - ALPHA</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .input-container {
+            width: 100%;
+            display: flex;
+            align-items: stretch; /* Textareas and button stretch vertically */
+        }
+
+        #input, #output {
+            flex: 1; /* Take remaining horizontal space equally */
+            height: 100vh; /* Adjust the height as needed */
+            padding: 10px;
+            box-sizing: border-box;
+            resize: vertical; /* Allows vertical resizing */
+        }
+
+        #submit {
+            width: 100px; /* Adjust the width as needed */
+            align-self: center; /* Center horizontally */
+            margin: 0 10px; /* Add spacing around the button */
+        }
+
+    </style>
+    <script src="https://cjrtnc.leaningtech.com/3.0/cj3loader.js"></script>
+    <script>
+        async function initializeFormatter() {
+            await cheerpjInit();
+            const cj = await cheerpjRunLibrary("/app/tlaplus-formatter-java/tlaplusformatter.jar");
+            const TLAPlusFormatter = await cj.me.fponzi.tlaplusformatter.TLAPlusFormatter;
+            console.log("Tlaplus formatter loaded");
+
+            document.getElementById('submit').addEventListener('click', async () => {
+                console.log("Ok let's do itttt");
+                // Get input text from textarea
+                const inputText = document.getElementById('input').value;
+                const formatter = await new TLAPlusFormatter(inputText);
+                console.log("Formatter created, wow!");
+                // Invoke function to process input (you need to define this function)
+                // Update output textarea with processed result
+                document.getElementById('output').value = await formatter.getOutput();
+            });
+        }
+
+        initializeFormatter();
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <div class="input-container">
+        <textarea id="input" placeholder="Insert some text">
+---------------------------- MODULE HourClock2 ------------------------------
+(***************************************************************************)
+(* This module contains the definition of the specification HC from the   *)
+(* book.                                                                   *)
+(***************************************************************************)
+EXTENDS Naturals
+VARIABLE (***************************************************************************)
+(* This is a variable hr.                                                  *)
+(***************************************************************************)
+            hr
+
+
+HCini  ==  hr \in (1 .. 12)
+HCnxt  ==  hr' = IF hr # 12 THEN hr + 1 ELSE 1
+HC  ==  HCini /\ [][HCnxt]_hr
+--------------------------------------------------------------
+THEOREM  HC => []HCini
+==============================================================
+        </textarea>
+        <button id="submit">Reformat</button>
+        <textarea id="output" readonly></textarea>
+    </div>
+</div>
+
+</body>
+</html>
+

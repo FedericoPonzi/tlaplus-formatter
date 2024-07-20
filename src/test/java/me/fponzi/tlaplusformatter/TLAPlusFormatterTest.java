@@ -7,8 +7,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -28,10 +30,11 @@ class TLAPlusFormatterTest {
         URL outputFile = getClass().getClassLoader().getResource("outputs/HourClock.tla");
         assertNotNull(resource, "Resource file not found");
         System.out.println(outputFile);
-        String expected = Files.readString(Path.of(outputFile.toURI()));
+        Path path = Paths.get(outputFile.toURI());
+        String expected = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
         System.out.println("Expected: " + expected);
-        var f = new TLAPlusFormatter(input);
-        var actual = f.getOutput();
+        TLAPlusFormatter f = new TLAPlusFormatter(input);
+        String actual = f.getOutput();
         assertNotNull(actual, "Formatted output is null");
         assertNotNull(expected, "Expected output is null");
         assertEquals(expected, actual, "Formatted output does not match expected output");
@@ -40,43 +43,43 @@ class TLAPlusFormatterTest {
 
     @Test
     void testFormatModule() throws FrontEndException, IOException {
-        var spec = "---- MODULE Spec ----\n======";
-        var expected = "---- MODULE Spec ----\n\n======\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
+        String spec = "---- MODULE Spec ----\n======";
+        String expected = "---- MODULE Spec ----\n\n======\n";
+        TLAPlusFormatter f = new TLAPlusFormatter(spec);
+        String received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
 
     @Test
     void testFormatModule2() throws FrontEndException, IOException {
-        var spec = "---- MODULE Spec ----\n\n======";
-        var expected = "---- MODULE Spec ----\n\n======\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
+        String spec = "---- MODULE Spec ----\n\n======";
+        String expected = "---- MODULE Spec ----\n\n======\n";
+        TLAPlusFormatter f = new TLAPlusFormatter(spec);
+        String received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
 
     @Test
     void testFormatExtends() throws FrontEndException, IOException {
-        var spec = "---- MODULE Spec ----\nEXTENDS Naturals\n======";
-        var expected = "---- MODULE Spec ----\n\nEXTENDS Naturals\n\n======\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
+        String spec = "---- MODULE Spec ----\nEXTENDS Naturals\n======";
+        String expected = "---- MODULE Spec ----\n\nEXTENDS Naturals\n\n======\n";
+        TLAPlusFormatter f = new TLAPlusFormatter(spec);
+        String received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
 
     @Test
     void testFormatVariables() throws FrontEndException, IOException {
-        var spec = "---- MODULE Spec ----\nVARIABLES x, y\n======";
-        var expected = "---- MODULE Spec ----\n\nVARIABLES\n          x,\n          y\n\n======\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
+        String spec = "---- MODULE Spec ----\nVARIABLES x, y\n======";
+        String expected = "---- MODULE Spec ----\n\nVARIABLES\n          x,\n          y\n\n======\n";
+        TLAPlusFormatter f = new TLAPlusFormatter(spec);
+        String received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
 
     @Test
     void testFormatIfThenElseConjList() throws FrontEndException, IOException {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        String spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals\n" +
                 "CONSTANTS\n" +
                 "  Prisoner,\n" +
@@ -96,7 +99,7 @@ class TLAPlusFormatterTest {
                 "  /\\ UNCHANGED timesSwitched\n" +
                 "\n" +
                 "=============================================================================\n";
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+        String expected = "------------------------------ MODULE Spec -----------------------------\n" +
                 "\n" +
                 "EXTENDS Naturals\n" +
                 "\n" +
@@ -122,19 +125,19 @@ class TLAPlusFormatterTest {
                 "               /\\ UNCHANGED timesSwitched \n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
+        TLAPlusFormatter f = new TLAPlusFormatter(spec);
+        String received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
 
     @Test
     public void testLetIn() throws FrontEndException, IOException {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        String spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "MH == LET x == 1\n" +
                 "          b == 2 IN 10" +
                 "=============================================================================\n";
 
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+        String expected = "------------------------------ MODULE Spec -----------------------------\n" +
                 "\n" +
                 "MH ==\n" +
                 "      LET\n" +
@@ -146,8 +149,8 @@ class TLAPlusFormatterTest {
                 "          10 \n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
+        TLAPlusFormatter f = new TLAPlusFormatter(spec);
+        String received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
 }

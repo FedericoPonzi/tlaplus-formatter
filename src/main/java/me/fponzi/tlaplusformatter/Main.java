@@ -37,8 +37,8 @@ public class Main {
             }
 
             // Get the file path from the positional arguments
-            var file = new File(remainingArgs[0]);
-            var tree = new TLAPlusFormatter(file);
+            File file = new File(remainingArgs[0]);
+            TLAPlusFormatter tree = new TLAPlusFormatter(file);
             System.out.println(tree.getOutput());
         } catch (ParseException e) {
             System.err.println("Error parsing command line arguments: " + e.getMessage());

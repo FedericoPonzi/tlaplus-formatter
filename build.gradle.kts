@@ -1,9 +1,16 @@
 plugins {
     id("java")
+
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 group = "me.fponzi"
 version = "1.0-SNAPSHOT"
+
+// target compile for java 8
 
 repositories {
     mavenCentral()
