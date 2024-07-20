@@ -2,7 +2,7 @@ plugins {
     id("java")
 }
 
-group = "org.example"
+group = "me.fponzi"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -18,6 +18,7 @@ dependencies {
     implementation ("commons-io:commons-io:2.16.1")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    implementation("commons-cli:commons-cli:1.8.0")
 }
 
 sourceSets {

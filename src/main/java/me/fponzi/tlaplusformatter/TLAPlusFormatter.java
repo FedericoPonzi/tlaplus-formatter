@@ -74,7 +74,7 @@ public class TLAPlusFormatter {
                 new PrintStream(outStream)
         );
         if(ret != 0) {
-            throw new FrontEndException(errBuf.toString());
+            throw new FrontEndException("Parsing failed, errors:" + errBuf.toString());
         }
     }
 
