@@ -165,7 +165,7 @@ public class TLAPlusFormatter {
         for (int i = 1; i < node.zero().length; i++) {
             var child = node.zero()[i];
             if (child.getImage().equals(",")) {
-                f.append(child).space().nl();
+                f.append(child).nl();
             } else {
                 f.append(child.zero()[0]);
             }
@@ -203,7 +203,6 @@ public class TLAPlusFormatter {
                 .nl();
         basePrintTree(node.one()[2]);
         f.decreaseIndent(indentSpace);
-        f.nl().nl();
     }
 
     private void printBody(TreeNode node) {
@@ -216,6 +215,7 @@ public class TLAPlusFormatter {
                 printVariables(child);
             } else if (child.getImage().equals("N_OperatorDefinition") && child.getKind() == 389) {
                 printOperatorDefinition(child);
+                f.nl().nl();
             } else if (child.getImage().startsWith("----") && child.getKind() == 35) {
                 f.nl().append(child).nl().nl();
             } else if (child.getImage().equals("N_Assumption") && child.getKind() == 332) {
@@ -303,9 +303,24 @@ public class TLAPlusFormatter {
 
         f.decreaseIndent(indet);
     }
-    public void theorem(TreeNode node) {
-        f.append(node.zero()[0]);
+
+    public void letIn(TreeNode node) {
+        f.append(node.zero()[0]).
+                increaseIndent(4).nl(); // LET
+        for (int i = 0; i < node.zero()[1].zero().length; i++) {
+            var child = node.zero()[1].zero()[i];
+            basePrintTree(child);
+            if(i < node.zero()[1].zero().length - 1){
+                f.nl();
+            }
+        }
+        f.decreaseIndent(4).nl();
+        f.append(node.zero()[2]).space(); // IN
+        f.increaseIndent(4).nl();
+        basePrintTree(node.zero()[3]); // body
+        f.decreaseIndent(4);
     }
+
     public void postfixExpr(TreeNode node) {
         f.append(node.zero()[0].zero()[1]).append(node.zero()[1].zero()[1]).space();
     }
@@ -325,6 +340,12 @@ public class TLAPlusFormatter {
             return;
         } else if (node.getImage().equals("N_IfThenElse") && node.getKind() == 369) {
             ifThenElse(node);
+            return;
+        } else if (node.getImage().equals("N_LetIn") && node.getKind() == 380) {
+            letIn(node);
+            return;
+        } else if (node.getImage().equals("N_OperatorDefinition") && node.getKind() == 389) {
+            printOperatorDefinition(node);
             return;
         }
         //System.out.println("Unhandled: " + node.getImage());

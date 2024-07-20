@@ -101,7 +101,7 @@ class TLAPlusFormatterTest {
                 "EXTENDS Naturals\n" +
                 "\n" +
                 "CONSTANTS \n" +
-                "          Prisoner, \n" +
+                "          Prisoner,\n" +
                 "          Counter\n" +
                 "VARIABLES\n" +
                 "          switchAUp,\n" +
@@ -120,6 +120,30 @@ class TLAPlusFormatterTest {
                 "                       /\\ switchBUp' = ~ switchBUp \n" +
                 "                       /\\ UNCHANGED << switchAUp , count >> \n" +
                 "               /\\ UNCHANGED timesSwitched \n" +
+                "\n" +
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
+
+    @Test
+    public void testLetIn() throws FrontEndException, IOException {
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "MH == LET x == 1\n" +
+                "          b == 2 IN 10" +
+                "=============================================================================\n";
+
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "MH ==\n" +
+                "      LET\n" +
+                "          x ==\n" +
+                "               1 \n" +
+                "          b ==\n" +
+                "               2 \n" +
+                "      IN \n" +
+                "          10 \n" +
                 "\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
