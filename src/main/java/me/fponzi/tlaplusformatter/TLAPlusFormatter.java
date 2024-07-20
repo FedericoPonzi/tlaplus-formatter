@@ -155,16 +155,38 @@ public class TLAPlusFormatter {
         f.nl().nl();
     }
 
-    private void printVariables(TreeNode node) {
-        System.err.println("Found variable.");
-        f.appendSp(node.zero()[0]); // VARIABLE
-        for (int i = 0; i < node.one().length; i++) {
-            f.append(node.one()[i]);
-            if (node.one()[i].getImage().equals(",")) {
-                f.space();
+    private void printConstants(TreeNode node) {
+        System.out.println("CONSTANTS");
+        var constant = node.zero()[0].zero()[0];
+        var indent = constant.getImage().length() + 1;
+        f.append(constant).space().increaseIndent(indent).nl();
+
+        // i=1 to skip CONSTANT[S] token
+        for (int i = 1; i < node.zero().length; i++) {
+            var child = node.zero()[i];
+            if (child.getImage().equals(",")) {
+                f.append(child).space().nl();
+            } else {
+                f.append(child.zero()[0]);
             }
         }
-        f.nl().nl();
+        f.decreaseIndent(indent).nl();
+    }
+
+    private void printVariables(TreeNode node) {
+        System.err.println("Found variable.");
+        var indent = node.zero()[0].getImage().length();
+        f.append(node.zero()[0]); // VARIABLE
+        f.increaseIndent(indent).nl();
+        for (int i = 0; i < node.one().length; i++) {
+            f.append(node.one()[i]);
+            if (node.one()[i].getImage().equals(",") && i < node.one().length - 1) {
+                f.nl();
+            }
+        }
+        f.decreaseIndent(indent)
+                .nl()
+                .nl();
 
     }
 
@@ -176,7 +198,7 @@ public class TLAPlusFormatter {
                 .nl();
         basePrintTree(node.one()[2]);
         f.decreaseIndent(indentSpace);
-        f.nl();
+        f.nl().nl();
     }
 
     private void printBody(TreeNode node) {
@@ -191,6 +213,10 @@ public class TLAPlusFormatter {
                 printOperatorDefinition(child);
             } else if (child.getImage().startsWith("----") && child.getKind() == 35) {
                 f.nl().append(child).nl().nl();
+            } else if (child.getImage().equals("N_Assumption") && child.getKind() == 332) {
+                printAssume(child);
+            } else if (child.getImage().equals("N_ParamDeclaration") && child.getKind() == 392) {
+                printConstants(child);
             } else {
                 basePrintTree(child);
             }
@@ -215,16 +241,34 @@ public class TLAPlusFormatter {
     }
 
     public void printAssume(TreeNode node) {
-        f.append(node.zero()[0].zero()[0])
+        System.out.println("Found ASSUME");
+        var indent = "ASSUME ".length();
+        f.append(node.one()[0])
                 .space()
-                .increaseIndent("ASSUME ".length())
+                .increaseIndent(indent)
                 .nl();
-
+        basePrintTree(node.one()[1]);
+        f.decreaseIndent(indent)
+                .nl()
+                .nl();
     }
 
-    public void conjList(TreeNode node) {
-
+    public void conjDisjList(TreeNode node) {
+        System.out.println("Found conjList or DisjList");
+        for (int i = 0; i < node.zero().length; i++) {
+            var conjDisjItem = node.zero()[i];
+            conjDisjItem(conjDisjItem);
+            if (i < node.zero().length - 1) {
+                f.nl();
+            }
+        }
     }
+
+    private void conjDisjItem(TreeNode node) {
+        f.append(node.zero()[0]).space();
+        basePrintTree(node.zero()[1]);
+    }
+
 
     public void postfixExpr(TreeNode node) {
         f.append(node.zero()[0].zero()[1]).append(node.zero()[1].zero()[1]).space();
@@ -234,12 +278,18 @@ public class TLAPlusFormatter {
         if (node == null) {
             return;
         }
-        System.out.println("Unhandled: " + node.getImage());
-
         if (node.getImage().equals("N_PostfixExpr") && node.getKind() == 395) {
             postfixExpr(node);
             return;
+        } else if (node.getImage().equals("N_ConjList") && node.getKind() == 341) {
+            conjDisjList(node);
+            return;
+        } else if (node.getImage().equals("N_DisjList") && node.getKind() == 344) {
+            conjDisjList(node);
+            return;
         }
+        System.out.println("Unhandled: " + node.getImage());
+
         if (!node.getImage().startsWith("N_")) {
             f.append(node).space();
         }

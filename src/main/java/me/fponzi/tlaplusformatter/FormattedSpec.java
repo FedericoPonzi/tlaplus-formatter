@@ -27,7 +27,18 @@ public class FormattedSpec {
     }
 
     protected FormattedSpec append(TreeNode node) {
+        for (String c: node.getPreComments()) {
+            out.append(c);
+            this.nl();
+        }
         out.append(node.getImage());
+        return this;
+    }
+    protected FormattedSpec precomment(TreeNode node) {
+        for(String l : node.getPreComments()){
+            out.append(l);
+            this.nl();
+        }
         return this;
     }
 
