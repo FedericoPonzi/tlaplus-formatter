@@ -34,7 +34,43 @@ class TLAPlusFormatterTest {
         var actual = f.getOutput();
         assertNotNull(actual, "Formatted output is null");
         assertNotNull(expected, "Expected output is null");
-        assertEquals(actual, expected, "Formatted output does not match expected output");
+        assertEquals(expected, actual, "Formatted output does not match expected output");
+    }
 
+
+    @Test
+    void testFormatModule() throws FrontEndException, IOException {
+        var spec = "---- MODULE Spec ----\n======";
+        var expected = "---- MODULE Spec ----\n\n======\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
+
+    @Test
+    void testFormatModule2() throws FrontEndException, IOException {
+        var spec = "---- MODULE Spec ----\n\n======";
+        var expected = "---- MODULE Spec ----\n\n======\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
+
+    @Test
+    void testFormatExtends() throws FrontEndException, IOException {
+        var spec = "---- MODULE Spec ----\nEXTENDS Naturals\n======";
+        var expected = "---- MODULE Spec ----\n\nEXTENDS Naturals\n\n======\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
+
+    @Test
+    void testFormatVariables() throws FrontEndException, IOException {
+        var spec = "---- MODULE Spec ----\nVARIABLES x, y\n======";
+        var expected = "---- MODULE Spec ----\n\nVARIABLES x, y\n\n======\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
     }
 }
