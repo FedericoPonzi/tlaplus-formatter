@@ -68,7 +68,7 @@ class TLAPlusFormatterTest {
     @Test
     void testFormatVariables() throws FrontEndException, IOException {
         var spec = "---- MODULE Spec ----\nVARIABLES x, y\n======";
-        var expected = "---- MODULE Spec ----\n\nVARIABLES x, y\n\n======\n";
+        var expected = "---- MODULE Spec ----\n\nVARIABLES\n          x,\n          y\n\n======\n";
         var f = new TLAPlusFormatter(spec);
         var received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");

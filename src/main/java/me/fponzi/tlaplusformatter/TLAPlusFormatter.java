@@ -175,7 +175,7 @@ public class TLAPlusFormatter {
 
     private void printVariables(TreeNode node) {
         System.err.println("Found variable.");
-        var indent = node.zero()[0].getImage().length();
+        var indent = node.zero()[0].getImage().length() + 1;
         f.append(node.zero()[0]); // VARIABLE
         f.increaseIndent(indent).nl();
         for (int i = 0; i < node.one().length; i++) {
