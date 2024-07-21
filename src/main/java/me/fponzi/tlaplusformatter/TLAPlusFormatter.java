@@ -5,6 +5,8 @@ import me.fponzi.tlaplusformatter.exceptions.SanyException;
 import me.fponzi.tlaplusformatter.exceptions.SanySemanticException;
 import me.fponzi.tlaplusformatter.exceptions.SanySyntaxException;
 import org.apache.commons.io.output.WriterOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tla2sany.drivers.FrontEndException;
 import tla2sany.drivers.SANY;
 import tla2sany.modanalyzer.ParseUnit;
@@ -16,11 +18,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringWriter;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Hashtable;
 
 public class TLAPlusFormatter {
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     // TODO: handle pre and post module comments/sections
     public FormattedSpec f;
     TreeNode root;
@@ -155,7 +160,7 @@ public class TLAPlusFormatter {
     }
 
     private void printConstants(TreeNode node) {
-        System.out.println("CONSTANTS");
+        LOG.debug("CONSTANTS");
         var constant = node.zero()[0].zero()[0];
         var indent = constant.getImage().length() + 1;
         f.append(constant).space().increaseIndent(indent).nl();
@@ -245,7 +250,7 @@ public class TLAPlusFormatter {
     }
 
     public void printAssume(TreeNode node) {
-        System.out.println("Found ASSUME");
+        LOG.debug("Found ASSUME");
         var indent = "ASSUME ".length();
         f.append(node.one()[0])
                 .space()
@@ -258,7 +263,7 @@ public class TLAPlusFormatter {
     }
 
     public void conjDisjList(TreeNode node) {
-        System.out.println("Found conjList or DisjList");
+        LOG.debug("Found conjList or DisjList");
         for (int i = 0; i < node.zero().length; i++) {
             var conjDisjItem = node.zero()[i];
             conjDisjItem(conjDisjItem);
@@ -347,7 +352,7 @@ public class TLAPlusFormatter {
             printOperatorDefinition(node);
             return;
         }
-        //System.out.println("Unhandled: " + node.getImage());
+        LOG.debug("Unhandled: " + node.getImage());
 
         if (!node.getImage().startsWith("N_")) {
             f.append(node).space();
