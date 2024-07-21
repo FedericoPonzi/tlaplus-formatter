@@ -34,17 +34,6 @@ public class FormattedSpec {
         out.append(node.getImage());
         return this;
     }
-    protected FormattedSpec precomment(TreeNode node) {
-        for(String l : node.getPreComments()){
-            out.append(l);
-            this.nl();
-        }
-        return this;
-    }
-
-    protected FormattedSpec appendSp(TreeNode node) {
-        return this.append(node).space();
-    }
 
     protected FormattedSpec increaseIndent(int val) {
         this.indent = " ".repeat(this.indent.length() + val);
