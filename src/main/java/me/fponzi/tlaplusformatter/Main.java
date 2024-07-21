@@ -9,6 +9,8 @@ import tla2sany.drivers.FrontEndException;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class Main {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -43,16 +45,26 @@ public class Main {
             // Get the remaining arguments (positional arguments)
             String[] remainingArgs = cmd.getArgs();
 
-            if (remainingArgs.length != 1) {
-                System.err.println("Please provide exactly one file path as an argument.");
+            if (remainingArgs.length > 2 || remainingArgs.length == 0) {
+                System.err.println("Please provide at most two file paths (input and optionally output) as arguments.");
                 printHelp();
                 System.exit(1);
             }
 
             // Get the file path from the positional arguments
             var file = new File(remainingArgs[0]);
+            var outputFile = new File(remainingArgs[1]);
+
             var tree = new TLAPlusFormatter(file);
             System.out.println(tree.getOutput());
+
+            Path path = outputFile.toPath(); // convert File to Path
+            try {
+                Files.write(path, tree.getOutput().getBytes()); // write "output" to the file
+            } catch (IOException e) {
+                System.err.println("An error occurred while writing to the file: " + e.getMessage());
+            }
+
         } catch (ParseException e) {
             System.err.println("Error parsing command line arguments: " + e.getMessage());
             printHelp();
