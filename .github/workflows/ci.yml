@@ -23,6 +23,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Package
-        path: build/libs/tlaplus-formatter-1.0-SNAPSHOT.jar
+        name: Release
+        path: build/libs/tlaplus-formatter.jar
         retention-days: 90
+        if-no-files-found: error

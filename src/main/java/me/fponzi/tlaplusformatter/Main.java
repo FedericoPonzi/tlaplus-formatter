@@ -11,8 +11,8 @@ public class Main {
     private static void printHelp() {
         HelpFormatter formatter = new HelpFormatter();
         String header = "A TLA+ formatter. Use it to reformat your specs.";
-        String footer = "\n\nPath to the .tla file that contains the spec to format.";
-        formatter.printHelp("java -jar TLAPlusFormatter <FILE>", header, new Options(), footer, true);
+        String footer = "Please contribute feedback or get the latest release from https://github.com/FedericoPonzi/tlaplus-formatter";
+        formatter.printHelp("java -jar tlaplus-formatter.jar <FILE>", header, new Options(), footer, true);
     }
 
     //Generate

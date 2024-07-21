@@ -135,8 +135,7 @@ public class TLAPlusFormatter {
         var specObj = new SpecObj(file.getAbsolutePath(), filenameResolver);
         loadSpecObject(specObj, file, errBuf);
         Hashtable<String, ParseUnit> parseUnitContext = specObj.parseUnitContext;
-        var pu = parseUnitContext.get(specObj.getRootModule().getName().toString());
-        return pu.getParseTree();
+        return parseUnitContext.get(specObj.getRootModule().getName().toString()).getParseTree();
     }
 
     private void printExtends(TreeNode node) {

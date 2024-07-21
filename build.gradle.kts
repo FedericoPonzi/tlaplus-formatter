@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("io.ktor.plugin") version "2.3.12"
 }
 
 group = "me.fponzi"
@@ -36,4 +37,14 @@ tasks.withType<Copy> {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+application {
+    mainClass = "me.fponzi.tlaplusformatter.Main"
+}
+
+ktor {
+    fatJar {
+        archiveFileName.set("tlaplus-formatter.jar")
+    }
 }
