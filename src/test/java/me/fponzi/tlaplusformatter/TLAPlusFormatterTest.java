@@ -131,7 +131,7 @@ class TLAPlusFormatterTest {
     }
 
     @Test
-    void testFormatIfThenElseConjList() throws FrontEndException, IOException {
+    void testFormatIfThenElseConjDisjList() throws FrontEndException, IOException {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals\n" +
                 "CONSTANTS\n" +
@@ -147,8 +147,8 @@ class TLAPlusFormatterTest {
                 "       THEN /\\ switchAUp' = FALSE\n" +
                 "            /\\ UNCHANGED switchBUp\n" +
                 "            /\\ count' =  count + 1\n" +
-                "       ELSE /\\ switchBUp' = ~switchBUp\n" +
-                "            /\\ UNCHANGED <<switchAUp, count>>\n" +
+                "       ELSE \\/ switchBUp' = ~switchBUp\n" +
+                "            \\/ UNCHANGED <<switchAUp, count>>\n" +
                 "  /\\ UNCHANGED timesSwitched\n" +
                 "\n" +
                 "=============================================================================\n";
@@ -173,8 +173,8 @@ class TLAPlusFormatterTest {
                 "                       /\\ UNCHANGED switchBUp \n" +
                 "                       /\\ count' = count + 1 \n" +
                 "                  ELSE\n" +
-                "                       /\\ switchBUp' = ~ switchBUp \n" +
-                "                       /\\ UNCHANGED << switchAUp , count >> \n" +
+                "                       \\/ switchBUp' = ~ switchBUp \n" +
+                "                       \\/ UNCHANGED << switchAUp , count >> \n" +
                 "               /\\ UNCHANGED timesSwitched \n" +
                 "\n" +
                 "=============================================================================\n";
