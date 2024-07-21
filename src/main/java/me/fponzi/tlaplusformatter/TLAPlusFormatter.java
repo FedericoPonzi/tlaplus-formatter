@@ -163,7 +163,7 @@ public class TLAPlusFormatter {
         LOG.debug("CONSTANTS");
         var constant = node.zero()[0].zero()[0];
         var indent = constant.getImage().length() + 1;
-        f.append(constant).space().increaseIndent(indent).nl();
+        f.append(constant).increaseIndent(indent).nl();
 
         // i=1 to skip CONSTANT[S] token
         for (int i = 1; i < node.zero().length; i++) {
@@ -243,6 +243,7 @@ public class TLAPlusFormatter {
             } else if (child.getImage().equals("N_EndModule") && child.getKind() == 345) {
                 f.append(child.zero()[0]).nl();
             } else {
+                // TODO: throw exception, I think this should never happen
                 System.err.println("Unhandled node: " + node.getImage());
                 basePrintTree(child);
             }
@@ -253,7 +254,6 @@ public class TLAPlusFormatter {
         LOG.debug("Found ASSUME");
         var indent = "ASSUME ".length();
         f.append(node.one()[0])
-                .space()
                 .increaseIndent(indent)
                 .nl();
         basePrintTree(node.one()[1]);

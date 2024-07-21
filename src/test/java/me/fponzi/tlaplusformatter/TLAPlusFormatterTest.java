@@ -66,9 +66,41 @@ class TLAPlusFormatterTest {
     }
 
     @Test
-    void testFormatVariables() throws FrontEndException, IOException {
-        var spec = "---- MODULE Spec ----\nVARIABLES x, y\n======";
-        var expected = "---- MODULE Spec ----\n\nVARIABLES\n          x,\n          y\n\n======\n";
+    public void testFormatVariables() throws FrontEndException, IOException {
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "VARIABLES x, y\n" +
+                "=============================================================================\n";
+
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "VARIABLES\n" +
+                "          x,\n" +
+                "          y\n" +
+                "\n" +
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
+
+
+    @Test
+    public void testFormatAssume() throws FrontEndException, IOException {
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "EXTENDS Naturals\n" +
+                "CONSTANT x\n" +
+                "ASSUME x \\in Nat\n" +
+                "=============================================================================\n";
+
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "EXTENDS Naturals\n\n"+
+                "CONSTANT\n" +
+                "         x\n" +
+                "ASSUME\n" +
+                "       x \\in Nat \n" +
+                "\n" +
+                "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
         var received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
@@ -100,7 +132,7 @@ class TLAPlusFormatterTest {
                 "\n" +
                 "EXTENDS Naturals\n" +
                 "\n" +
-                "CONSTANTS \n" +
+                "CONSTANTS\n" +
                 "          Prisoner,\n" +
                 "          Counter\n" +
                 "VARIABLES\n" +
@@ -150,4 +182,5 @@ class TLAPlusFormatterTest {
         var received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
+
 }
