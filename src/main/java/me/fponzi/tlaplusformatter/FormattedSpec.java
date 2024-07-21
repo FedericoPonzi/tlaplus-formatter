@@ -10,6 +10,10 @@ public class FormattedSpec {
         out = new StringBuffer();
         indent = "";
     }
+    protected FormattedSpec append(String str) {
+        out.append(str);
+        return this;
+    }
 
     public StringBuffer getOut() {
         return out;
@@ -44,4 +48,5 @@ public class FormattedSpec {
         this.indent = " ".repeat(this.indent.length() - val);
         return this;
     }
+
 }

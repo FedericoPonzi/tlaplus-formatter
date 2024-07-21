@@ -26,12 +26,13 @@ import java.util.Hashtable;
 public class TLAPlusFormatter {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    // TODO: handle pre and post module comments/sections
     public FormattedSpec f;
     TreeNode root;
+    File spec;
 
     public TLAPlusFormatter(File specPath) throws IOException, FrontEndException {
         root = getTreeNode(specPath.getAbsolutePath());
+        this.spec = specPath;
         format();
     }
 
@@ -64,9 +65,37 @@ public class TLAPlusFormatter {
         return tmpFile;
     }
 
+    private String[] getPreAndPostModuleSections(String spec, int startLine, int endLine) {
+        String[] lines = spec.split("\\R"); // Split by any line terminator
+        StringBuilder preModuleSection = new StringBuilder();
+        StringBuilder postModuleSection = new StringBuilder();
+
+        for (int i = 0; i < lines.length; i++) {
+            if (i < startLine - 1) {
+                preModuleSection.append(lines[i]).append(System.lineSeparator());
+            } else if (i > endLine - 1) {
+                postModuleSection.append(lines[i]).append(System.lineSeparator());
+            }
+        }
+        return new String[] { preModuleSection.toString(), postModuleSection.toString()};
+    }
+
     private void format() {
         f = new FormattedSpec();
+        String[] extraSections = new String[]{"", ""};
+        try {
+            String content = Files.readString(spec.toPath());
+            //read all the content of spec:
+            var startOfModuleRow = root.zero()[0].getLocation().getCoordinates()[0];
+            var endOfModuleRow = root.zero()[3].getLocation().getCoordinates()[0];
+
+            extraSections = getPreAndPostModuleSections(content, startOfModuleRow, endOfModuleRow);
+        } catch (Exception e) {
+            LOG.error("Failed to read content of the spec to get pre and post module sections: " + e);
+        }
+        f.append(extraSections[0]);
         printTree(root);
+        f.append(extraSections[1]);
     }
 
     private static File sanyTempDir() throws IOException {
@@ -314,7 +343,7 @@ public class TLAPlusFormatter {
         for (int i = 0; i < node.zero()[1].zero().length; i++) {
             var child = node.zero()[1].zero()[i];
             basePrintTree(child);
-            if(i < node.zero()[1].zero().length - 1){
+            if (i < node.zero()[1].zero().length - 1) {
                 f.nl();
             }
         }

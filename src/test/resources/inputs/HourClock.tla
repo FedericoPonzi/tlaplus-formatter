@@ -1,4 +1,5 @@
-AAAH OK
+This is some text explaining the spec.
+Has multiple lines in it.
 ---------------------- MODULE HourClock ----------------------
 EXTENDS Naturals, TLC
 VARIABLE hr
@@ -8,5 +9,5 @@ HC  ==  HCini /\ [][HCnxt]_hr
 --------------------------------------------------------------
 THEOREM  HC => []HCini
 ==============================================================
-
-HELLO WORLD ! :D
+This is post text
+Has multiple llines in it.

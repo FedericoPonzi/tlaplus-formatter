@@ -1,3 +1,5 @@
+This is some text explaining the spec.
+Has multiple lines in it.
 ---------------------- MODULE HourClock ----------------------
 
 EXTENDS Naturals, TLC
@@ -23,3 +25,5 @@ HC ==
 --------------------------------------------------------------
 
 THEOREM HC => [] HCini ==============================================================
+This is post text
+Has multiple llines in it.
