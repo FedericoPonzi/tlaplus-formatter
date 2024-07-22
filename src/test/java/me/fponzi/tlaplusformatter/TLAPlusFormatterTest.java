@@ -207,4 +207,25 @@ class TLAPlusFormatterTest {
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
 
+    @Test
+    public void testTheorem() throws FrontEndException, IOException {
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "EXTENDS Naturals\n" +
+                "CONSTANT x\n" +
+                "THEOREM x \\in Nat \\land x > 10\n" +
+                "=============================================================================\n";
+
+        var expected = "------------------------------ MODULE Spec -----------------------------\n\n" +
+                "EXTENDS Naturals\n" +
+                "\n" +
+                "CONSTANT\n" +
+                "         x\n" +
+                "THEOREM\n" +
+                "        x \\in Nat \\land x > 10 \n" +
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
+
 }

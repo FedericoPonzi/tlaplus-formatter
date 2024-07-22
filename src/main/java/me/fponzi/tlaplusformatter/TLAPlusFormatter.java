@@ -260,6 +260,14 @@ public class TLAPlusFormatter {
             }
         }
     }
+    private void printTheorem(TreeNode node) {
+        var theoremKeyword = node.zero()[0];
+        assert theoremKeyword.getImage().equals("THEOREM") && theoremKeyword.getKind() == 66;
+        var indent = theoremKeyword.getImage().length() + 1;
+        f.append(theoremKeyword).increaseIndent(indent).nl();
+        basePrintTree(node.zero()[1]);
+        f.decreaseIndent(indent).nl();
+    }
 
     public void printTree(TreeNode node) {
         for (var child : node.zero()) {
@@ -379,6 +387,9 @@ public class TLAPlusFormatter {
             return;
         } else if (node.getImage().equals("N_OperatorDefinition") && node.getKind() == 389) {
             printOperatorDefinition(node);
+            return;
+        } else if (node.getImage().equals("N_Theorem") && node.getKind() == 422) {
+            printTheorem(node);
             return;
         }
         LOG.debug("Unhandled: " + node.getImage());
