@@ -207,7 +207,6 @@ public class TLAPlusFormatter {
     }
 
     private void printVariables(TreeNode node) {
-        System.err.println("Found variable.");
         var indent = node.zero()[0].getImage().length() + 1;
         f.append(node.zero()[0]); // VARIABLE
         f.increaseIndent(indent).nl();
@@ -333,6 +332,7 @@ public class TLAPlusFormatter {
     }
 
     private void ifThenElse(TreeNode node) {
+        //todo: don't append new lines if bodies have only one number or element
         var indet = "THEN ".length();
         var z = node.zero();
         var tokenIF = z[0];
@@ -390,6 +390,26 @@ public class TLAPlusFormatter {
         f.append(node.zero()[len - 1]); // >>
     }
 
+    public void printRecursive(TreeNode node) {
+        var z = node.zero();
+        f.append(z[0]).space(); // RECURSIVE
+        for (int i = 1; i < z.length; i++){
+            basePrintTree(z[i]);
+        }
+        f.nl();
+    }
+
+    public void printSubsetOf(TreeNode node) {
+        var z = node.zero();
+        f.append(z[0]).space(); // {
+        f.append(z[1]).space(); // x
+        f.append(z[2]).space(); // \in
+        basePrintTree(z[3]); // S
+        f.append(z[4]).space(); // :
+        basePrintTree(z[5]);
+        f.space().append(z[6]); // }
+    }
+
     public void basePrintTree(TreeNode node) {
         if (node == null) {
             return;
@@ -421,10 +441,17 @@ public class TLAPlusFormatter {
         } else if(node.getImage().equals("UNCHANGED")) {
             f.append(node).space();
             return;
-        } else if(node.getImage().equals("N_Tuple")) {
+        } else if(node.getImage().equals("N_Tuple") && node.getKind() == 423) {
             printTuple(node);
             return;
+        } else if(node.getImage().equals("N_Recursive") && node.getKind() == 431) {
+            printRecursive(node);
+            return;
+        } else if(node.getImage().equals("N_SubsetOf") && node.getKind() == 419) {
+            printSubsetOf(node);
+            return;
         }
+
         LOG.debug("Unhandled: {}", node.getImage());
 
         if (!node.getImage().startsWith("N_")) {
