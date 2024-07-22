@@ -9,6 +9,8 @@ If you want to try it out, go to the build page of the latest commit, and downlo
 
 Unzip the file, and you can use the jar file in there like this:
 ```
-java -jar tlaplus-formatter.jar <FILE>
+java -jar tlaplus-formatter.jar <INFILE> [OUTFILE]
 ```
-It will print in output your reformatted spec.
+
+It will print in output your reformatted spec. If OUTFILE parameter is specified, it will write the output to that file.
+You can use the input file as output file as well.
