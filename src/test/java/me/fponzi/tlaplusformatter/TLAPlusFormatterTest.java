@@ -281,4 +281,27 @@ class TLAPlusFormatterTest {
         var received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
+
+    @Test
+    public void testSubsetOf() throws FrontEndException, IOException {
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "CONSTANT max\n" +
+                "S ==\n" +
+                " { x \\in 1 .. max: x < max}\n" +
+                "=============================================================================\n";
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "\n" +
+                "CONSTANT\n" +
+                "         max\n" +
+                "S ==\n" +
+                "     { x \\in 1 .. max: x < max }\n" +
+                "\n" +
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
 }
