@@ -435,6 +435,23 @@ public class TLAPlusFormatter {
         basePrintTree(z[3]);
     }
 
+    // CHOOSE e \in S: TRUE
+    public void printChoose(TreeNode node) {
+        var z = node.zero();
+        f.append(z[0]).space(); // choose
+        f.append(z[1]).space(); // var
+        basePrintTree(z[2]); // maybeBound
+        f.append(z[3]).space(); // :
+        basePrintTree(z[4]); // condition
+    }
+
+    // "\in S" from TowerOfHanoi test.
+    public void printMaybeBound(TreeNode node) {
+        var z = node.zero();
+        f.append(z[0]).space();
+        basePrintTree(z[1]);
+    }
+
     public void basePrintTree(TreeNode node) {
         if (node == null) {
             return;
@@ -483,6 +500,12 @@ public class TLAPlusFormatter {
             return;
         } else if(node.getImage().equals("N_BoundedQuant")) {
             printBoundedQuant(node);
+            return;
+        } else if(node.getImage().equals("N_UnBoundedOrBoundedChoose")) {
+            printChoose(node);
+            return;
+        } else if(node.getImage().equals("N_MaybeBound") && node.getKind() == 381) {
+            printMaybeBound(node);
             return;
         }
 

@@ -37,15 +37,19 @@ class TLAPlusFormatterTest {
 
 
     @Test
-    void format() {
+    void testFormatHourClock() {
         testSpecFiles("HourClock");
     }
 
     @Test
-    void formatStones() {
+    void testFormatStones() {
         testSpecFiles("Stones");
     }
 
+    @Test
+    void testFormatTowerOfHanoi() {
+        testSpecFiles("TowerOfHanoi");
+    }
 
     @Test
     void testFormatModule() throws FrontEndException, IOException {
