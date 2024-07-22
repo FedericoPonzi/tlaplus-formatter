@@ -10,4 +10,4 @@ HC  ==  HCini /\ [][HCnxt]_hr
 THEOREM  HC => []HCini
 ==============================================================
 This is post text
-Has multiple llines in it.
+Has multiple lines in it.

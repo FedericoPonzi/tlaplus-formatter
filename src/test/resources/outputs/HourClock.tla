@@ -8,24 +8,24 @@ VARIABLE
          hr
 
 HCini ==
-         hr \in ( 1 .. 12 ) 
+         hr \in (1 .. 12)
 
 HCnxt ==
          hr' = IF
-              hr # 12 
+              hr # 12
          THEN
-              hr + 1 
+              hr + 1
          ELSE
-              1 
+              1
 
 HC ==
-      HCini /\ [] [ HCnxt ]_ hr 
+      HCini /\ [][HCnxt]_hr
 
 
 --------------------------------------------------------------
 
 THEOREM
-        HC => [] HCini 
+        HC => []HCini
 ==============================================================
 This is post text
-Has multiple llines in it.
+Has multiple lines in it.

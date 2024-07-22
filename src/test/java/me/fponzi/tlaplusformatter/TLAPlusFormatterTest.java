@@ -94,11 +94,11 @@ class TLAPlusFormatterTest {
 
         var expected = "------------------------------ MODULE Spec -----------------------------\n" +
                 "\n" +
-                "EXTENDS Naturals\n\n"+
+                "EXTENDS Naturals\n\n" +
                 "CONSTANT\n" +
                 "         x\n" +
                 "ASSUME\n" +
-                "       x \\in Nat \n" +
+                "       x \\in Nat\n" +
                 "\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
@@ -117,12 +117,12 @@ class TLAPlusFormatterTest {
 
         var expected = "------------------------------ MODULE Spec -----------------------------\n" +
                 "\n" +
-                "EXTENDS Naturals\n\n"+
+                "EXTENDS Naturals\n\n" +
                 "CONSTANT\n" +
                 "         x\n" +
                 "ASSUME\n" +
-                "       /\\ x \\in Nat \n" +
-                "       /\\ x > 10 \n" +
+                "       /\\ x \\in Nat\n" +
+                "       /\\ x > 10\n" +
                 "\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
@@ -167,15 +167,15 @@ class TLAPlusFormatterTest {
                 "\n" +
                 "CounterStep ==\n" +
                 "               /\\ IF\n" +
-                "                       switchAUp \n" +
+                "                       switchAUp\n" +
                 "                  THEN\n" +
-                "                       /\\ switchAUp' = FALSE \n" +
-                "                       /\\ UNCHANGED switchBUp \n" +
-                "                       /\\ count' = count + 1 \n" +
+                "                       /\\ switchAUp' = FALSE\n" +
+                "                       /\\ UNCHANGED switchBUp\n" +
+                "                       /\\ count' = count + 1\n" +
                 "                  ELSE\n" +
-                "                       \\/ switchBUp' = ~ switchBUp \n" +
-                "                       \\/ UNCHANGED << switchAUp , count >> \n" +
-                "               /\\ UNCHANGED timesSwitched \n" +
+                "                       \\/ switchBUp' = ~switchBUp\n" +
+                "                       \\/ UNCHANGED <<switchAUp, count>>\n" +
+                "               /\\ UNCHANGED timesSwitched\n" +
                 "\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
@@ -195,11 +195,11 @@ class TLAPlusFormatterTest {
                 "MH ==\n" +
                 "      LET\n" +
                 "          x ==\n" +
-                "               1 \n" +
+                "               1\n" +
                 "          b ==\n" +
-                "               2 \n" +
-                "      IN \n" +
-                "          10 \n" +
+                "               2\n" +
+                "      IN\n" +
+                "          10\n" +
                 "\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
@@ -221,7 +221,7 @@ class TLAPlusFormatterTest {
                 "CONSTANT\n" +
                 "         x\n" +
                 "THEOREM\n" +
-                "        x \\in Nat \\land x > 10 \n" +
+                "        x \\in Nat \\land x > 10\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
         var received = f.getOutput();

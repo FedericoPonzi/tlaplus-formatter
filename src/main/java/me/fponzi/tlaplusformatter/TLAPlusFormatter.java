@@ -231,7 +231,7 @@ public class TLAPlusFormatter {
             basePrintTree(id);
             if (id.getImage().equals(",")) f.space();
         }
-        f.append(node.one()[1]) // ==
+        f.space().append(node.one()[1]) // ==
                 .increaseIndent(indentSpace)
                 .nl();
         basePrintTree(node.one()[2]);
@@ -256,10 +256,25 @@ public class TLAPlusFormatter {
             } else if (child.getImage().equals("N_ParamDeclaration") && child.getKind() == 392) {
                 printConstants(child);
             } else {
+                LOG.debug("Unhandled body node: {}", child.getImage());
                 basePrintTree(child);
             }
         }
     }
+
+    private void printPostfixExpr(TreeNode node) {
+        basePrintTree(node.zero()[0]);
+        basePrintTree(node.zero()[1]);
+    }
+
+    private void printInfixExpr(TreeNode node) {
+        basePrintTree(node.zero()[0]);
+        f.space();
+        basePrintTree(node.zero()[1]);
+        f.space();
+        basePrintTree(node.zero()[2]);
+    }
+
     private void printTheorem(TreeNode node) {
         var theoremKeyword = node.zero()[0];
         assert theoremKeyword.getImage().equals("THEOREM") && theoremKeyword.getKind() == 66;
@@ -281,7 +296,7 @@ public class TLAPlusFormatter {
                 f.append(child.zero()[0]).nl();
             } else {
                 // TODO: throw exception, I think this should never happen
-                System.err.println("Unhandled node: " + node.getImage());
+                LOG.debug("Unhandled tree node: {}", child.getImage());
                 basePrintTree(child);
             }
         }
@@ -356,24 +371,30 @@ public class TLAPlusFormatter {
             }
         }
         f.decreaseIndent(4).nl();
-        f.append(node.zero()[2]).space(); // IN
+        f.append(node.zero()[2]); // IN
         f.increaseIndent(4).nl();
         basePrintTree(node.zero()[3]); // body
         f.decreaseIndent(4);
     }
 
-    public void postfixExpr(TreeNode node) {
-        f.append(node.zero()[0].zero()[1]).append(node.zero()[1].zero()[1]).space();
+    public void printTuple(TreeNode node) {
+        var z = node.zero();
+        var len = z.length;
+        f.append(z[0]); // <<
+        for (int i = 1; i < len - 1; i++) {
+            basePrintTree(node.zero()[i]);
+            if (i < node.zero().length - 2 && i % 2 == 0) {
+                f.space(); // ,
+            }
+        }
+        f.append(node.zero()[len - 1]); // >>
     }
 
     public void basePrintTree(TreeNode node) {
         if (node == null) {
             return;
         }
-        if (node.getImage().equals("N_PostfixExpr") && node.getKind() == 395) {
-            postfixExpr(node);
-            return;
-        } else if (node.getImage().equals("N_ConjList") && node.getKind() == 341) {
+        if (node.getImage().equals("N_ConjList") && node.getKind() == 341) {
             conjDisjList(node);
             return;
         } else if (node.getImage().equals("N_DisjList") && node.getKind() == 344) {
@@ -391,11 +412,23 @@ public class TLAPlusFormatter {
         } else if (node.getImage().equals("N_Theorem") && node.getKind() == 422) {
             printTheorem(node);
             return;
+        } else if (node.getImage().equals("N_InfixExpr") && node.getKind() == 371) {
+            printInfixExpr(node);
+            return;
+        } else if (node.getImage().equals("N_PostfixExpr") && node.getKind() == 395) {
+            printPostfixExpr(node);
+            return;
+        } else if(node.getImage().equals("UNCHANGED")) {
+            f.append(node).space();
+            return;
+        } else if(node.getImage().equals("N_Tuple")) {
+            printTuple(node);
+            return;
         }
-        LOG.debug("Unhandled: " + node.getImage());
+        LOG.debug("Unhandled: {}", node.getImage());
 
         if (!node.getImage().startsWith("N_")) {
-            f.append(node).space();
+            f.append(node);
         }
         if (node.zero() != null) {
             for (var child : node.zero()) {
