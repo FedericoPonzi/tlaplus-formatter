@@ -5,36 +5,45 @@ import tla2sany.drivers.FrontEndException;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TLAPlusFormatterTest {
 
-    @Test
-    void format() throws URISyntaxException, IOException, FrontEndException {
-        //load file test/resources/inputs/HourClock.tla
-        // format
-        // compare to test/resources/outputs/HourClock.tla
-        // Get the resource as a URL
-        URL resource = getClass().getClassLoader().getResource("inputs/HourClock.tla");
-        assertNotNull(resource, "Resource file not found");
-        File input = new File(resource.toURI());
+    /**
+     * Compares src/test/resources/inputs/name.tla to src/test/resources/outputs/name.tla
+     */
+    void testSpecFiles(String name) {
+        try {
+            URL resource = getClass().getClassLoader().getResource("inputs/" + name + ".tla");
+            assertNotNull(resource, "Resource file not found");
+            File input = new File(resource.toURI());
 
-        URL outputFile = getClass().getClassLoader().getResource("outputs/HourClock.tla");
-        assertNotNull(resource, "Resource file not found");
-        System.out.println(outputFile);
-        String expected = Files.readString(Path.of(outputFile.toURI()));
-        System.out.println("Expected: " + expected);
-        var f = new TLAPlusFormatter(input);
-        var actual = f.getOutput();
-        assertNotNull(actual, "Formatted output is null");
-        assertNotNull(expected, "Expected output is null");
-        assertEquals(expected, actual, "Formatted output does not match expected output");
+            URL outputFile = getClass().getClassLoader().getResource("outputs/" + name + ".tla");
+            assertNotNull(resource, "Resource file not found");
+            String expected = Files.readString(Path.of(outputFile.toURI()));
+            var f = new TLAPlusFormatter(input);
+            var actual = f.getOutput();
+            assertNotNull(actual, "Formatted output is null");
+            assertNotNull(expected, "Expected output is null");
+            assertEquals(expected, actual, "Formatted output does not match expected output");
+        } catch (Exception e){
+            fail(e);
+        }
+    }
+
+
+    @Test
+    void format() {
+        testSpecFiles("HourClock");
+    }
+
+    @Test
+    void formatStones() {
+        testSpecFiles("Stones");
     }
 
 
@@ -274,7 +283,7 @@ class TLAPlusFormatterTest {
                 "                            { x \\in 1 .. max: /\\ (r - 1) =< (wt - x)\n" +
                 "                            /\\ wt =< x * r }\n" +
                 "                   IN\n" +
-                "                       UNION{Partitions(<<x>> \\o seq,wt - x):x\\inS}\n" +
+                "                       UNION { Partitions(<<x>> \\o seq,wt - x): x \\in S }\n" +
                 "\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
@@ -298,6 +307,27 @@ class TLAPlusFormatterTest {
                 "         max\n" +
                 "S ==\n" +
                 "     { x \\in 1 .. max: x < max }\n" +
+                "\n" +
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
+    @Test
+    public void testBoundedQuant() throws FrontEndException, IOException {
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "CONSTANT max\n" +
+                "S == \\A a \\in 1..max: \\E b \\in 1..max: a < b \n" +
+                "=============================================================================\n";
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "\n" +
+                "CONSTANT\n" +
+                "         max\n" +
+                "S ==\n" +
+                "     \\A a \\in 1 .. max : \\E b \\in 1 .. max : a < b\n" +
                 "\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);

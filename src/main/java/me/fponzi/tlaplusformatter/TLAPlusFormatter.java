@@ -243,6 +243,7 @@ public class TLAPlusFormatter {
             return;
         }
         for (var child : node.zero()) {
+            //todo: move to basePrintTree
             if (child.getImage().equals("N_VariableDeclaration") && child.getKind() == 426) {
                 printVariables(child);
             } else if (child.getImage().equals("N_OperatorDefinition") && child.getKind() == 389) {
@@ -255,7 +256,6 @@ public class TLAPlusFormatter {
             } else if (child.getImage().equals("N_ParamDeclaration") && child.getKind() == 392) {
                 printConstants(child);
             } else {
-                LOG.debug("Unhandled body node: {}", child.getImage());
                 basePrintTree(child);
             }
         }
@@ -410,6 +410,31 @@ public class TLAPlusFormatter {
         f.space().append(z[6]); // }
     }
 
+    public void printSetOfAll(TreeNode node) {
+        var z = node.zero();
+        f.append(z[0]).space(); // {
+        basePrintTree(z[1]); // OpApplication
+        f.append(z[2]).space(); // :
+        basePrintTree(z[3]); // QuantBound
+        f.append(z[4]); // }
+    }
+
+    public void printQuantBound(TreeNode node ) {
+        var z = node.zero();
+        f.append(z[0]).space(); // x
+        f.append(z[1]).space(); // \in
+        basePrintTree(z[2]); // S
+        f.space();
+    }
+    // \E coef \in [1..N -> -1..1]
+    public void printBoundedQuant(TreeNode node) {
+        var z = node.zero();
+        f.append(z[0]).space(); // \E
+        basePrintTree(z[1]); //
+        f.append(z[2]).space(); // \in
+        basePrintTree(z[3]);
+    }
+
     public void basePrintTree(TreeNode node) {
         if (node == null) {
             return;
@@ -438,7 +463,7 @@ public class TLAPlusFormatter {
         } else if (node.getImage().equals("N_PostfixExpr") && node.getKind() == 395) {
             printPostfixExpr(node);
             return;
-        } else if(node.getImage().equals("UNCHANGED")) {
+        } else if(node.getImage().equals("UNCHANGED") || node.getImage().equals("UNION")) {
             f.append(node).space();
             return;
         } else if(node.getImage().equals("N_Tuple") && node.getKind() == 423) {
@@ -449,6 +474,15 @@ public class TLAPlusFormatter {
             return;
         } else if(node.getImage().equals("N_SubsetOf") && node.getKind() == 419) {
             printSubsetOf(node);
+            return;
+        } else if(node.getImage().equals("N_SetOfAll") && node.getKind() == 413) {
+            printSetOfAll(node);
+            return;
+        } else if(node.getImage().equals("N_QuantBound") && node.getKind() == 408) {
+            printQuantBound(node);
+            return;
+        } else if(node.getImage().equals("N_BoundedQuant")) {
+            printBoundedQuant(node);
             return;
         }
 
