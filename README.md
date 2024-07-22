@@ -23,3 +23,9 @@ You can use the input file as output file as well. Run with `-help` for the help
 
 ## Run in vscode
 It's work in progress, see [PR-327](https://github.com/tlaplus/vscode-tlaplus/pull/327/files) on vscode-tlaplus repo.
+
+
+---
+
+## Development
+Some of the constant used in the code are coming from SANY's codebase, specifically from this file: `src/tla2sany/st/SyntaxTreeConstants.java` (check [tlaplus repo](https://github.com/tlaplus/tlaplus/)).

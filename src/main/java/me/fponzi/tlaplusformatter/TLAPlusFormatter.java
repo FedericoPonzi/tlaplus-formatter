@@ -498,10 +498,10 @@ public class TLAPlusFormatter {
         } else if(node.getImage().equals("N_QuantBound") && node.getKind() == 408) {
             printQuantBound(node);
             return;
-        } else if(node.getImage().equals("N_BoundedQuant")) {
+        } else if(node.getImage().equals("N_BoundedQuant") && node.getKind() == 335) {
             printBoundedQuant(node);
             return;
-        } else if(node.getImage().equals("N_UnBoundedOrBoundedChoose")) {
+        } else if(node.getImage().equals("N_UnBoundedOrBoundedChoose") && node.getKind() == 424) {
             printChoose(node);
             return;
         } else if(node.getImage().equals("N_MaybeBound") && node.getKind() == 381) {
