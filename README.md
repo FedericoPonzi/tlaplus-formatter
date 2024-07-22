@@ -25,6 +25,9 @@ You can use the input file as output file as well. Run with `-help` for the help
 It's work in progress, see [PR-327](https://github.com/tlaplus/vscode-tlaplus/pull/327/files) on vscode-tlaplus repo.
 
 
+## Limitations
+Because it uses SANY underneath, your spec should first suceed SANY's parse command otherwise it won't be able to reformat. 
+
 ---
 
 ## Development
