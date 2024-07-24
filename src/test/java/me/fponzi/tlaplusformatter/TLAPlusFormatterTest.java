@@ -72,6 +72,11 @@ class TLAPlusFormatterTest {
     }
 
     @Test
+    void testFormatSpanning() {
+        testSpecFiles("spanning");
+    }
+
+    @Test
     void testFormatModule() throws FrontEndException, IOException {
         var spec = "---- MODULE Spec ----\n======";
         var expected = "---- MODULE Spec ----\n\n======\n";

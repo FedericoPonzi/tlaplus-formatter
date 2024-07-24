@@ -588,6 +588,25 @@ public class TLAPlusFormatter {
         f.space();
         basePrintTree(z[2]); // Y
     }
+    // Example:
+    // WF_vars(\E i, j \in Proc: IF i # root /\ prnt[i] = NoPrnt /\ <<j, i>> \in msg
+    //                                     THEN Update(i, j)
+    //                                     ELSE \/ Send(i) \/ Parent(i)
+    //                                          \/ UNCHANGED <<prnt, msg, rpt>>)
+    private void printFairnessExpr(TreeNode node){
+        var lengthCheckPoint = f.out.length();
+        var z = node.zero();
+        f.append(z[0]); // WF_
+        f.append(z[1]); // vars
+        f.append(z[2]); // (
+        var indentSpace = f.out.length() - lengthCheckPoint;
+        f.increaseIndent(indentSpace);
+        basePrintTree(z[3]); // expr
+        f.decreaseIndent(indentSpace)
+                .append(z[3]); // )
+
+
+    }
 
     public void basePrintTree(TreeNode node) {
         if (node == null) {
@@ -668,6 +687,9 @@ public class TLAPlusFormatter {
             return;
         } else if(node.getImage().equals("N_Times")) {
             printTimes(node);
+            return;
+        } else if(node.getImage().equals("N_FairnessExpr")){
+            printFairnessExpr(node);
             return;
         }
 
