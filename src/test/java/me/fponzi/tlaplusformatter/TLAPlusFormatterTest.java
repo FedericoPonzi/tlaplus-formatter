@@ -30,6 +30,21 @@ class TLAPlusFormatterTest {
             assertNotNull(actual, "Formatted output is null");
             assertNotNull(expected, "Expected output is null");
             assertEquals(expected, actual, "Formatted output does not match expected output");
+            // here we use the downside of having SANY validating the spec
+            // as an advantage to ensure the specs are valid.
+            // also, the formatting should be stable.
+            try {
+                // initialize tlaplusfmt using output file path.
+                // in this way, if the spec EXTENDS other specs, we can include them in the outputs resource folder.
+                // For example see TowerOfHanoi.tla.
+                f = new TLAPlusFormatter(new File(outputFile.toURI()));
+                actual = f.getOutput();
+                assertNotNull(actual, "Formatted output is null");
+                assertEquals(expected, actual, "Second formatted output does not match expected output");
+            } catch (Exception e) {
+                fail(actual, e);
+            }
+
         } catch (Exception e){
             fail(e);
         }
@@ -268,26 +283,26 @@ class TLAPlusFormatterTest {
                 "\n" +
                 "RECURSIVE Partitions(_,_)\n" +
                 "Partitions(seq, wt) ==\n" +
-                "              IF\n" +
-                "                   Len(seq) = N\n" +
-                "              THEN\n" +
-                "                   {seq}\n" +
-                "              ELSE\n" +
-                "                   LET\n" +
-                "                       r ==\n" +
-                "                            N - Len(seq)\n" +
-                "                       max ==\n" +
-                "                              IF\n" +
-                "                                   Len(seq) = 0\n" +
-                "                              THEN\n" +
-                "                                   wt\n" +
-                "                              ELSE\n" +
-                "                                   Head(seq)\n" +
-                "                       S ==\n" +
-                "                            { x \\in 1 .. max: /\\ (r - 1) =< (wt - x)\n" +
-                "                            /\\ wt =< x * r }\n" +
-                "                   IN\n" +
-                "                       UNION { Partitions(<<x>> \\o seq,wt - x): x \\in S }\n" +
+                "                       IF\n" +
+                "                            Len(seq) = N\n" +
+                "                       THEN\n" +
+                "                            {seq}\n" +
+                "                       ELSE\n" +
+                "                            LET\n" +
+                "                                r ==\n" +
+                "                                     N - Len(seq)\n" +
+                "                                max ==\n" +
+                "                                       IF\n" +
+                "                                            Len(seq) = 0\n" +
+                "                                       THEN\n" +
+                "                                            wt\n" +
+                "                                       ELSE\n" +
+                "                                            Head(seq)\n" +
+                "                                S ==\n" +
+                "                                     { x \\in 1 .. max: /\\ (r - 1) =< (wt - x)\n" +
+                "                                                       /\\ wt =< x * r }\n" +
+                "                            IN\n" +
+                "                                UNION { Partitions(<<x>> \\o seq, wt - x): x \\in S }\n" +
                 "\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
@@ -332,6 +347,61 @@ class TLAPlusFormatterTest {
                 "         max\n" +
                 "S ==\n" +
                 "     \\A a \\in 1 .. max : \\E b \\in 1 .. max : a < b\n" +
+                "\n" +
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
+
+    @Test
+    public void testDisjList() throws FrontEndException, IOException {
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "CONSTANT max, wt, r\n" +
+                "S == {x \\in 1..max : /\\ (r-1) =< (wt - x)\n" +
+                "                                  /\\ wt =< x*r          }" +
+                "=============================================================================\n";
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "\n" +
+                "CONSTANT\n" +
+                "         max,\n" +
+                "         wt,\n" +
+                "         r\n" +
+                "S ==\n" +
+                "     { x \\in 1 .. max: /\\ (r - 1) =< (wt - x) /\\ wt =< x * r }\n" +
+                "\n" +
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+        f = new TLAPlusFormatter(received);
+        received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected second output");
+    }
+
+    @Test
+    public void testFcnApplExcept() throws FrontEndException, IOException {
+        // TODO:
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "VARIABLE towers\n" +
+                "Move(from, to, disk) ==  towers' = [towers EXCEPT ![from] = towers[from] - disk,  \\* Remaining tower does not change\n" +
+                "                                                    ![to] = towers[to] + disk]\n" +
+                "=============================================================================\n";
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "\n" +
+                "VARIABLE\n" +
+                "         towers\n" +
+                "\n" +
+                "Move(from, to, disk) ==\n" +
+                "                        towers' = [towers EXCEPT ![from]=towers[from] - disk,\n" +
+                "                                                 \\* Remaining tower does not change\n" +
+                "                                                 ![to]=towers[to] + disk]\n" +
                 "\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);

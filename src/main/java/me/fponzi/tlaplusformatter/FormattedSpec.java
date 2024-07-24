@@ -32,7 +32,8 @@ public class FormattedSpec {
 
     protected FormattedSpec append(TreeNode node) {
         for (String c: node.getPreComments()) {
-            out.append(c);
+            // Inline comments (that start with \n) include their new line character at the end.
+            out.append(c.trim());
             this.nl();
         }
         out.append(node.getImage());

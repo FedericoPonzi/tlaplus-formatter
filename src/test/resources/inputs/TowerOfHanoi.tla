@@ -90,32 +90,6 @@ Next == \E d \in SetOfPowerOfTwo(D): \E idx1, idx2 \in DOMAIN towers:
             /\ idx1 # idx2 \* No need to try to move onto the same tower (Move(...) prevents it too)
             /\ Move(idx1, idx2, d)
 
-(***************************************************************************)
-(* We define the formula Spec to be the complete specification, asserting  *)
-(* of a behavior that it begins in a state satisfying Init, and that every *)
-(* step either satisfies Next or else leaves the pair <<big, small>>       *)
-(* unchanged.                                                              *)
-(***************************************************************************)
-Spec == Init /\ [][Next]_vars
------------------------------------------------------------------------------
-
-(***************************************************************************)
-(* The final configuration has all disks on the right tower. If TLC is set *)
-(* to run with an invariant rightTower # 2^N-1, it will search for         *)
-(* configurations in which this invariant is violated. If violation can be *)
-(* found, the stack trace shows the steps to solve the Hanoi problem.      *)
-(***************************************************************************)
-NotSolved == towers[N] # 2^D - 1
-
-(***************************************************************************)
-(* We find a solution by having TLC check if NotSolved is an invariant,    *)
-(* which will cause it to print out an "error trace" consisting of a       *)
-(* behavior ending in a state where NotSolved is false. With three disks,  *)
-(* and three towers the puzzle can be solved in seven moves.               *)
-(* The minimum number of moves required to solve a Tower of Hanoi puzzle   *)
-(* generally is 2n - 1, where n is the number of disks. Thus, the counter- *)
-(* examples shown by TLC will be of length 2n-1                            *)
-(***************************************************************************)
 =============================================================================
 \* Modification History
 \* Last modified Tue May 17 14:55:33 CEST 2016 by markus

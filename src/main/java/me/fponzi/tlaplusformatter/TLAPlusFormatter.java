@@ -22,6 +22,9 @@ import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Hashtable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class TLAPlusFormatter {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -53,11 +56,24 @@ public class TLAPlusFormatter {
     public TLAPlusFormatter(String spec) throws IOException, FrontEndException {
         this(storeToTmp(spec));
     }
+    private static String getModuleName(String spec) {
+        String regex = "----\\s?MODULE\\s+(\\w+)\\s?----";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(spec);
 
+        // Find the first match
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else {
+            return "Spec";
+        }
+    }
     private static File storeToTmp(String spec) throws IOException {
         File tmpFolder = Files.createTempDirectory("sanyimp").toFile();
-        // write spec to tmpfolder:
-        File tmpFile = new File(tmpFolder, "Spec.tla");
+        // write spec to tmpfolder: TODO: take filename from module name.
+        // parse spec and extract module name:
+        var fileName = getModuleName(spec) + ".tla";
+        File tmpFile = new File(tmpFolder, fileName);
         // Write spec to tmpFile
         try (java.io.FileWriter writer = new java.io.FileWriter(tmpFile)) {
             writer.write(spec);
@@ -77,7 +93,7 @@ public class TLAPlusFormatter {
                 postModuleSection.append(lines[i]).append(System.lineSeparator());
             }
         }
-        return new String[] { preModuleSection.toString(), postModuleSection.toString()};
+        return new String[]{preModuleSection.toString(), postModuleSection.toString()};
     }
 
     private void format() {
@@ -222,20 +238,26 @@ public class TLAPlusFormatter {
 
     }
 
+    // S == 1 or S(x) == x + 1
     private void printOperatorDefinition(TreeNode node) {
-        var indentSpace = node.one()[0].zero()[0].getImage().length() + " == ".length();
+        var lengthCheckpoint = f.out.length();
         // node.one()[0].zero()[0] is the identifier.
         // it my be followed by parameters.
         for (var id : node.one()[0].zero()) {
             basePrintTree(id);
+            for (var precomment : id.getPreComments()){
+                lengthCheckpoint += precomment.length() + 1; // plus new line
+            }
             if (id.getImage().equals(",")) f.space();
         }
-        f.space().append(node.one()[1]) // ==
-                .increaseIndent(indentSpace)
+        f.space().append(node.one()[1]); // ==
+        var indentSpace = f.out.length() - lengthCheckpoint + 1; // 1 in this way the next line gets offsetted by 1 "space"
+        f.increaseIndent(indentSpace)
                 .nl();
         basePrintTree(node.one()[2]);
         f.decreaseIndent(indentSpace);
     }
+
 
     private void printBody(TreeNode node) {
         if (node.zero() == null) {
@@ -267,11 +289,15 @@ public class TLAPlusFormatter {
     }
 
     private void printInfixExpr(TreeNode node) {
+        int lengthCheckpoint = f.out.length();
         basePrintTree(node.zero()[0]);
         f.space();
         basePrintTree(node.zero()[1]);
         f.space();
+        int indentSpace = f.out.length() - lengthCheckpoint;
+        f.increaseIndent(indentSpace);
         basePrintTree(node.zero()[2]);
+        f.decreaseIndent(indentSpace);
     }
 
     private void printTheorem(TreeNode node) {
@@ -314,7 +340,7 @@ public class TLAPlusFormatter {
     }
 
     public void conjDisjList(TreeNode node) {
-        LOG.debug("Found conjList or DisjList");
+        LOG.debug("Found {}", node.getImage());
         for (int i = 0; i < node.zero().length; i++) {
             var conjDisjItem = node.zero()[i];
             conjDisjItem(conjDisjItem);
@@ -325,6 +351,7 @@ public class TLAPlusFormatter {
     }
 
     private void conjDisjItem(TreeNode node) {
+        LOG.debug("Found {}", node.getImage());
         f.append(node.zero()[0]).space(); // "/\ "
         f.increaseIndent(3);
         basePrintTree(node.zero()[1]);
@@ -393,7 +420,7 @@ public class TLAPlusFormatter {
     public void printRecursive(TreeNode node) {
         var z = node.zero();
         f.append(z[0]).space(); // RECURSIVE
-        for (int i = 1; i < z.length; i++){
+        for (int i = 1; i < z.length; i++) {
             basePrintTree(z[i]);
         }
         f.nl();
@@ -401,13 +428,17 @@ public class TLAPlusFormatter {
 
     public void printSubsetOf(TreeNode node) {
         var z = node.zero();
+        var lengthCheckpoint = f.out.length();
         f.append(z[0]).space(); // {
         f.append(z[1]).space(); // x
         f.append(z[2]).space(); // \in
         basePrintTree(z[3]); // S
         f.append(z[4]).space(); // :
+        var indent = f.out.length() - lengthCheckpoint;
+        f.increaseIndent(indent);
         basePrintTree(z[5]);
         f.space().append(z[6]); // }
+        f.decreaseIndent(indent);
     }
 
     public void printSetOfAll(TreeNode node) {
@@ -418,21 +449,35 @@ public class TLAPlusFormatter {
         basePrintTree(z[3]); // QuantBound
         f.append(z[4]); // }
     }
-
-    public void printQuantBound(TreeNode node ) {
+    // x \in S
+    public void printQuantBound(TreeNode node) {
         var z = node.zero();
-        f.append(z[0]).space(); // x
-        f.append(z[1]).space(); // \in
-        basePrintTree(z[2]); // S
+        var i = 0;
+        // x1,x2,x3...
+        while(!z[i].getImage().equals("\\in")){
+            f.append(z[i]);
+            if(z[i].getImage().equals(",")){
+                f.space();
+            }
+            i++;
+        }
+        f.space().append(z[i]).space(); // \in
+        i++;
+        basePrintTree(z[i]); // S
         f.space();
     }
-    // \E coef \in [1..N -> -1..1]
+
+    // \E coef \in [1..N -> -1..1] or \A QuantBound : ConjList.
     public void printBoundedQuant(TreeNode node) {
         var z = node.zero();
+        var lengthCheckpoint = f.out.length();
         f.append(z[0]).space(); // \E
-        basePrintTree(z[1]); //
-        f.append(z[2]).space(); // \in
-        basePrintTree(z[3]);
+        basePrintTree(z[1]); // QuantBound
+        f.append(z[2]).space(); // :
+        var indent = f.out.length() - lengthCheckpoint;
+        f.increaseIndent(indent);
+        basePrintTree(z[3]); // prop
+        f.decreaseIndent(indent);
     }
 
     // CHOOSE e \in S: TRUE
@@ -450,6 +495,50 @@ public class TLAPlusFormatter {
         var z = node.zero();
         f.append(z[0]).space();
         basePrintTree(z[1]);
+    }
+    // A == Head(s) - it's Head(s).
+    public void printOpApplication(TreeNode node) {
+        var z = node.zero();
+        basePrintTree(z[0]); // Head - GeneralId
+        basePrintTree(z[1]); // N_OpArgs
+
+    }
+    public void printOpArgs(TreeNode node) {
+        var z = node.zero();
+        f.append(z[0]);
+        for (int i = 1 ; i < z.length - 1 ; i++) {
+            basePrintTree(z[i]);
+            if (i%2 == 0) { // add space after a comma
+                f.space();
+            }
+        }
+        f.append(z[z.length - 1]);
+    }
+    private void printExcept(TreeNode node) {
+        int lengthCheckpoint = f.out.length();
+        var z = node.zero();
+        f.append(z[0]); // [
+        basePrintTree(z[1]); // generalId
+        f.space().append(z[2]).space(); // EXCEPT
+        int indentSpace = f.out.length() - lengthCheckpoint;
+        f.increaseIndent(indentSpace);
+        for(int i = 3; i < z.length - 1; i++) {
+            basePrintTree(z[i]);
+            if (i%2 == 0) { // a comma
+                f.nl();
+            }
+        }
+        f.append(z[z.length - 1]); // ]
+        f.decreaseIndent(indentSpace);
+    }
+
+    // towers[from]
+    private void printFcnAppl(TreeNode node) {
+        basePrintTree(node.zero()[0]); // generalId.
+        var o = node.one();
+        f.append(o[0]); // [
+        basePrintTree(o[1]);
+        f.append(o[2]); // ]
     }
 
     public void basePrintTree(TreeNode node) {
@@ -480,32 +569,48 @@ public class TLAPlusFormatter {
         } else if (node.getImage().equals("N_PostfixExpr") && node.getKind() == 395) {
             printPostfixExpr(node);
             return;
-        } else if(node.getImage().equals("UNCHANGED") || node.getImage().equals("UNION")) {
+        } else if (Stream.of("EXCEPT", "UNCHANGED", "UNION", "SUBSET", "DOMAIN").anyMatch(p -> node.getImage().equals(p))) {
+            // todo: handle the rest and this should fall in the default case below - print string and space
             f.append(node).space();
             return;
-        } else if(node.getImage().equals("N_Tuple") && node.getKind() == 423) {
+        } else if (node.getImage().equals("N_Tuple") && node.getKind() == 423) {
             printTuple(node);
             return;
-        } else if(node.getImage().equals("N_Recursive") && node.getKind() == 431) {
+        } else if (node.getImage().equals("N_Recursive") && node.getKind() == 431) {
             printRecursive(node);
             return;
-        } else if(node.getImage().equals("N_SubsetOf") && node.getKind() == 419) {
+        } else if (node.getImage().equals("N_SubsetOf") && node.getKind() == 419) {
             printSubsetOf(node);
             return;
-        } else if(node.getImage().equals("N_SetOfAll") && node.getKind() == 413) {
+        } else if (node.getImage().equals("N_SetOfAll") && node.getKind() == 413) {
             printSetOfAll(node);
             return;
-        } else if(node.getImage().equals("N_QuantBound") && node.getKind() == 408) {
+        } else if (node.getImage().equals("N_QuantBound") && node.getKind() == 408) {
             printQuantBound(node);
             return;
-        } else if(node.getImage().equals("N_BoundedQuant") && node.getKind() == 335) {
+        } else if (node.getImage().equals("N_BoundedQuant") && node.getKind() == 335) {
             printBoundedQuant(node);
             return;
-        } else if(node.getImage().equals("N_UnBoundedOrBoundedChoose") && node.getKind() == 424) {
+        } else if (node.getImage().equals("N_UnBoundedOrBoundedChoose") && node.getKind() == 424) {
             printChoose(node);
             return;
-        } else if(node.getImage().equals("N_MaybeBound") && node.getKind() == 381) {
+        } else if (node.getImage().equals("N_MaybeBound") && node.getKind() == 381) {
             printMaybeBound(node);
+            return;
+        } else if(node.getImage().equals("N_GeneralId") || node.getImage().equals("N_GenPostfixOp") || node.getImage().equals("N_GenInfixOp")){
+            f.append(node.zero()[1]);
+            return;
+        } else if(node.getImage().equals("N_OpApplication")) {
+            printOpApplication(node);
+            return;
+        } else if(node.getImage().equals("N_OpArgs")) {
+            printOpArgs(node);
+            return;
+        } else if (node.getImage().equals("N_FcnAppl")) {
+            printFcnAppl(node);
+            return;
+        } else if (node.getImage().equals("N_Except")) {
+            printExcept(node);
             return;
         }
 
