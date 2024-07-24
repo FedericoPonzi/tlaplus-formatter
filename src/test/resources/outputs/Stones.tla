@@ -89,7 +89,7 @@ Partitions(seq, wt) ==
                                      { x \in 1 .. max: /\ (r - 1) =< (wt - x)
                                                        /\ wt =< x * r }
                             IN
-                                UNION { Partitions(<<x>> \o seq, wt - x): x \in S}
+                                UNION {Partitions(<<x>> \o seq, wt - x): x \in S}
 
 (***************************************************************************)
 (* For convenience, we define Weighs(seq, wt) to be true if the elements   *)

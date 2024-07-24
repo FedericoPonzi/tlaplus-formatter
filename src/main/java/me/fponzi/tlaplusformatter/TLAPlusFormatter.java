@@ -300,6 +300,15 @@ public class TLAPlusFormatter {
         f.decreaseIndent(indentSpace);
     }
 
+    // Example: R ** T in
+    // R ** T == LET SR == Support(x)....
+    private void printInfixLhs(TreeNode node) {
+        basePrintTree(node.zero()[0]);
+        f.space();
+        basePrintTree(node.zero()[1]);
+        f.space();
+        basePrintTree(node.zero()[2]);
+    }
     private void printTheorem(TreeNode node) {
         var theoremKeyword = node.zero()[0];
         assert theoremKeyword.getImage().equals("THEOREM") && theoremKeyword.getKind() == 66;
@@ -393,7 +402,9 @@ public class TLAPlusFormatter {
         for (int i = 0; i < node.zero()[1].zero().length; i++) {
             var child = node.zero()[1].zero()[i];
             basePrintTree(child);
-            if (i < node.zero()[1].zero().length - 1) {
+            if (i < node.zero()[1].zero().length - 1
+                    && !child.getImage().equals("N_Recursive") // RECURSIVE prints its own new line.
+            ) {
                 f.nl();
             }
         }
@@ -430,7 +441,8 @@ public class TLAPlusFormatter {
         var z = node.zero();
         var lengthCheckpoint = f.out.length();
         f.append(z[0]).space(); // {
-        f.append(z[1]).space(); // x
+        basePrintTree(z[1]); // x or a tuple like <<r, t>>
+        f.space(); //
         f.append(z[2]).space(); // \in
         basePrintTree(z[3]); // S
         f.append(z[4]).space(); // :
@@ -443,7 +455,7 @@ public class TLAPlusFormatter {
 
     public void printSetOfAll(TreeNode node) {
         var z = node.zero();
-        f.append(z[0]).space(); // {
+        f.append(z[0]); // {
         basePrintTree(z[1]); // OpApplication
         f.append(z[2]).space(); // :
         basePrintTree(z[3]); // QuantBound
@@ -568,6 +580,15 @@ public class TLAPlusFormatter {
         f.decreaseIndent(indentSpace);
     }
 
+    private void printTimes(TreeNode node) {
+        var z = node.zero();
+        basePrintTree(z[0]); // X
+        f.space(); //
+        basePrintTree(z[1]); // \X
+        f.space();
+        basePrintTree(z[2]); // Y
+    }
+
     public void basePrintTree(TreeNode node) {
         if (node == null) {
             return;
@@ -641,6 +662,12 @@ public class TLAPlusFormatter {
             return;
         } else if (node.getImage().equals("N_FunctionDefinition")) {
             printFunctionDefinition(node);
+            return;
+        } else if(node.getImage().equals("N_InfixLHS")) {
+            printInfixLhs(node);
+            return;
+        } else if(node.getImage().equals("N_Times")) {
+            printTimes(node);
             return;
         }
 

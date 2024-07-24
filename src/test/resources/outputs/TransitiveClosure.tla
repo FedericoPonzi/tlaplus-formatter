@@ -25,7 +25,7 @@
 EXTENDS Integers, Sequences, FiniteSets, TLC
 
 Support(R) ==
-              { r[1]: r \in R } \cup { r[2]: r \in R }
+              {r[1]: r \in R} \cup {r[2]: r \in R}
 
 (***************************************************************************)
 (* A relation R defines a directed graph on its support, where there is an *)
@@ -40,10 +40,10 @@ TC(R) ==
              S ==
                   Support(R)
          IN
-             { N_IdentifierTuple \in S\XS: \E p \in Seq(S) : /\ Len(p) > 1
-                                                             /\ p[1] = s
-                                                             /\ p[Len(p)] = t
-                                                             /\ \A i \in 1 .. (Len(p) - 1) : <<p[i], p[i + 1]>> \in R }
+             { <<s,t>> \in S \X S: \E p \in Seq(S): /\ Len(p) > 1
+                                                    /\ p[1] = s
+                                                    /\ p[Len(p)] = t
+                                                    /\ \A i \in 1 .. (Len(p) - 1): <<p[i], p[i + 1]>> \in R }
 
 (***************************************************************************)
 (* This definition can't be evaluated by TLC because Seq(S) is an infinite *)
@@ -57,14 +57,14 @@ TC(R) ==
 TC1(R) ==
           LET
               BoundedSeq(S, n) ==
-                                  UNION { [1 .. i->S]: i \in 0 .. n }
+                                  UNION {[1 .. i->S]: i \in 0 .. n}
               S ==
                    Support(R)
           IN
-              { N_IdentifierTuple \in S\XS: \E p \in BoundedSeq(S, Cardinality(S) + 1) : /\ Len(p) > 1
-                                                                                         /\ p[1] = s
-                                                                                         /\ p[Len(p)] = t
-                                                                                         /\ \A i \in 1 .. (Len(p) - 1) : <<p[i], p[i + 1]>> \in R }
+              { <<s,t>> \in S \X S: \E p \in BoundedSeq(S, Cardinality(S) + 1): /\ Len(p) > 1
+                                                                                /\ p[1] = s
+                                                                                /\ p[Len(p)] = t
+                                                                                /\ \A i \in 1 .. (Len(p) - 1): <<p[i], p[i + 1]>> \in R }
 
 (***************************************************************************)
 (* This naive method used by TLC to evaluate expressions makes this        *)
@@ -80,7 +80,7 @@ R**T ==
             ST ==
                   Support(T)
         IN
-            { N_IdentifierTuple \in SR\XST: \E s \in SR \cap ST : (<<r, s>> \in R) /\ (<<s, t>> \in T) }
+            { <<r,t>> \in SR \X ST: \E s \in SR \cap ST: (<<r, s>> \in R) /\ (<<s, t>> \in T) }
 
 (***************************************************************************)
 (* We can then define the closure of R to equal                            *)
@@ -93,12 +93,12 @@ R**T ==
 (***************************************************************************)
 TC2(R) ==
           LET
-              C[n \in Nat ]==IF
-                   n = 0
-              THEN
-                   R
-              ELSE
-                   C[n - 1] \cup (C[n - 1] ** R)
+              C[n \in Nat] == IF
+                                   n = 0
+                              THEN
+                                   R
+                              ELSE
+                                   C[n - 1] \cup (C[n - 1] ** R)
           IN
               IF
                    R = {}
@@ -146,7 +146,6 @@ TC4(R) ==
               S ==
                    Support(R)
               RECURSIVE TCR(_)
-
               TCR(T) ==
                         IF
                              T = {}
@@ -159,7 +158,7 @@ TC4(R) ==
                                  RR ==
                                        TCR(T \ {r})
                              IN
-                                 RR \cup { N_IdentifierTuple \in S \X S: <<s, r>> \in RR /\ <<r, t>> \in RR }
+                                 RR \cup { <<s,t>> \in S \X S: <<s, r>> \in RR /\ <<r, t>> \in RR }
           IN
               TCR(S)
 
@@ -169,7 +168,7 @@ TC4(R) ==
 (* makes it highly probable that they're correct.                          *)
 (***************************************************************************)
 ASSUME
-       \A N \in 0 .. 3 : \A R \in SUBSET ((1 .. N)\X(1 .. N)) : /\ TC1(R) = TC2(R)
+       \A N \in 0 .. 3: \A R \in SUBSET ((1 .. N) \X (1 .. N)): /\ TC1(R) = TC2(R)
                                                                 /\ TC2(R) = TC3(R)
                                                                 /\ TC3(R) = TC4(R)
 
@@ -196,29 +195,29 @@ ASSUME
 (***************************************************************************)
 TC5(R(_,_), S, s, t) ==
                         LET
-                            CR[n \in Nat ,v \in S ]==IF
-                                 n = 0
-                            THEN
-                                 R(s, v)
-                            ELSE
-                                 \/ CR[n - 1,v]
-                                 \/ \E u \in S : CR[n - 1,u] /\ R(u, v)
+                            CR[n \in Nat, v \in S] == IF
+                                                           n = 0
+                                                      THEN
+                                                           R(s, v)
+                                                      ELSE
+                                                           \/ CR[n - 1, v]
+                                                           \/ \E u \in S: CR[n - 1, u] /\ R(u, v)
                         IN
                             /\ s \in S
                             /\ t \in S
-                            /\ CR[Cardinality(S) - 1,t]
+                            /\ CR[Cardinality(S) - 1, t]
 
 (***************************************************************************)
 (* Finally, the following assumption checks that our definition TC5 agrees *)
 (* with our definition TC1.                                                *)
 (***************************************************************************)
 ASSUME
-       \A N \in 0 .. 3 : \A R \in SUBSET ((1 .. N)\X(1 .. N)) : LET
+       \A N \in 0 .. 3: \A R \in SUBSET ((1 .. N) \X (1 .. N)): LET
                                                                     RR(s, t) ==
                                                                                 <<s, t>> \in R
                                                                     S ==
                                                                          Support(R)
                                                                 IN
-                                                                    \A s, t \in S : TC5(RR, S, s, t) <=> (<<s, t>> \in TC1(R))
+                                                                    \A s, t \in S: TC5(RR, S, s, t) <=> (<<s, t>> \in TC1(R))
 
 =============================================================================

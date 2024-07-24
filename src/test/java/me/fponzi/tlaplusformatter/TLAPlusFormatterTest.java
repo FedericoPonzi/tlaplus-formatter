@@ -66,7 +66,7 @@ class TLAPlusFormatterTest {
         testSpecFiles("TowerOfHanoi");
     }
 
-    //@Test
+    @Test
     void testFormatTransitiveClosure() {
         testSpecFiles("TransitiveClosure");
     }
@@ -307,7 +307,7 @@ class TLAPlusFormatterTest {
                 "                                     { x \\in 1 .. max: /\\ (r - 1) =< (wt - x)\n" +
                 "                                                       /\\ wt =< x * r }\n" +
                 "                            IN\n" +
-                "                                UNION { Partitions(<<x>> \\o seq, wt - x): x \\in S}\n" +
+                "                                UNION {Partitions(<<x>> \\o seq, wt - x): x \\in S}\n" +
                 "\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
@@ -456,6 +456,40 @@ class TLAPlusFormatterTest {
         var f = new TLAPlusFormatter(spec);
         var received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
-
+    }
+    @Test
+    public void testBound() throws FrontEndException, IOException {
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "CONSTANT a\n" +
+                "Support(x) == 0\n"+
+                "R ** T == LET SR == Support(R)\n" +
+                "              ST == Support(T)\n" +
+                "          IN  {<<r, t>> \\in SR \\X ST :\n" +
+                "                \\E s \\in SR \\cap ST : (<<r, s>> \\in R) /\\ (<<s, t>> \\in T)}" +
+                "=============================================================================\n";
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "\n" +
+                "CONSTANT\n" +
+                "         a\n" +
+                "Support(x) ==\n" +
+                "              0\n" +
+                "\n" +
+                "R**T ==\n" +
+                "        LET\n" +
+                "            SR ==\n" +
+                "                  Support(R)\n" +
+                "            ST ==\n" +
+                "                  Support(T)\n" +
+                "        IN\n" +
+                "            { <<r,t>> \\in SR \\X ST: \\E s \\in SR \\cap ST: (<<r, s>> \\in R) /\\ (<<s, t>> \\in T) }\n" +
+                "\n" +
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
     }
 }
+
