@@ -66,6 +66,11 @@ class TLAPlusFormatterTest {
         testSpecFiles("TowerOfHanoi");
     }
 
+    //@Test
+    void testFormatTransitiveClosure() {
+        testSpecFiles("TransitiveClosure");
+    }
+
     @Test
     void testFormatModule() throws FrontEndException, IOException {
         var spec = "---- MODULE Spec ----\n======";
@@ -302,7 +307,7 @@ class TLAPlusFormatterTest {
                 "                                     { x \\in 1 .. max: /\\ (r - 1) =< (wt - x)\n" +
                 "                                                       /\\ wt =< x * r }\n" +
                 "                            IN\n" +
-                "                                UNION { Partitions(<<x>> \\o seq, wt - x): x \\in S }\n" +
+                "                                UNION { Partitions(<<x>> \\o seq, wt - x): x \\in S}\n" +
                 "\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
@@ -346,7 +351,7 @@ class TLAPlusFormatterTest {
                 "CONSTANT\n" +
                 "         max\n" +
                 "S ==\n" +
-                "     \\A a \\in 1 .. max : \\E b \\in 1 .. max : a < b\n" +
+                "     \\A a \\in 1 .. max: \\E b \\in 1 .. max: a < b\n" +
                 "\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
@@ -407,5 +412,50 @@ class TLAPlusFormatterTest {
         var f = new TLAPlusFormatter(spec);
         var received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
+    }
+    @Test
+    public void testFnAppl_FnDefinition_IfElse_LetIn() throws FrontEndException, IOException {
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "EXTENDS Naturals, FiniteSets\n" +
+                "R(s,v) == 0 \n"+
+                "L(s,t, S) == LET\n" +
+                "               CR[n \\in Nat ,v \\in S ] ==  IF\n" +
+                "                                                 n = 0\n" +
+                "                                            THEN\n" +
+                "                                                  R(s, v)\n" +
+                "                                              ELSE\n" +
+                "                                                  \\/ CR[n - 1,v]\n" +
+                "                                                  \\/ \\E u \\in S : CR[n - 1,u] /\\ R(u, v)\n" +
+    "                        IN\n" +
+                "                            /\\ s \\in S\n" +
+                "                            /\\ t \\in S\n" +
+                "                            /\\ CR[Cardinality(S) - 1,t]\n" +
+                "=============================================================================\n";
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "EXTENDS Naturals, FiniteSets\n" +
+                "\n" +
+                "R(s, v) ==\n" +
+                "           0\n" +
+                "\n" +
+                "L(s, t, S) ==\n" +
+                "              LET\n" +
+                "                  CR[n \\in Nat, v \\in S] == IF\n" + // escape chars disalign the vertical align in this view
+                "                                                 n = 0\n" +
+                "                                            THEN\n" +
+                "                                                 R(s, v)\n" +
+                "                                            ELSE\n" +
+                "                                                 \\/ CR[n - 1, v]\n" +
+                "                                                 \\/ \\E u \\in S: CR[n - 1, u] /\\ R(u, v)\n" +
+                "              IN\n" +
+                "                  /\\ s \\in S\n" +
+                "                  /\\ t \\in S\n" +
+                "                  /\\ CR[Cardinality(S) - 1, t]\n" +
+                "\n" +
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+
     }
 }

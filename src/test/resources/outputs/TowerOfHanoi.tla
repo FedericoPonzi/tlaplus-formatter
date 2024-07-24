@@ -20,16 +20,16 @@ SetOfPowerOfTwo(n) ==
 (***************************************************************************)
 Sum(f) ==
           LET
-              DSum[S \in SUBSET DOMAIN f ]==LET
-                  elt ==
-                         CHOOSE e \in S: TRUE
-              IN
-                  IF
-                       S = {}
-                  THEN
-                       0
-                  ELSE
-                       f[elt] + DSum[S \ {elt}]
+              DSum[S \in SUBSET DOMAIN f] == LET
+                                                 elt ==
+                                                        CHOOSE e \in S: TRUE
+                                             IN
+                                                 IF
+                                                      S = {}
+                                                 THEN
+                                                      0
+                                                 ELSE
+                                                      f[elt] + DSum[S \ {elt}]
           IN
               DSum[DOMAIN f]
 
@@ -56,16 +56,16 @@ Inv ==
 
 (* Towers are naturals in the interval (0, 2^D] *)
 TypeOK ==
-          /\ \A i \in DOMAIN towers : /\ towers[i] \in Nat
-                                      \* Towers are represented by natural numbers
-                                      /\ towers[i] < 2 ^ D
+          /\ \A i \in DOMAIN towers: /\ towers[i] \in Nat
+                                     \* Towers are represented by natural numbers
+                                     /\ towers[i] < 2 ^ D
 
 (***************************************************************************)
 (* Now we define of the initial predicate, that specifies the initial      *)
 (* values of the variables.                                                *)
 (***************************************************************************)
 Init ==
-        /\ towers = [i \in 1 .. N |->IF
+        /\ towers = [i \in 1 .. N|->IF
                          i = 1
                     THEN
                          2 ^ D - 1
@@ -121,9 +121,9 @@ Move(from, to, disk) ==
 (* Define all possible actions that disks can perform.                     *)
 (***************************************************************************)
 Next ==
-        \E d \in SetOfPowerOfTwo(D) : \E idx1, idx2 \in DOMAIN towers : /\ idx1 # idx2
-                                                                        \* No need to try to move onto the same tower (Move(...) prevents it too)
-                                                                        /\ Move(idx1, idx2, d)
+        \E d \in SetOfPowerOfTwo(D): \E idx1, idx2 \in DOMAIN towers: /\ idx1 # idx2
+                                                                      \* No need to try to move onto the same tower (Move(...) prevents it too)
+                                                                      /\ Move(idx1, idx2, d)
 
 =============================================================================
 \* Modification History

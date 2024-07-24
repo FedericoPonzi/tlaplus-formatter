@@ -464,7 +464,6 @@ public class TLAPlusFormatter {
         f.space().append(z[i]).space(); // \in
         i++;
         basePrintTree(z[i]); // S
-        f.space();
     }
 
     // \E coef \in [1..N -> -1..1] or \A QuantBound : ConjList.
@@ -532,13 +531,41 @@ public class TLAPlusFormatter {
         f.decreaseIndent(indentSpace);
     }
 
-    // towers[from]
+    // Examples: towers[from] or CR[n - 1, v]
     private void printFcnAppl(TreeNode node) {
         basePrintTree(node.zero()[0]); // generalId.
         var o = node.one();
         f.append(o[0]); // [
-        basePrintTree(o[1]);
-        f.append(o[2]); // ]
+        for(int i = 1; i < o.length - 1; i++) {
+            if(i % 2 == 0) { // comma
+                f.append(o[i]).space();
+            } else {
+                basePrintTree(o[i]);
+            }
+        }
+        f.append(o[o.length-1]); // ]
+    }
+    // Example:
+    // CR[n \in Nat ,v \in S ]==IF n = 0 THEN R(s, v) ELSE
+    //   \/ CR[n - 1,
+    //   \/ \E u \in S : CR[n - 1, /\ R(u, v)
+    private void printFunctionDefinition(TreeNode node) {
+        var o = node.one();
+        var lengthCheckpoint = f.out.length();
+        f.append(o[0]); // function name
+        f.append(o[1]); // [
+        for(int i = 2; i < o.length - 2; i++) {
+            if(i % 2 == 1) { // comma
+                f.append(o[i]).space();
+            } else {
+                basePrintTree(o[i]);
+            }
+        }
+        f.append(o[o.length-2]).space(); // ==
+        var indentSpace = f.out.length() - lengthCheckpoint;
+        f.increaseIndent(indentSpace);
+        basePrintTree(o[o.length-1]); // Definition
+        f.decreaseIndent(indentSpace);
     }
 
     public void basePrintTree(TreeNode node) {
@@ -611,6 +638,9 @@ public class TLAPlusFormatter {
             return;
         } else if (node.getImage().equals("N_Except")) {
             printExcept(node);
+            return;
+        } else if (node.getImage().equals("N_FunctionDefinition")) {
+            printFunctionDefinition(node);
             return;
         }
 
