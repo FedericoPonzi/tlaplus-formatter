@@ -602,6 +602,10 @@ class TLAPlusFormatterTest {
         var received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
-
+    // TODO: test choose, also test:
+    /* CHOOSE bc \in (Ballots \X Commands): /\ \E pr \in prs: /\ pr.votes[s].bal = bc[1]
+                                                                                              /\ pr.votes[s].cmd = bc[2]
+                                                                            /\ \A pr \in prs: pr.votes[s].bal =< bc[1]
+     */
 }
 

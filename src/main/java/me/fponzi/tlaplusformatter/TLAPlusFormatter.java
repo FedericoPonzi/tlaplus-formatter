@@ -334,7 +334,7 @@ public class TLAPlusFormatter {
         }
         f.decreaseLevel().nl();
     }
-
+    // TODO: look at Queens.tla
     public void printTree(TreeNode node) {
         for (var child : node.zero()) {
             if (child.getImage().equals("N_BeginModule") && child.getKind() == 333) {
@@ -537,8 +537,9 @@ public class TLAPlusFormatter {
         f.append(z[0]).space(); // choose
         f.append(z[1]).space(); // var
         basePrintTree(z[2]); // maybeBound
-        f.append(z[3]).space(); // :
+        f.append(z[3]); // :
         f.increaseLevel();
+        f.space();
         basePrintTree(z[4]); // condition
         f.decreaseLevel();
     }
