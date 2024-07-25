@@ -240,7 +240,7 @@ public class TLAPlusFormatter {
 
     }
 
-    private void printModuleDefinition(TreeNode node){
+    private void printModuleDefinition(TreeNode node) {
         basePrintTree(node.one()[0]); // Name
         f.space().append(node.one()[1]);
         f.increaseLevel().nl();
@@ -287,7 +287,7 @@ public class TLAPlusFormatter {
                 printAssume(child);
             } else if (child.getImage().equals("N_ParamDeclaration") && child.getKind() == 392) {
                 printConstants(child);
-            } else if(child.getImage().equals("N_ModuleDefinition") && child.getKind() == 383){
+            } else if (child.getImage().equals("N_ModuleDefinition") && child.getKind() == 383) {
                 printModuleDefinition(child);
             } else {
                 basePrintTree(child);
@@ -763,7 +763,12 @@ public class TLAPlusFormatter {
             printMaybeBound(node);
             return;
         } else if (node.getImage().equals("N_GeneralId") || node.getImage().equals("N_GenPostfixOp") || node.getImage().equals("N_GenInfixOp")) {
-            f.append(node.zero()[1]);
+            // this might have as image an identifier like "Nat"
+            // but also an idPrefix in pos [0] and identifier in [1], like for !Nat.
+            // In this case it's easier to just delegate to basePrintTree
+            for (var ch : node.zero()) {
+                basePrintTree(ch);
+            }
             return;
         } else if (node.getImage().equals("N_OpApplication")) {
             printOpApplication(node);

@@ -533,7 +533,7 @@ class TLAPlusFormatterTest {
                 "CONSTANT a\n" +
                 "N == INSTANCE Naturals\n" +
                 "\n" +
-                "UndefinedHashesExist == 1\n" +
+                "UndefinedHashesExist == N!Nat\n" +
                 "=============================================================================\n";
         var expected = "------------------------------ MODULE Spec -----------------------------\n" +
                 "\n" +
@@ -545,7 +545,7 @@ class TLAPlusFormatterTest {
                 "     INSTANCE Naturals\n" +
                 "\n"+
                 "UndefinedHashesExist ==\n" +
-                "                        1\n" +
+                "                        N!Nat\n" +
                 "\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
