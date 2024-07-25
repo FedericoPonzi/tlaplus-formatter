@@ -77,6 +77,11 @@ class TLAPlusFormatterTest {
     }
 
     @Test
+    void testFormatSlush() {
+        testSpecFiles("Slush");
+    }
+
+    @Test
     void testFormatModule() throws FrontEndException, IOException {
         var spec = "---- MODULE Spec ----\n======";
         var expected = "---- MODULE Spec ----\n\n======\n";
@@ -491,6 +496,46 @@ class TLAPlusFormatterTest {
                 "        IN\n" +
                 "            { <<r,t>> \\in SR \\X ST: \\E s \\in SR \\cap ST: (<<r, s>> \\in R) /\\ (<<s, t>> \\in T) }\n" +
                 "\n" +
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
+
+    public void testCase() throws FrontEndException, IOException {
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "CONSTANT a\n" +
+                "Support(x) == 0\n"+
+                "R ** T == LET SR == Support(R)\n" +
+                "              ST == Support(T)\n" +
+                "          IN  {<<r, t>> \\in SR \\X ST :\n" +
+                "                \\E s \\in SR \\cap ST : (<<r, s>> \\in R) /\\ (<<s, t>> \\in T)}\n" +
+                "CASE x = 1\n" +
+                "CASE x = 2\n" +
+                "CASE x = 3\n" +
+                "=============================================================================\n";
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "\n" +
+                "CONSTANT\n" +
+                "         a\n" +
+                "Support(x) ==\n" +
+                "              0\n" +
+                "\n" +
+                "R**T ==\n" +
+                "        LET\n" +
+                "            SR ==\n" +
+                "                  Support(R)\n" +
+                "            ST ==\n" +
+                "                  Support(T)\n" +
+                "        IN\n" +
+                "            { <<r,t>> \\in SR \\X ST: \\E s \\in SR \\cap ST: (<<r, s>> \\in R) /\\ (<<s, t>> \\in T) }\n" +
+                "\n" +
+                "CASE x = 1\n" +
+                "CASE x = 2\n" +
+                "CASE x = 3\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
         var received = f.getOutput();

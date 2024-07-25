@@ -51,13 +51,13 @@ Next ==
 
 Spec ==
         /\ Init /\ [][Next]_vars
-        /\ WF_N_GeneralId(\E i, j \in Proc: IF
-                                                 i # root /\ prnt[i] = NoPrnt /\ <<j, i>> \in msg
-                                            THEN
-                                                 Update(i, j)
-                                            ELSE
-                                                 \/ Send(i) \/ Parent(i)
-                                                 \/ UNCHANGED <<prnt, msg, rpt>>N_BoundedQuant
+        /\ WF_vars(\E i, j \in Proc: IF
+                                          i # root /\ prnt[i] = NoPrnt /\ <<j, i>> \in msg
+                                     THEN
+                                          Update(i, j)
+                                     ELSE
+                                          \/ Send(i) \/ Parent(i)
+                                          \/ UNCHANGED <<prnt, msg, rpt>>)
 
 TypeOK ==
           /\ \A i \in Proc: prnt[i] = NoPrnt \/ <<i, prnt[i]>> \in nbrs

@@ -56,6 +56,7 @@ public class TLAPlusFormatter {
     public TLAPlusFormatter(String spec) throws IOException, FrontEndException {
         this(storeToTmp(spec));
     }
+
     private static String getModuleName(String spec) {
         String regex = "----\\s?MODULE\\s+(\\w+)\\s?----";
         Pattern pattern = Pattern.compile(regex);
@@ -68,6 +69,7 @@ public class TLAPlusFormatter {
             return "Spec";
         }
     }
+
     private static File storeToTmp(String spec) throws IOException {
         File tmpFolder = Files.createTempDirectory("sanyimp").toFile();
         // write spec to tmpfolder: TODO: take filename from module name.
@@ -245,7 +247,7 @@ public class TLAPlusFormatter {
         // it my be followed by parameters.
         for (var id : node.one()[0].zero()) {
             basePrintTree(id);
-            for (var precomment : id.getPreComments()){
+            for (var precomment : id.getPreComments()) {
                 lengthCheckpoint += precomment.length() + 1; // plus new line
             }
             if (id.getImage().equals(",")) f.space();
@@ -288,16 +290,15 @@ public class TLAPlusFormatter {
         basePrintTree(node.zero()[1]);
     }
 
+    // Example: a \/ b
     private void printInfixExpr(TreeNode node) {
-        int lengthCheckpoint = f.out.length();
         basePrintTree(node.zero()[0]);
         f.space();
         basePrintTree(node.zero()[1]);
+        f.increaseLevel();
         f.space();
-        int indentSpace = f.out.length() - lengthCheckpoint;
-        f.increaseIndent(indentSpace);
         basePrintTree(node.zero()[2]);
-        f.decreaseIndent(indentSpace);
+        f.decreaseLevel();
     }
 
     // Example: R ** T in
@@ -309,13 +310,13 @@ public class TLAPlusFormatter {
         f.space();
         basePrintTree(node.zero()[2]);
     }
+
     private void printTheorem(TreeNode node) {
         var theoremKeyword = node.zero()[0];
         assert theoremKeyword.getImage().equals("THEOREM") && theoremKeyword.getKind() == 66;
-        var indent = theoremKeyword.getImage().length() + 1;
-        f.append(theoremKeyword).increaseIndent(indent).nl();
+        f.append(theoremKeyword).increaseLevel().nl();
         basePrintTree(node.zero()[1]);
-        f.decreaseIndent(indent).nl();
+        f.decreaseLevel().nl();
     }
 
     public void printTree(TreeNode node) {
@@ -335,15 +336,29 @@ public class TLAPlusFormatter {
             }
         }
     }
-
+    // ASSUME x > 0 or ASSUME x == /\ something
+    // not sure why x == something is not parsed as Operator definition but instead it will add three nodes.
     public void printAssume(TreeNode node) {
         LOG.debug("Found ASSUME");
-        var indent = "ASSUME ".length();
-        f.append(node.one()[0])
-                .increaseIndent(indent)
+        var one = node.one();
+
+        f.append(one[0])
+                .increaseLevel()
                 .nl();
-        basePrintTree(node.one()[1]);
-        f.decreaseIndent(indent)
+        basePrintTree(one[1]);
+        // TODO: additional isolated test
+        // I think this is a bug in SANY or something unexpected on the parsing output side.
+        if(one.length > 3 && one[2].getImage().equals("==")) {
+            //it's an op declaration.
+            // one[1] has the id
+            f.space();
+            basePrintTree(one[2]); // ==
+            f.increaseLevel();
+            f.nl();
+            basePrintTree(one[3]); // content
+            f.decreaseLevel();
+        }
+        f.decreaseLevel()
                 .nl()
                 .nl();
     }
@@ -361,10 +376,10 @@ public class TLAPlusFormatter {
 
     private void conjDisjItem(TreeNode node) {
         LOG.debug("Found {}", node.getImage());
-        f.append(node.zero()[0]).space(); // "/\ "
-        f.increaseIndent(3);
+        f.append(node.zero()[0]); // "/\ "
+        f.increaseLevel().space();
         basePrintTree(node.zero()[1]);
-        f.decreaseIndent(3);
+        f.decreaseLevel();
     }
 
     private void ifThenElse(TreeNode node) {
@@ -439,36 +454,40 @@ public class TLAPlusFormatter {
 
     public void printSubsetOf(TreeNode node) {
         var z = node.zero();
-        var lengthCheckpoint = f.out.length();
         f.append(z[0]).space(); // {
         basePrintTree(z[1]); // x or a tuple like <<r, t>>
         f.space(); //
         f.append(z[2]).space(); // \in
         basePrintTree(z[3]); // S
-        f.append(z[4]).space(); // :
-        var indent = f.out.length() - lengthCheckpoint;
-        f.increaseIndent(indent);
+        f.append(z[4]); // :
+        f.increaseLevel();
+        f.space();
         basePrintTree(z[5]);
         f.space().append(z[6]); // }
-        f.decreaseIndent(indent);
+        f.decreaseLevel();
     }
 
     public void printSetOfAll(TreeNode node) {
         var z = node.zero();
+        var lengthCheckpoint = f.out.length();
         f.append(z[0]); // {
         basePrintTree(z[1]); // OpApplication
         f.append(z[2]).space(); // :
+        var indent = f.out.length() - lengthCheckpoint;
+        f.increaseIndent(indent);
         basePrintTree(z[3]); // QuantBound
         f.append(z[4]); // }
+        f.decreaseIndent(indent);
     }
+
     // x \in S
     public void printQuantBound(TreeNode node) {
         var z = node.zero();
         var i = 0;
         // x1,x2,x3...
-        while(!z[i].getImage().equals("\\in")){
+        while (!z[i].getImage().equals("\\in")) {
             f.append(z[i]);
-            if(z[i].getImage().equals(",")){
+            if (z[i].getImage().equals(",")) {
                 f.space();
             }
             i++;
@@ -481,14 +500,13 @@ public class TLAPlusFormatter {
     // \E coef \in [1..N -> -1..1] or \A QuantBound : ConjList.
     public void printBoundedQuant(TreeNode node) {
         var z = node.zero();
-        var lengthCheckpoint = f.out.length();
         f.append(z[0]).space(); // \E
         basePrintTree(z[1]); // QuantBound
-        f.append(z[2]).space(); // :
-        var indent = f.out.length() - lengthCheckpoint;
-        f.increaseIndent(indent);
+        f.append(z[2]); // :
+        f.increaseLevel();
+        f.space();
         basePrintTree(z[3]); // prop
-        f.decreaseIndent(indent);
+        f.decreaseLevel();
     }
 
     // CHOOSE e \in S: TRUE
@@ -498,15 +516,20 @@ public class TLAPlusFormatter {
         f.append(z[1]).space(); // var
         basePrintTree(z[2]); // maybeBound
         f.append(z[3]).space(); // :
+        f.increaseLevel();
         basePrintTree(z[4]); // condition
+        f.decreaseLevel();
     }
 
-    // "\in S" from TowerOfHanoi test.
+    // Example: "\in S" from TowerOfHanoi test.
     public void printMaybeBound(TreeNode node) {
         var z = node.zero();
+        // Example: CHOOSE c : c \notin Color, it will create an empty MaybeBound
+        if (z == null) return;
         f.append(z[0]).space();
         basePrintTree(z[1]);
     }
+
     // A == Head(s) - it's Head(s).
     public void printOpApplication(TreeNode node) {
         var z = node.zero();
@@ -514,17 +537,19 @@ public class TLAPlusFormatter {
         basePrintTree(z[1]); // N_OpArgs
 
     }
+
     public void printOpArgs(TreeNode node) {
         var z = node.zero();
         f.append(z[0]);
-        for (int i = 1 ; i < z.length - 1 ; i++) {
+        for (int i = 1; i < z.length - 1; i++) {
             basePrintTree(z[i]);
-            if (i%2 == 0) { // add space after a comma
+            if (i % 2 == 0) { // add space after a comma
                 f.space();
             }
         }
         f.append(z[z.length - 1]);
     }
+
     private void printExcept(TreeNode node) {
         int lengthCheckpoint = f.out.length();
         var z = node.zero();
@@ -533,9 +558,9 @@ public class TLAPlusFormatter {
         f.space().append(z[2]).space(); // EXCEPT
         int indentSpace = f.out.length() - lengthCheckpoint;
         f.increaseIndent(indentSpace);
-        for(int i = 3; i < z.length - 1; i++) {
+        for (int i = 3; i < z.length - 1; i++) {
             basePrintTree(z[i]);
-            if (i%2 == 0) { // a comma
+            if (i % 2 == 0) { // a comma
                 f.nl();
             }
         }
@@ -548,14 +573,28 @@ public class TLAPlusFormatter {
         basePrintTree(node.zero()[0]); // generalId.
         var o = node.one();
         f.append(o[0]); // [
-        for(int i = 1; i < o.length - 1; i++) {
-            if(i % 2 == 0) { // comma
+        for (int i = 1; i < o.length - 1; i++) {
+            if (i % 2 == 0) { // comma
                 f.append(o[i]).space();
             } else {
                 basePrintTree(o[i]);
             }
         }
-        f.append(o[o.length-1]); // ]
+        f.append(o[o.length - 1]); // ]
+    }
+    //  pc = [self \in ProcSet |-> CASE self = 0 -> "TM"
+    //                               [] self \in ResourceManagers -> "RM"]
+    private void printFcnConst(TreeNode node) {
+        var z = node.zero();
+        var lengthCheckpoint = f.out.length();
+        f.append(z[0]); // [
+        basePrintTree(z[1]); // QuantBound
+        f.append(z[2]); // |->
+        var indentSpace = f.out.length() - lengthCheckpoint;
+        f.increaseIndent(indentSpace);
+        basePrintTree(z[3]); // CASE or else
+        f.append(z[4]); // ]
+        f.decreaseIndent(indentSpace);
     }
     // Example:
     // CR[n \in Nat ,v \in S ]==IF n = 0 THEN R(s, v) ELSE
@@ -566,17 +605,17 @@ public class TLAPlusFormatter {
         var lengthCheckpoint = f.out.length();
         f.append(o[0]); // function name
         f.append(o[1]); // [
-        for(int i = 2; i < o.length - 2; i++) {
-            if(i % 2 == 1) { // comma
+        for (int i = 2; i < o.length - 2; i++) {
+            if (i % 2 == 1) { // comma
                 f.append(o[i]).space();
             } else {
                 basePrintTree(o[i]);
             }
         }
-        f.append(o[o.length-2]).space(); // ==
+        f.append(o[o.length - 2]).space(); // ==
         var indentSpace = f.out.length() - lengthCheckpoint;
         f.increaseIndent(indentSpace);
-        basePrintTree(o[o.length-1]); // Definition
+        basePrintTree(o[o.length - 1]); // Definition
         f.decreaseIndent(indentSpace);
     }
 
@@ -588,31 +627,64 @@ public class TLAPlusFormatter {
         f.space();
         basePrintTree(z[2]); // Y
     }
+
     // Example:
     // WF_vars(\E i, j \in Proc: IF i # root /\ prnt[i] = NoPrnt /\ <<j, i>> \in msg
     //                                     THEN Update(i, j)
     //                                     ELSE \/ Send(i) \/ Parent(i)
     //                                          \/ UNCHANGED <<prnt, msg, rpt>>)
-    private void printFairnessExpr(TreeNode node){
+    private void printFairnessExpr(TreeNode node) {
         var lengthCheckPoint = f.out.length();
         var z = node.zero();
         f.append(z[0]); // WF_
-        f.append(z[1]); // vars
+        basePrintTree(z[1]); // vars
         f.append(z[2]); // (
         var indentSpace = f.out.length() - lengthCheckPoint;
         f.increaseIndent(indentSpace);
         basePrintTree(z[3]); // expr
         f.decreaseIndent(indentSpace)
-                .append(z[3]); // )
+                .append(z[4]); // )
+    }
 
+    private void printCase(TreeNode node) {
+        var z = node.zero();
+        f.append(z[0]); // CASE
+        f.space();
+        f.increaseIndent(2);
+        for (int i = 1; i < z.length; i++) {
+            basePrintTree(z[i]);
+            if (i % 2 == 1) {
+                if( i < z.length - 1) {
+                    f.nl();
+                }
+            } else {
+                f.space();
+            }
 
+        }
+        f.decreaseIndent(2);
     }
 
     public void basePrintTree(TreeNode node) {
         if (node == null) {
             return;
         }
-        if (node.getImage().equals("N_ConjList") && node.getKind() == 341) {
+        if (node.getImage().equals("N_VariableDeclaration") && node.getKind() == 426) {
+            printVariables(node);
+            return;
+        } else if (node.getImage().equals("N_OperatorDefinition") && node.getKind() == 389) {
+            printOperatorDefinition(node);
+            return;
+        } else if (node.getImage().startsWith("----") && node.getKind() == 35) {
+            f.nl().append(node).nl().nl();
+            return;
+        } else if (node.getImage().equals("N_Assumption") && node.getKind() == 332) {
+            printAssume(node);
+            return;
+        } else if (node.getImage().equals("N_ParamDeclaration") && node.getKind() == 392) {
+            printConstants(node);
+            return;
+        }else if (node.getImage().equals("N_ConjList") && node.getKind() == 341) {
             conjDisjList(node);
             return;
         } else if (node.getImage().equals("N_DisjList") && node.getKind() == 344) {
@@ -664,13 +736,13 @@ public class TLAPlusFormatter {
         } else if (node.getImage().equals("N_MaybeBound") && node.getKind() == 381) {
             printMaybeBound(node);
             return;
-        } else if(node.getImage().equals("N_GeneralId") || node.getImage().equals("N_GenPostfixOp") || node.getImage().equals("N_GenInfixOp")){
+        } else if (node.getImage().equals("N_GeneralId") || node.getImage().equals("N_GenPostfixOp") || node.getImage().equals("N_GenInfixOp")) {
             f.append(node.zero()[1]);
             return;
-        } else if(node.getImage().equals("N_OpApplication")) {
+        } else if (node.getImage().equals("N_OpApplication")) {
             printOpApplication(node);
             return;
-        } else if(node.getImage().equals("N_OpArgs")) {
+        } else if (node.getImage().equals("N_OpArgs")) {
             printOpArgs(node);
             return;
         } else if (node.getImage().equals("N_FcnAppl")) {
@@ -682,14 +754,20 @@ public class TLAPlusFormatter {
         } else if (node.getImage().equals("N_FunctionDefinition")) {
             printFunctionDefinition(node);
             return;
-        } else if(node.getImage().equals("N_InfixLHS")) {
+        } else if (node.getImage().equals("N_InfixLHS")) {
             printInfixLhs(node);
             return;
-        } else if(node.getImage().equals("N_Times")) {
+        } else if (node.getImage().equals("N_Times")) {
             printTimes(node);
             return;
-        } else if(node.getImage().equals("N_FairnessExpr")){
+        } else if (node.getImage().equals("N_FairnessExpr")) {
             printFairnessExpr(node);
+            return;
+        } else if (node.getImage().equals("N_Case")) {
+            printCase(node);
+            return;
+        } else if(node.getImage().equals("N_FcnConst") && node.getKind() == 353) {
+            printFcnConst(node);
             return;
         }
 
