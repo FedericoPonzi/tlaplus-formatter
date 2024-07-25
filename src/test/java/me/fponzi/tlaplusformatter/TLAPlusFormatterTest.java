@@ -300,6 +300,27 @@ class TLAPlusFormatterTest {
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
     @Test
+    public void testTheoremAssign() throws FrontEndException, IOException {
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "CONSTANT TypeInvariant, Spec\n" +
+                "THEOREM Safety == Spec => TypeInvariant\n\n" +
+                "=============================================================================\n";
+
+        // TODO: (safety==Spec)
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "CONSTANT\n" +
+                "         TypeInvariant,\n" +
+                "         Spec\n" +
+                "THEOREM\n" +
+                "        Safety==Spec => TypeInvariant\n"+
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
+
+    @Test
     public void testRecursive() throws FrontEndException, IOException {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals, Sequences\n" +

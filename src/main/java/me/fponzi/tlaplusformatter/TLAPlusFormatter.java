@@ -329,7 +329,9 @@ public class TLAPlusFormatter {
         var theoremKeyword = node.zero()[0];
         assert theoremKeyword.getImage().equals("THEOREM") && theoremKeyword.getKind() == 66;
         f.append(theoremKeyword).increaseLevel().nl();
-        basePrintTree(node.zero()[1]);
+        for(int i = 1; i < node.zero().length; i++){
+            basePrintTree(node.zero()[i]);
+        }
         f.decreaseLevel().nl();
     }
 
