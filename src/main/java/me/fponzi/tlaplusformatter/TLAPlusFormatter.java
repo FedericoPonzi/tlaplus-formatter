@@ -240,11 +240,19 @@ public class TLAPlusFormatter {
 
     }
 
+    private void printModuleDefinition(TreeNode node){
+        basePrintTree(node.one()[0]); // Name
+        f.space().append(node.one()[1]);
+        f.increaseLevel().nl();
+        basePrintTree(node.one()[2]); //
+        f.decreaseLevel().nl().nl();
+    }
+
     // S == 1 or S(x) == x + 1
     private void printOperatorDefinition(TreeNode node) {
         var lengthCheckpoint = f.out.length();
         // node.one()[0].zero()[0] is the identifier.
-        // it my be followed by parameters.
+        // it might be followed by parameters.
         for (var id : node.one()[0].zero()) {
             basePrintTree(id);
             for (var precomment : id.getPreComments()) {
@@ -279,6 +287,8 @@ public class TLAPlusFormatter {
                 printAssume(child);
             } else if (child.getImage().equals("N_ParamDeclaration") && child.getKind() == 392) {
                 printConstants(child);
+            } else if(child.getImage().equals("N_ModuleDefinition") && child.getKind() == 383){
+                printModuleDefinition(child);
             } else {
                 basePrintTree(child);
             }
@@ -289,6 +299,7 @@ public class TLAPlusFormatter {
         basePrintTree(node.zero()[0]);
         basePrintTree(node.zero()[1]);
     }
+
 
     // Example: a \/ b
     private void printInfixExpr(TreeNode node) {
@@ -723,7 +734,7 @@ public class TLAPlusFormatter {
         } else if (node.getImage().equals("N_PostfixExpr") && node.getKind() == 395) {
             printPostfixExpr(node);
             return;
-        } else if (Stream.of("EXCEPT", "UNCHANGED", "UNION", "SUBSET", "DOMAIN").anyMatch(p -> node.getImage().equals(p))) {
+        } else if (Stream.of("EXCEPT", "UNCHANGED", "UNION", "SUBSET", "DOMAIN", "INSTANCE").anyMatch(p -> node.getImage().equals(p))) {
             // todo: handle the rest and this should fall in the default case below - print string and space
             f.append(node).space();
             return;
