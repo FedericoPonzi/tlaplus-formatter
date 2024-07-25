@@ -125,8 +125,37 @@ class TLAPlusFormatterTest {
         var received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
-
-
+    @Test
+    public void testConstants() throws FrontEndException, IOException {
+        // using Constants
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "CONSTANTS x, y\n" +
+                "=============================================================================\n";
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "CONSTANTS\n" +
+                "          x,\n" +
+                "          y\n" +
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
+    @Test
+    public void testConstantsParamsIdentDecl() throws FrontEndException, IOException {
+        // using Constants
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "CONSTANTS  CalculateHash(_,_,_)\n" +
+                "=============================================================================\n";
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "CONSTANTS\n" +
+                "          CalculateHash(_,_,_)\n" +
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
     @Test
     public void testFormatAssume() throws FrontEndException, IOException {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +

@@ -206,8 +206,11 @@ public class TLAPlusFormatter {
         f.nl().nl();
     }
 
+    // Example: CONSTANTS A,B
+    // Example: CONSTANT CalculateHash(_,_,_),
     private void printConstants(TreeNode node) {
         LOG.debug("CONSTANTS");
+
         var constant = node.zero()[0].zero()[0];
         var indent = constant.getImage().length() + 1;
         f.append(constant).increaseIndent(indent).nl();
@@ -218,7 +221,7 @@ public class TLAPlusFormatter {
             if (child.getImage().equals(",")) {
                 f.append(child).nl();
             } else {
-                f.append(child.zero()[0]);
+                basePrintTree(child);
             }
         }
         f.decreaseIndent(indent).nl();
@@ -691,6 +694,15 @@ public class TLAPlusFormatter {
         basePrintTree(z[1]); // expr
     }
 
+    // Example:
+    // CONSTANT CalculateHash(_,_,_)
+    public void printIdentDecl(TreeNode node) {
+        var z = node.zero();
+        for (var ch : z) {
+            f.append(ch);
+        }
+    }
+
     public void basePrintTree(TreeNode node) {
         if (node == null) {
             return;
@@ -802,6 +814,9 @@ public class TLAPlusFormatter {
             return;
         } else if (node.getImage().equals("N_PrefixExpr") && node.getKind() == 399) {
             printPrefixEpr(node);
+            return;
+        } else if(node.getImage().equals("N_IdentDecl") && node.getKind() == 363) {
+            printIdentDecl(node);
             return;
         }
 
