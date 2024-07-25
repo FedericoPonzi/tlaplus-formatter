@@ -336,6 +336,7 @@ public class TLAPlusFormatter {
             }
         }
     }
+
     // ASSUME x > 0 or ASSUME x == /\ something
     // not sure why x == something is not parsed as Operator definition but instead it will add three nodes.
     public void printAssume(TreeNode node) {
@@ -348,7 +349,7 @@ public class TLAPlusFormatter {
         basePrintTree(one[1]);
         // TODO: additional isolated test
         // I think this is a bug in SANY or something unexpected on the parsing output side.
-        if(one.length > 3 && one[2].getImage().equals("==")) {
+        if (one.length > 3 && one[2].getImage().equals("==")) {
             //it's an op declaration.
             // one[1] has the id
             f.space();
@@ -501,11 +502,16 @@ public class TLAPlusFormatter {
     public void printBoundedQuant(TreeNode node) {
         var z = node.zero();
         f.append(z[0]).space(); // \E
-        basePrintTree(z[1]); // QuantBound
-        f.append(z[2]); // :
+        for (int i = 1; i < z.length - 2; i++) {
+            basePrintTree(z[i]); // QuantBound
+            if (i % 2 == 0) { // ,
+                f.space();
+            }
+        }
+        f.append(z[z.length - 2]); // :
         f.increaseLevel();
         f.space();
-        basePrintTree(z[3]); // prop
+        basePrintTree(z[z.length - 1]); // prop
         f.decreaseLevel();
     }
 
@@ -582,6 +588,7 @@ public class TLAPlusFormatter {
         }
         f.append(o[o.length - 1]); // ]
     }
+
     //  pc = [self \in ProcSet |-> CASE self = 0 -> "TM"
     //                               [] self \in ResourceManagers -> "RM"]
     private void printFcnConst(TreeNode node) {
@@ -595,6 +602,7 @@ public class TLAPlusFormatter {
         f.append(z[4]); // ]
         f.decreaseLevel();
     }
+
     // Example:
     // CR[n \in Nat ,v \in S ]==IF n = 0 THEN R(s, v) ELSE
     //   \/ CR[n - 1,
@@ -611,7 +619,7 @@ public class TLAPlusFormatter {
             }
         }
         f.append(o[o.length - 2]) // ==
-        .increaseLevel()
+                .increaseLevel()
                 .space();
         basePrintTree(o[o.length - 1]); // Definition
         f.decreaseLevel();
@@ -652,7 +660,7 @@ public class TLAPlusFormatter {
         for (int i = 1; i < z.length; i++) {
             basePrintTree(z[i]);
             if (i % 2 == 1) {
-                if( i < z.length - 1) {
+                if (i < z.length - 1) {
                     f.nl();
                 }
             } else {
@@ -661,6 +669,15 @@ public class TLAPlusFormatter {
 
         }
         f.decreaseIndent(2);
+    }
+
+    public void printPrefixEpr(TreeNode node) {
+        // Example: [](A) -> N_GenPrefixOp N_ParenExpr
+        // where [] is the genPrefix.
+
+        var z = node.zero();
+        basePrintTree(z[0]); // prefix
+        basePrintTree(z[1]); // expr
     }
 
     public void basePrintTree(TreeNode node) {
@@ -682,7 +699,7 @@ public class TLAPlusFormatter {
         } else if (node.getImage().equals("N_ParamDeclaration") && node.getKind() == 392) {
             printConstants(node);
             return;
-        }else if (node.getImage().equals("N_ConjList") && node.getKind() == 341) {
+        } else if (node.getImage().equals("N_ConjList") && node.getKind() == 341) {
             conjDisjList(node);
             return;
         } else if (node.getImage().equals("N_DisjList") && node.getKind() == 344) {
@@ -764,8 +781,11 @@ public class TLAPlusFormatter {
         } else if (node.getImage().equals("N_Case")) {
             printCase(node);
             return;
-        } else if(node.getImage().equals("N_FcnConst") && node.getKind() == 353) {
+        } else if (node.getImage().equals("N_FcnConst") && node.getKind() == 353) {
             printFcnConst(node);
+            return;
+        } else if (node.getImage().equals("N_PrefixExpr") && node.getKind() == 399) {
+            printPrefixEpr(node);
             return;
         }
 
