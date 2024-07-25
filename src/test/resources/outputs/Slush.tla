@@ -284,14 +284,14 @@ ProcSet ==
 
 Init ==
         (* Global variables *)
-        /\ pick = [node \in Node|->NoColor]
+        /\ pick = [node \in Node|-> NoColor]
         /\ message = {}
         (* Process SlushLoop *)
-        /\ sampleSet = [self \in SlushLoopProcess|->{}]
-        /\ loopVariant = [self \in SlushLoopProcess|->0]
-        /\ pc = [self \in ProcSet|->CASE self \in SlushQueryProcess->"QueryReplyLoop"
-                                      [] self \in SlushLoopProcess->"RequireColorAssignment"
-                                      [] self = "ClientRequest"->"ClientRequestLoop"]
+        /\ sampleSet = [self \in SlushLoopProcess|-> {}]
+        /\ loopVariant = [self \in SlushLoopProcess|-> 0]
+        /\ pc = [self \in ProcSet|-> CASE self \in SlushQueryProcess->"QueryReplyLoop"
+                                       [] self \in SlushLoopProcess->"RequireColorAssignment"
+                                       [] self = "ClientRequest"->"ClientRequestLoop"]
 
 QueryReplyLoop(self) ==
                         /\ pc[self] = "QueryReplyLoop"

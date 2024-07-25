@@ -19,8 +19,8 @@ vars ==
         <<prnt, rpt, msg>>
 
 Init ==
-        /\ prnt = [i \in Proc|->NoPrnt]
-        /\ rpt = [i \in Proc|->FALSE]
+        /\ prnt = [i \in Proc|-> NoPrnt]
+        /\ rpt = [i \in Proc|-> FALSE]
         /\ msg = {}
 
 CanSend(i, j) ==

@@ -586,15 +586,14 @@ public class TLAPlusFormatter {
     //                               [] self \in ResourceManagers -> "RM"]
     private void printFcnConst(TreeNode node) {
         var z = node.zero();
-        var lengthCheckpoint = f.out.length();
         f.append(z[0]); // [
         basePrintTree(z[1]); // QuantBound
         f.append(z[2]); // |->
-        var indentSpace = f.out.length() - lengthCheckpoint;
-        f.increaseIndent(indentSpace);
+        f.increaseLevel();
+        f.space();
         basePrintTree(z[3]); // CASE or else
         f.append(z[4]); // ]
-        f.decreaseIndent(indentSpace);
+        f.decreaseLevel();
     }
     // Example:
     // CR[n \in Nat ,v \in S ]==IF n = 0 THEN R(s, v) ELSE
@@ -602,7 +601,6 @@ public class TLAPlusFormatter {
     //   \/ \E u \in S : CR[n - 1, /\ R(u, v)
     private void printFunctionDefinition(TreeNode node) {
         var o = node.one();
-        var lengthCheckpoint = f.out.length();
         f.append(o[0]); // function name
         f.append(o[1]); // [
         for (int i = 2; i < o.length - 2; i++) {
@@ -612,11 +610,11 @@ public class TLAPlusFormatter {
                 basePrintTree(o[i]);
             }
         }
-        f.append(o[o.length - 2]).space(); // ==
-        var indentSpace = f.out.length() - lengthCheckpoint;
-        f.increaseIndent(indentSpace);
+        f.append(o[o.length - 2]) // ==
+        .increaseLevel()
+                .space();
         basePrintTree(o[o.length - 1]); // Definition
-        f.decreaseIndent(indentSpace);
+        f.decreaseLevel();
     }
 
     private void printTimes(TreeNode node) {

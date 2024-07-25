@@ -96,7 +96,7 @@ Partitions(seq, wt) ==
 (* of the sequence seq sum to wt.                                          *)
 (***************************************************************************)
 Weighs(seq, wt) ==
-                   \E coef \in [1 .. N->-1 .. 1]: SeqSum([i \in 1 .. N|->coef[i] * seq[i]]) = wt
+                   \E coef \in [1 .. N->-1 .. 1]: SeqSum([i \in 1 .. N|-> coef[i] * seq[i]]) = wt
 
 (***************************************************************************)
 (* We now assert the following ASSUME, which TLC will evaluate by either   *)

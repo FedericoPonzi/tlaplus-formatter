@@ -65,12 +65,12 @@ TypeOK ==
 (* values of the variables.                                                *)
 (***************************************************************************)
 Init ==
-        /\ towers = [i \in 1 .. N|->IF
-                                         i = 1
-                                    THEN
-                                         2 ^ D - 1
-                                    ELSE
-                                         0]
+        /\ towers = [i \in 1 .. N|-> IF
+                                          i = 1
+                                     THEN
+                                          2 ^ D - 1
+                                     ELSE
+                                          0]
 
 \* all towers are empty except all disks are on the first Tower
 (***************************************************************************)
