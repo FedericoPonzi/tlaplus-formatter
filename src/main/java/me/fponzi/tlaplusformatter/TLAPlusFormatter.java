@@ -72,11 +72,8 @@ public class TLAPlusFormatter {
 
     private static File storeToTmp(String spec) throws IOException {
         File tmpFolder = Files.createTempDirectory("sanyimp").toFile();
-        // write spec to tmpfolder: TODO: take filename from module name.
-        // parse spec and extract module name:
         var fileName = getModuleName(spec) + ".tla";
         File tmpFile = new File(tmpFolder, fileName);
-        // Write spec to tmpFile
         try (java.io.FileWriter writer = new java.io.FileWriter(tmpFile)) {
             writer.write(spec);
         }
@@ -243,11 +240,13 @@ public class TLAPlusFormatter {
 
     }
 
+    // Exmaple: N == INSTANCE B
+    // Example: N == INSTANCE Reachable WITH vroot<-vrootBar, pc<-pcBar TODO
     private void printModuleDefinition(TreeNode node) {
-        basePrintTree(node.one()[0]); // Name
-        f.space().append(node.one()[1]);
+        basePrintTree(node.one()[0]); // IdentLHS
+        f.space().append(node.one()[1]); // ==
         f.increaseLevel().nl();
-        basePrintTree(node.one()[2]); //
+        basePrintTree(node.one()[2]); // N_NonLocalInstance.
         f.decreaseLevel().nl().nl();
     }
 
@@ -292,6 +291,9 @@ public class TLAPlusFormatter {
                 printConstants(child);
             } else if (child.getImage().equals("N_ModuleDefinition") && child.getKind() == 383) {
                 printModuleDefinition(child);
+            } else if (child.getImage().equals("N_FunctionDefinition")) {
+                printFunctionDefinition(child);
+                f.nl();
             } else {
                 basePrintTree(child);
             }
@@ -329,11 +331,12 @@ public class TLAPlusFormatter {
         var theoremKeyword = node.zero()[0];
         assert theoremKeyword.getImage().equals("THEOREM") && theoremKeyword.getKind() == 66;
         f.append(theoremKeyword).increaseLevel().nl();
-        for(int i = 1; i < node.zero().length; i++){
+        for (int i = 1; i < node.zero().length; i++) {
             basePrintTree(node.zero()[i]);
         }
         f.decreaseLevel().nl();
     }
+
     // TODO: look at Queens.tla
     public void printTree(TreeNode node) {
         for (var child : node.zero()) {
@@ -697,6 +700,38 @@ public class TLAPlusFormatter {
         basePrintTree(z[1]); // expr
     }
 
+    // Example: INSTANCE N WITH x<-a, y<-b
+    // Example: INSTANCE N
+    private void printNonLocalInstance(TreeNode node) {
+        f.append(node.zero()[0]); // INSTANCE
+        f.space();
+        basePrintTree(node.zero()[1]); // module name
+        if(node.zero().length == 2) {
+            return;
+        }
+        f.space();
+        f.append(node.zero()[2]); // WITH
+        f.increaseLevel().space();
+        // module parameters now, they are N_Substitution.
+        for (int i = 3; i < node.zero().length; i++) {
+            basePrintTree(node.zero()[i]);
+            if (node.zero()[i].getImage().equals(",")) {
+                f.nl();
+            }
+        }
+        f.decreaseLevel();
+
+    }
+
+    private void printSubstitution(TreeNode node) {
+        var z = node.zero();
+        basePrintTree(z[0]); // param
+        f.space();
+        f.append(z[1]); // <-
+        f.space();
+        basePrintTree(z[2]); // expr
+    }
+
     // Example:
     // CONSTANT CalculateHash(_,_,_)
     public void printIdentDecl(TreeNode node) {
@@ -818,8 +853,14 @@ public class TLAPlusFormatter {
         } else if (node.getImage().equals("N_PrefixExpr") && node.getKind() == 399) {
             printPrefixEpr(node);
             return;
-        } else if(node.getImage().equals("N_IdentDecl") && node.getKind() == 363) {
+        } else if (node.getImage().equals("N_IdentDecl") && node.getKind() == 363) {
             printIdentDecl(node);
+            return;
+        } else if (node.getImage().equals("N_NonLocalInstance") && node.getKind() == 376) {
+            printNonLocalInstance(node);
+            return;
+        } else if (node.getImage().equals("N_Substitution") && node.getKind() == 420) {
+            printSubstitution(node);
             return;
         }
 

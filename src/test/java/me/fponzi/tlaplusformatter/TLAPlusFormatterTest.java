@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TLAPlusFormatterTest {
-
+    // TODO: compare AST of pre format and post format.
     /**
      * Compares src/test/resources/inputs/name.tla to src/test/resources/outputs/name.tla
      */
@@ -602,10 +602,97 @@ class TLAPlusFormatterTest {
         var received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
+
+    @Test
+    public void testInstanceWith() throws FrontEndException, IOException {
+
+        var spec2 = "------------------------------ MODULE Spec2 -----------------------------\n" +
+                "CONSTANT pc, vroot\n" +
+                "=============================================================================\n";
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "CONSTANT vrootBar, pcBar\n" +
+                "N == INSTANCE Spec2 WITH vroot <- vrootBar, pc <- pcBar\n" +
+                "=============================================================================\n";
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "CONSTANT\n" +
+                "         vrootBar,\n" +
+                "         pcBar\n" +
+                "N ==\n" +
+                "     INSTANCE Spec2 WITH vroot <- vrootBar,\n" +
+                "                         pc <- pcBar\n" +
+                "\n" +
+                "=============================================================================\n";
+
+        File tmpFolder = Files.createTempDirectory("sanyimp").toFile();
+        File spec2File = new File(tmpFolder, "Spec2.tla");
+        File specFile = new File(tmpFolder, "Spec.tla");
+        try (java.io.FileWriter writer = new java.io.FileWriter(specFile)) {
+            writer.write(spec);
+        }
+        try (java.io.FileWriter writer = new java.io.FileWriter(spec2File)) {
+            writer.write(spec2);
+        }
+
+        var f = new TLAPlusFormatter(specFile);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
+    //@Test
+    public void testSubset() throws FrontEndException, IOException {
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "CONSTANT a\n" +
+                "\n" +
+                " RecordCombine(S, T) ==\n" +
+                "   (*************************************************************************)\n" +
+                "   (* If S and T are sets of records, then this equals the set of all       *)\n" +
+                "   (* records rc(s,t) with s in S and t in T, where rc(s,t) is the record   *)\n" +
+                "   (* obtained by \"merging\" s and t--that is, forming the record whose set  *)\n" +
+                "   (* of fields is the union of the sets of fields of the two records.      *)\n" +
+                "   (*************************************************************************)\n" +
+                "   LET rc(s, t) ==\n" +
+                "        [i \\in (DOMAIN s) \\cup (DOMAIN t) |-> IF i \\in DOMAIN s THEN s[i]\n" +
+                "                                                                ELSE t[i]]\n" +
+                "   IN  {rc(s, t) : s \\in S, t \\in T}" +
+                "=============================================================================\n";
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "\n" +
+                "CONSTANT\n" +
+                "         a\n" +
+                "RecordCombine(S, T) ==\n" +
+                "                       (*************************************************************************)\n" +
+                "                       (* If S and T are sets of records, then this equals the set of all       *)\n" +
+                "                       (* records rc(s,t) with s in S and t in T, where rc(s,t) is the record   *)\n" +
+                "                       (* obtained by \"merging\" s and t--that is, forming the record whose set  *)\n" +
+                "                       (* of fields is the union of the sets of fields of the two records.      *)\n" +
+                "                       (*************************************************************************)\n" +
+                "                       LET\n" +
+                "                           rc(s, t) ==\n" +
+                "                                       [i \\in (DOMAIN s) \\cup (DOMAIN t)|-> IF\n" +
+                "                                                                                 i \\in DOMAIN s\n" +
+                "                                                                            THEN\n" +
+                "                                                                                 s[i]\n" +
+                "                                                                            ELSE\n" +
+                "                                                                                 t[i]]\n" +
+                "                       IN\n" +
+                "                           {rc(s, t): s \\in S,\n" +
+                "\n" +
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
+
     // TODO: test choose, also test:
     /* CHOOSE bc \in (Ballots \X Commands): /\ \E pr \in prs: /\ pr.votes[s].bal = bc[1]
                                                                                               /\ pr.votes[s].cmd = bc[2]
                                                                             /\ \A pr \in prs: pr.votes[s].bal =< bc[1]
      */
+
+
+
 }
 

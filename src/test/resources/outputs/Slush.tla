@@ -38,6 +38,7 @@ ASSUME
 
 HostOf[pid \in SlushLoopProcess \cup SlushQueryProcess] == CHOOSE n \in Node: /\ \E mapping \in HostMapping: /\ n \in mapping
                                                                                                              /\ pid \in mapping
+
 ----------------------------------------------------------------------------
 
 (*--algorithm Slush
