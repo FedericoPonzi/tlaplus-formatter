@@ -1,11 +1,9 @@
 package me.fponzi.tlaplusformatter;
 
 import org.junit.jupiter.api.Test;
-import tla2sany.drivers.FrontEndException;
 import tla2sany.st.TreeNode;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,15 +14,15 @@ class TLAPlusFormatterTest {
 
     boolean compareAst(TreeNode root1, TreeNode root2) {
         if (root1.zero() != null) {
-            for (int i = 0; i < root1.zero().length ; i++) {
-                if(!compareAst(root1.zero()[i], root2.zero()[i])) {
+            for (int i = 0; i < root1.zero().length; i++) {
+                if (!compareAst(root1.zero()[i], root2.zero()[i])) {
                     return false;
                 }
             }
         }
         if (root1.one() != null) {
-            for (int i = 0; i < root1.one().length ; i++) {
-                if(!compareAst(root1.one()[i], root2.one()[i])) {
+            for (int i = 0; i < root1.one().length; i++) {
+                if (!compareAst(root1.one()[i], root2.one()[i])) {
                     return false;
                 }
             }
@@ -33,6 +31,7 @@ class TLAPlusFormatterTest {
     }
 
     // TODO: compare AST of pre format and post format.
+
     /**
      * Compares src/test/resources/inputs/name.tla to src/test/resources/outputs/name.tla
      */
@@ -74,7 +73,7 @@ class TLAPlusFormatterTest {
                 fail(actual, e);
             }
 
-        } catch (Exception e){
+        } catch (Exception e) {
             fail(e);
         }
     }
@@ -110,35 +109,63 @@ class TLAPlusFormatterTest {
         testSpecFiles("Slush");
     }
 
+    // creates a temp folder
+    // stores input and expected there
+    // run the formatter do asserts
+    void assertSpecEquals(String expected, String input, String... extendedSpecs) {
+        try {
+            File tmpFolder = Files.createTempDirectory("tlaplusfmt").toFile();
+
+            File specFile = new File(tmpFolder, "Spec.tla");
+            try (java.io.FileWriter writer = new java.io.FileWriter(specFile)) {
+                writer.write(input);
+            }
+            for (String extendedSpec : extendedSpecs) {
+                File extendedSpecFile = new File(tmpFolder, TLAPlusFormatter.getModuleName(extendedSpec) + ".tla");
+                try (java.io.FileWriter writer = new java.io.FileWriter(extendedSpecFile)) {
+                    writer.write(extendedSpec);
+                }
+            }
+            var f = new TLAPlusFormatter(specFile);
+            var received = f.getOutput();
+            assertEquals(expected, received, "Formatted output does not match expected output");
+
+            // override input spec with the formatted spec.
+            try (java.io.FileWriter writer = new java.io.FileWriter(specFile)) {
+                writer.write(expected);
+            }
+            var f2 = new TLAPlusFormatter(specFile);
+
+            assertTrue(compareAst(f.root, f2.root));
+
+        } catch (Exception e) { //  throws FrontEndException, IOException
+            fail(e);
+        }
+    }
+
     @Test
-    void testFormatModule() throws FrontEndException, IOException {
+    void testFormatModule() {
         var spec = "---- MODULE Spec ----\n======";
         var expected = "---- MODULE Spec ----\n\n======\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
 
     @Test
-    void testFormatModule2() throws FrontEndException, IOException {
+    void testFormatModule2() {
         var spec = "---- MODULE Spec ----\n\n======";
         var expected = "---- MODULE Spec ----\n\n======\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
 
     @Test
-    void testFormatExtends() throws FrontEndException, IOException {
+    void testFormatExtends() {
         var spec = "---- MODULE Spec ----\nEXTENDS Naturals\n======";
         var expected = "---- MODULE Spec ----\n\nEXTENDS Naturals\n\n======\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
 
     @Test
-    public void testFormatVariables() throws FrontEndException, IOException {
+    public void testFormatVariables() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "VARIABLES x, y\n" +
                 "=============================================================================\n";
@@ -150,12 +177,11 @@ class TLAPlusFormatterTest {
                 "          y\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
+
     @Test
-    public void testConstants() throws FrontEndException, IOException {
+    public void testConstants() {
         // using Constants
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "CONSTANTS x, y\n" +
@@ -166,12 +192,11 @@ class TLAPlusFormatterTest {
                 "          x,\n" +
                 "          y\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
+
     @Test
-    public void testConstantsParamsIdentDecl() throws FrontEndException, IOException {
+    public void testConstantsParamsIdentDecl() {
         // using Constants
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "CONSTANTS  CalculateHash(_,_,_)\n" +
@@ -181,12 +206,12 @@ class TLAPlusFormatterTest {
                 "CONSTANTS\n" +
                 "          CalculateHash(_,_,_)\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
+
     }
+
     @Test
-    public void testFormatAssume() throws FrontEndException, IOException {
+    public void testFormatAssume() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals\n" +
                 "CONSTANT x\n" +
@@ -202,13 +227,11 @@ class TLAPlusFormatterTest {
                 "       x \\in Nat\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
 
     @Test
-    public void testFormatAssumeConjList() throws FrontEndException, IOException {
+    public void testFormatAssumeConjList() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals\n" +
                 "CONSTANT x\n" +
@@ -226,13 +249,11 @@ class TLAPlusFormatterTest {
                 "       /\\ x > 10\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
 
     @Test
-    void testFormatIfThenElseConjDisjList() throws FrontEndException, IOException {
+    void testFormatIfThenElseConjDisjList() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals\n" +
                 "CONSTANTS\n" +
@@ -279,13 +300,11 @@ class TLAPlusFormatterTest {
                 "               /\\ UNCHANGED timesSwitched\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
 
     @Test
-    public void testLetIn() throws FrontEndException, IOException {
+    public void testLetIn() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "MH == LET x == 1\n" +
                 "          b == 2 IN 10" +
@@ -303,13 +322,11 @@ class TLAPlusFormatterTest {
                 "          10\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
 
     @Test
-    public void testTheorem() throws FrontEndException, IOException {
+    public void testTheorem() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals\n" +
                 "CONSTANT x\n" +
@@ -324,12 +341,11 @@ class TLAPlusFormatterTest {
                 "THEOREM\n" +
                 "        x \\in Nat \\land x > 10\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
+
     @Test
-    public void testTheoremAssign() throws FrontEndException, IOException {
+    public void testTheoremAssign() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "CONSTANT TypeInvariant, Spec\n" +
                 "THEOREM Safety == Spec => TypeInvariant\n\n" +
@@ -342,15 +358,13 @@ class TLAPlusFormatterTest {
                 "         TypeInvariant,\n" +
                 "         Spec\n" +
                 "THEOREM\n" +
-                "        Safety==Spec => TypeInvariant\n"+
+                "        Safety==Spec => TypeInvariant\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
 
     @Test
-    public void testRecursive() throws FrontEndException, IOException {
+    public void testRecursive() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT N\n" +
@@ -363,7 +377,7 @@ class TLAPlusFormatterTest {
                 "             max == IF Len(seq) = 0 THEN wt ELSE Head(seq)\n" +
                 "             S == {x \\in 1..max : /\\ (r-1) =< (wt - x)\n" +
                 "                                  /\\ wt =< x*r          }\n" +
-                "         IN UNION { Partitions(<<x>> \\o seq, wt - x ) : x \\in S }\n"+
+                "         IN UNION { Partitions(<<x>> \\o seq, wt - x ) : x \\in S }\n" +
                 "=============================================================================\n";
 
         var expected = "------------------------------ MODULE Spec -----------------------------\n" +
@@ -399,13 +413,11 @@ class TLAPlusFormatterTest {
                 "                                UNION {Partitions(<<x>> \\o seq, wt - x): x \\in S}\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
 
     @Test
-    public void testSubsetOf() throws FrontEndException, IOException {
+    public void testSubsetOf() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT max\n" +
@@ -422,12 +434,11 @@ class TLAPlusFormatterTest {
                 "     { x \\in 1 .. max: x < max }\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
+
     @Test
-    public void testBoundedQuant() throws FrontEndException, IOException {
+    public void testBoundedQuant() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT max\n" +
@@ -443,13 +454,11 @@ class TLAPlusFormatterTest {
                 "     \\A a \\in 1 .. max: \\E b \\in 1 .. max: a < b\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
 
     @Test
-    public void testDisjList() throws FrontEndException, IOException {
+    public void testDisjList() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT max, wt, r\n" +
@@ -468,16 +477,11 @@ class TLAPlusFormatterTest {
                 "     { x \\in 1 .. max: /\\ (r - 1) =< (wt - x) /\\ wt =< x * r }\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
-        f = new TLAPlusFormatter(received);
-        received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected second output");
+        assertSpecEquals(expected, spec);
     }
 
     @Test
-    public void testFcnApplExcept() throws FrontEndException, IOException {
+    public void testFcnApplExcept() {
         // TODO:
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals, Sequences\n" +
@@ -498,15 +502,14 @@ class TLAPlusFormatterTest {
                 "                                                 ![to]=towers[to] + disk]\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
+
     @Test
-    public void testFnAppl_FnDefinition_IfElse_LetIn() throws FrontEndException, IOException {
+    public void testFnAppl_FnDefinition_IfElse_LetIn() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals, FiniteSets\n" +
-                "R(s,v) == 0 \n"+
+                "R(s,v) == 0 \n" +
                 "L(s,t, S) == LET\n" +
                 "               CR[n \\in Nat ,v \\in S ] ==  IF\n" +
                 "                                                 n = 0\n" +
@@ -515,7 +518,7 @@ class TLAPlusFormatterTest {
                 "                                              ELSE\n" +
                 "                                                  \\/ CR[n - 1,v]\n" +
                 "                                                  \\/ \\E u \\in S : CR[n - 1,u] /\\ R(u, v)\n" +
-    "                        IN\n" +
+                "                        IN\n" +
                 "                            /\\ s \\in S\n" +
                 "                            /\\ t \\in S\n" +
                 "                            /\\ CR[Cardinality(S) - 1,t]\n" +
@@ -542,16 +545,15 @@ class TLAPlusFormatterTest {
                 "                  /\\ CR[Cardinality(S) - 1, t]\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
+
     @Test
-    public void testBound() throws FrontEndException, IOException {
+    public void testBound() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT a\n" +
-                "Support(x) == 0\n"+
+                "Support(x) == 0\n" +
                 "R ** T == LET SR == Support(R)\n" +
                 "              ST == Support(T)\n" +
                 "          IN  {<<r, t>> \\in SR \\X ST :\n" +
@@ -576,20 +578,18 @@ class TLAPlusFormatterTest {
                 "              { <<r,t>> \\in SR \\X ST: \\E s \\in SR \\cap ST: (<<r, s>> \\in R) /\\ (<<s, t>> \\in T) }\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
 
     @Test
-    public void testPrefixEpr() throws FrontEndException, IOException {
+    public void testPrefixEpr() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT Proc, pc\n" +
                 "AgrrLtl ==\n" +
                 "  [](~(\\E i \\in Proc, j \\in Proc :  pc[i] = \"COMMIT\" /\\ pc[j] = \"ABORT\"))\n\n" +
                 "=============================================================================\n";
-        var expected =  "------------------------------ MODULE Spec -----------------------------\n" +
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
                 "\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "\n" +
@@ -600,13 +600,11 @@ class TLAPlusFormatterTest {
                 "           [](~(\\E i \\in Proc, j \\in Proc: pc[i] = \"COMMIT\" /\\ pc[j] = \"ABORT\"))\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
 
     @Test
-    public void testInstance() throws FrontEndException, IOException {
+    public void testInstance() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT a\n" +
@@ -622,18 +620,16 @@ class TLAPlusFormatterTest {
                 "         a\n" +
                 "N ==\n" +
                 "     INSTANCE Naturals\n" +
-                "\n"+
+                "\n" +
                 "UndefinedHashesExist ==\n" +
                 "                        N!Nat\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
 
     @Test
-    public void testInstanceWith() throws FrontEndException, IOException {
+    public void testInstanceWith() {
 
         var spec2 = "------------------------------ MODULE Spec2 -----------------------------\n" +
                 "CONSTANT pc, vroot\n" +
@@ -653,22 +649,11 @@ class TLAPlusFormatterTest {
                 "\n" +
                 "=============================================================================\n";
 
-        File tmpFolder = Files.createTempDirectory("sanyimp").toFile();
-        File spec2File = new File(tmpFolder, "Spec2.tla");
-        File specFile = new File(tmpFolder, "Spec.tla");
-        try (java.io.FileWriter writer = new java.io.FileWriter(specFile)) {
-            writer.write(spec);
-        }
-        try (java.io.FileWriter writer = new java.io.FileWriter(spec2File)) {
-            writer.write(spec2);
-        }
-
-        var f = new TLAPlusFormatter(specFile);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec, spec2);
     }
+
     @Test
-    public void testSetOfAllMultipleQuantifiers() throws FrontEndException, IOException {
+    public void testSetOfAllMultipleQuantifiers() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT a\n" +
@@ -686,12 +671,11 @@ class TLAPlusFormatterTest {
                 "                       {a: s \\in S, t \\in T}\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
+
     @Test
-    public void testOdot() throws FrontEndException, IOException {
+    public void testOdot() {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Integers\n" +
                 "a / b     == IF b /= 0 THEN <<a, b>> ELSE CHOOSE x \\in {} : TRUE\n" +
@@ -713,16 +697,13 @@ class TLAPlusFormatterTest {
                 "             (a[1] * b[1]) / (a[2] * b[2])\n" +
                 "\n" +
                 "=============================================================================\n";
-        var f = new TLAPlusFormatter(spec);
-        var received = f.getOutput();
-        assertEquals(expected, received, "Formatted output does not match expected output");
+        assertSpecEquals(expected, spec);
     }
     // TODO: test choose, also test:
     /* CHOOSE bc \in (Ballots \X Commands): /\ \E pr \in prs: /\ pr.votes[s].bal = bc[1]
                                                                                               /\ pr.votes[s].cmd = bc[2]
                                                                             /\ \A pr \in prs: pr.votes[s].bal =< bc[1]
      */
-
 
 
 }

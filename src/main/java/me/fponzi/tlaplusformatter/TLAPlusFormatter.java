@@ -59,7 +59,7 @@ public class TLAPlusFormatter {
         this(storeToTmp(spec));
     }
 
-    private static String getModuleName(String spec) {
+    static String getModuleName(String spec) {
         String regex = "----\\s?MODULE\\s+(\\w+)\\s?----";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(spec);
