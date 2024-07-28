@@ -486,18 +486,17 @@ public class TLAPlusFormatter {
         f.space().append(z[6]); // }
         f.decreaseLevel();
     }
-
+    // Example: RecordCombine(S, T) ==\n" +
+    //                "   {rc(s, t):s \\in S, t \\in T}
     public void printSetOfAll(TreeNode node) {
         var z = node.zero();
-        var lengthCheckpoint = f.out.length();
-        f.append(z[0]); // {
-        basePrintTree(z[1]); // OpApplication
-        f.append(z[2]).space(); // :
-        var indent = f.out.length() - lengthCheckpoint;
-        f.increaseIndent(indent);
-        basePrintTree(z[3]); // QuantBound
-        f.append(z[4]); // }
-        f.decreaseIndent(indent);
+        for(int i = 0; i < z.length; i++){
+            basePrintTree(z[i]);
+            if(z[i].getImage().equals(",")) f.space();
+            if(z[i].getImage().equals(":")) f.increaseLevel();
+            if(z[i].getImage().equals(":")) f.space();
+        }
+        f.decreaseLevel();
     }
 
     // x \in S

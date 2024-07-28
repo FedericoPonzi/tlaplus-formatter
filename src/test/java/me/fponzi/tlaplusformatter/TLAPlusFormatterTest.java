@@ -638,23 +638,14 @@ class TLAPlusFormatterTest {
         var received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
-    //@Test
-    public void testSubset() throws FrontEndException, IOException {
+    @Test
+    public void testSetOfAllMultipleQuantifiers() throws FrontEndException, IOException {
         var spec = "------------------------------ MODULE Spec -----------------------------\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT a\n" +
                 "\n" +
                 " RecordCombine(S, T) ==\n" +
-                "   (*************************************************************************)\n" +
-                "   (* If S and T are sets of records, then this equals the set of all       *)\n" +
-                "   (* records rc(s,t) with s in S and t in T, where rc(s,t) is the record   *)\n" +
-                "   (* obtained by \"merging\" s and t--that is, forming the record whose set  *)\n" +
-                "   (* of fields is the union of the sets of fields of the two records.      *)\n" +
-                "   (*************************************************************************)\n" +
-                "   LET rc(s, t) ==\n" +
-                "        [i \\in (DOMAIN s) \\cup (DOMAIN t) |-> IF i \\in DOMAIN s THEN s[i]\n" +
-                "                                                                ELSE t[i]]\n" +
-                "   IN  {rc(s, t) : s \\in S, t \\in T}" +
+                "   {a : s \\in S, t \\in T}" +
                 "=============================================================================\n";
         var expected = "------------------------------ MODULE Spec -----------------------------\n" +
                 "\n" +
@@ -663,22 +654,7 @@ class TLAPlusFormatterTest {
                 "CONSTANT\n" +
                 "         a\n" +
                 "RecordCombine(S, T) ==\n" +
-                "                       (*************************************************************************)\n" +
-                "                       (* If S and T are sets of records, then this equals the set of all       *)\n" +
-                "                       (* records rc(s,t) with s in S and t in T, where rc(s,t) is the record   *)\n" +
-                "                       (* obtained by \"merging\" s and t--that is, forming the record whose set  *)\n" +
-                "                       (* of fields is the union of the sets of fields of the two records.      *)\n" +
-                "                       (*************************************************************************)\n" +
-                "                       LET\n" +
-                "                           rc(s, t) ==\n" +
-                "                                       [i \\in (DOMAIN s) \\cup (DOMAIN t)|-> IF\n" +
-                "                                                                                 i \\in DOMAIN s\n" +
-                "                                                                            THEN\n" +
-                "                                                                                 s[i]\n" +
-                "                                                                            ELSE\n" +
-                "                                                                                 t[i]]\n" +
-                "                       IN\n" +
-                "                           {rc(s, t): s \\in S,\n" +
+                "                       {a: s \\in S, t \\in T}\n" +
                 "\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
