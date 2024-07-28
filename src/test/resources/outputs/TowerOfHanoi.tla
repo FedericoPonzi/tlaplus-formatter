@@ -77,7 +77,7 @@ Init ==
 (* TRUE iff the tower is empty                                             *)
 (***************************************************************************)
 IsEmptyTower(tower) ==
-                      tower = 0
+                       tower = 0
 
 (***************************************************************************)
 (* TRUE iff the disk is located on the given tower                         *)
@@ -97,8 +97,8 @@ IsSmallestDisk(tower, disk) ==
 (* TRUE iff disk can be moved off of tower                                 *)
 (***************************************************************************)
 CanMoveOff(tower, disk) ==
-                          /\ IsOnTower(tower, disk)
-                          /\ IsSmallestDisk(tower, disk)
+                           /\ IsOnTower(tower, disk)
+                           /\ IsSmallestDisk(tower, disk)
 
 (***************************************************************************)
 (* TRUE iff disk can be moved to the tower                                 *)

@@ -537,14 +537,14 @@ class TLAPlusFormatterTest {
                 "Support(x) ==\n" +
                 "              0\n" +
                 "\n" +
-                "R**T ==\n" +
-                "        LET\n" +
-                "            SR ==\n" +
-                "                  Support(R)\n" +
-                "            ST ==\n" +
-                "                  Support(T)\n" +
-                "        IN\n" +
-                "            { <<r,t>> \\in SR \\X ST: \\E s \\in SR \\cap ST: (<<r, s>> \\in R) /\\ (<<s, t>> \\in T) }\n" +
+                "R ** T ==\n" +
+                "          LET\n" +
+                "              SR ==\n" +
+                "                    Support(R)\n" +
+                "              ST ==\n" +
+                "                    Support(T)\n" +
+                "          IN\n" +
+                "              { <<r,t>> \\in SR \\X ST: \\E s \\in SR \\cap ST: (<<r, s>> \\in R) /\\ (<<s, t>> \\in T) }\n" +
                 "\n" +
                 "=============================================================================\n";
         var f = new TLAPlusFormatter(spec);
@@ -661,7 +661,33 @@ class TLAPlusFormatterTest {
         var received = f.getOutput();
         assertEquals(expected, received, "Formatted output does not match expected output");
     }
-
+    @Test
+    public void testOdot() throws FrontEndException, IOException {
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "EXTENDS Integers\n" +
+                "a / b     == IF b /= 0 THEN <<a, b>> ELSE CHOOSE x \\in {} : TRUE\n" +
+                "a \\odot b == (a[1]*b[1]) / (a[2]*b[2])\n\n" +
+                "=============================================================================\n";
+        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "\n" +
+                "EXTENDS Integers\n" +
+                "\n" +
+                "a / b ==\n" +
+                "         IF\n" +
+                "              b /= 0\n" +
+                "         THEN\n" +
+                "              <<a, b>>\n" +
+                "         ELSE\n" +
+                "              CHOOSE x \\in {}: TRUE\n" +
+                "\n" +
+                "a \\odot b ==\n" +
+                "             (a[1] * b[1]) / (a[2] * b[2])\n" +
+                "\n" +
+                "=============================================================================\n";
+        var f = new TLAPlusFormatter(spec);
+        var received = f.getOutput();
+        assertEquals(expected, received, "Formatted output does not match expected output");
+    }
     // TODO: test choose, also test:
     /* CHOOSE bc \in (Ballots \X Commands): /\ \E pr \in prs: /\ pr.votes[s].bal = bc[1]
                                                                                               /\ pr.votes[s].cmd = bc[2]

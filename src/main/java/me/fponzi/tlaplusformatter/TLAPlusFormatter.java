@@ -22,6 +22,8 @@ import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -251,23 +253,22 @@ public class TLAPlusFormatter {
     }
 
     // S == 1 or S(x) == x + 1
+    // or a \odot b == c
+    // node.one()[0].zero()[0] is (usually) the identifier.
+    // node.one()[1] has the == sign.
     private void printOperatorDefinition(TreeNode node) {
-        var lengthCheckpoint = f.out.length();
-        // node.one()[0].zero()[0] is the identifier.
-        // it might be followed by parameters.
-        for (var id : node.one()[0].zero()) {
-            basePrintTree(id);
-            for (var precomment : id.getPreComments()) {
-                lengthCheckpoint += precomment.length() + 1; // plus new line
-            }
-            if (id.getImage().equals(",")) f.space();
+        var o = node.one();
+        for (int i = 0; i < o[0].zero().length; i++) {
+            var ch = node.one()[0].zero()[i];
+            basePrintTree(ch);
+            if (i + 1 < o[0].zero().length && !(List.of(",", "(", ")").contains(o[0].zero()[i + 1].getImage())) && !Objects.equals("(", ch.getImage())) {
+                f.space();
+            } else if (ch.getImage().equals(",")) f.space();
         }
         f.space().append(node.one()[1]); // ==
-        var indentSpace = f.out.length() - lengthCheckpoint + 1; // 1 in this way the next line gets offsetted by 1 "space"
-        f.increaseIndent(indentSpace)
-                .nl();
+        f.increaseLevel().nl();
         basePrintTree(node.one()[2]);
-        f.decreaseIndent(indentSpace);
+        f.decreaseLevel();
     }
 
 
@@ -486,15 +487,16 @@ public class TLAPlusFormatter {
         f.space().append(z[6]); // }
         f.decreaseLevel();
     }
+
     // Example: RecordCombine(S, T) ==\n" +
     //                "   {rc(s, t):s \\in S, t \\in T}
     public void printSetOfAll(TreeNode node) {
         var z = node.zero();
-        for(int i = 0; i < z.length; i++){
+        for (int i = 0; i < z.length; i++) {
             basePrintTree(z[i]);
-            if(z[i].getImage().equals(",")) f.space();
-            if(z[i].getImage().equals(":")) f.increaseLevel();
-            if(z[i].getImage().equals(":")) f.space();
+            if (z[i].getImage().equals(",")) f.space();
+            if (z[i].getImage().equals(":")) f.increaseLevel();
+            if (z[i].getImage().equals(":")) f.space();
         }
         f.decreaseLevel();
     }
@@ -705,7 +707,7 @@ public class TLAPlusFormatter {
         f.append(node.zero()[0]); // INSTANCE
         f.space();
         basePrintTree(node.zero()[1]); // module name
-        if(node.zero().length == 2) {
+        if (node.zero().length == 2) {
             return;
         }
         f.space();

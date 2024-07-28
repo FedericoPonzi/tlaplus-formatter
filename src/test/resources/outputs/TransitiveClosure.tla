@@ -73,14 +73,14 @@ TC1(R) ==
 (* efficiently, let's look at the closure operation more algebraically.    *)
 (* Let's define the composition of two relations R and T as follows.       *)
 (***************************************************************************)
-R**T ==
-        LET
-            SR ==
-                  Support(R)
-            ST ==
-                  Support(T)
-        IN
-            { <<r,t>> \in SR \X ST: \E s \in SR \cap ST: (<<r, s>> \in R) /\ (<<s, t>> \in T) }
+R ** T ==
+          LET
+              SR ==
+                    Support(R)
+              ST ==
+                    Support(T)
+          IN
+              { <<r,t>> \in SR \X ST: \E s \in SR \cap ST: (<<r, s>> \in R) /\ (<<s, t>> \in T) }
 
 (***************************************************************************)
 (* We can then define the closure of R to equal                            *)
