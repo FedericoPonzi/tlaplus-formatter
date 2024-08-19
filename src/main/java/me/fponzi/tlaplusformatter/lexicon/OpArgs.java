@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
-
 public class OpArgs extends TreeNode {
     public static final String IMAGE = "N_OpArgs";
     public static final int KIND = 388;
@@ -23,7 +21,7 @@ public class OpArgs extends TreeNode {
         var z = this.zero();
         f.append(z[0]);
         for (int i = 1; i < z.length - 1; i++) {
-            basePrintTree(z[i], f);
+            z[i].format(f);
             if (i % 2 == 0) { // add space after a comma
                 f.space();
             }

@@ -1,13 +1,11 @@
 package me.fponzi.tlaplusformatter.lexicon;
 
 import me.fponzi.tlaplusformatter.FormattedSpec;
+import me.fponzi.tlaplusformatter.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import me.fponzi.tlaplusformatter.TreeNode;
 
 import java.lang.invoke.MethodHandles;
-
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
 
 // Example: a \/ b
 public class InfixExpr extends TreeNode {
@@ -21,12 +19,12 @@ public class InfixExpr extends TreeNode {
 
     @Override
     public void format(FormattedSpec f) {
-        basePrintTree(this.zero()[0], f );
+        this.zero()[0].format(f );
         f.space();
-        basePrintTree(this.zero()[1], f);
+        this.zero()[1].format(f);
         f.increaseLevel();
         f.space();
-        basePrintTree(this.zero()[2], f);
+        this.zero()[2].format(f);
         f.decreaseLevel();
     }
 

@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
-
 // x \in S
 public class QuantBound extends TreeNode {
     public static final String IMAGE = "N_QuantBound";
@@ -33,7 +31,7 @@ public class QuantBound extends TreeNode {
         }
         f.space().append(z[i]).space(); // \in
         i++;
-        basePrintTree(z[i], f); // S
+        z[i].format(f); // S
     }
 
 

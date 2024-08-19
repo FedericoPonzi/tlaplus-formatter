@@ -1,13 +1,11 @@
 package me.fponzi.tlaplusformatter.lexicon;
 
 import me.fponzi.tlaplusformatter.FormattedSpec;
+import me.fponzi.tlaplusformatter.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import me.fponzi.tlaplusformatter.TreeNode;
 
 import java.lang.invoke.MethodHandles;
-
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
 
 public class IfThenElse extends TreeNode {
     public static final String IMAGE = "N_IfThenElse";
@@ -32,18 +30,18 @@ public class IfThenElse extends TreeNode {
         f.append(tokenIF)
                 .increaseIndent(indet)
                 .nl();
-        basePrintTree(tokenIfBody, f); // cond
+        tokenIfBody.format(f); // cond
         f.decreaseIndent(indet).nl()
                 .append(tokenThen)
                 .increaseIndent(indet)
                 .nl();
-        basePrintTree(tokenThenBody, f);
+        tokenThenBody.format(f);
 
         f.decreaseIndent(indet).nl()
                 .append(tokenElse)
                 .increaseIndent(indet)
                 .nl();
-        basePrintTree(tokenElseBody, f);
+        tokenElseBody.format(f);
 
         f.decreaseIndent(indet);
 

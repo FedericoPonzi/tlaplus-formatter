@@ -1,7 +1,6 @@
 package me.fponzi.tlaplusformatter.lexicon;
 
 import me.fponzi.tlaplusformatter.FormattedSpec;
-import me.fponzi.tlaplusformatter.TLAPlusFormatter;
 import me.fponzi.tlaplusformatter.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +22,7 @@ public class Tuple extends TreeNode {
         var len = z.length;
         f.append(z[0]); // <<
         for (int i = 1; i < len - 1; i++) {
-            TLAPlusFormatter.basePrintTree(this.zero()[i], f);
+            this.zero()[i].format(f);
             if (i < this.zero().length - 2 && i % 2 == 0) {
                 f.space(); // ,
             }

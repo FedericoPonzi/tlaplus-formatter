@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
-
 // Example: INSTANCE N WITH x<-a, y<-b
 // Example: INSTANCE N
 public class NonLocalInstance extends TreeNode {
@@ -24,7 +22,7 @@ public class NonLocalInstance extends TreeNode {
     public void format(FormattedSpec f) {
         f.append(this.zero()[0]); // INSTANCE
         f.space();
-        basePrintTree(this.zero()[1], f); // module name
+        this.zero()[1].format(f); // module name
         if (this.zero().length == 2) {
             return;
         }
@@ -33,7 +31,7 @@ public class NonLocalInstance extends TreeNode {
         f.increaseLevel().space();
         // module parameters now, they are N_Substitution.
         for (int i = 3; i < this.zero().length; i++) {
-            basePrintTree(this.zero()[i], f);
+            this.zero()[i].format(f);
             if (this.zero()[i].getImage().equals(",")) {
                 f.nl();
             }

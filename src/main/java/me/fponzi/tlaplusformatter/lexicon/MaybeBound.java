@@ -1,13 +1,11 @@
 package me.fponzi.tlaplusformatter.lexicon;
 
 import me.fponzi.tlaplusformatter.FormattedSpec;
+import me.fponzi.tlaplusformatter.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import me.fponzi.tlaplusformatter.TreeNode;
 
 import java.lang.invoke.MethodHandles;
-
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
 
 // Example: "\in S" from TowerOfHanoi test.
 public class MaybeBound extends TreeNode {
@@ -25,7 +23,7 @@ public class MaybeBound extends TreeNode {
         // Example: CHOOSE c : c \notin Color, it will create an empty MaybeBound
         if (z == null) return;
         f.append(z[0]).space();
-        basePrintTree(z[1], f);
+        z[1].format(f);
     }
 
 

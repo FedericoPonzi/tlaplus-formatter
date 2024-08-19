@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
-
 // CHOOSE e \in S: TRUE
 public class Choose extends TreeNode {
     public static final String IMAGE = "N_UnBoundedOrBoundedChoose";
@@ -24,11 +22,11 @@ public class Choose extends TreeNode {
         var z = this.zero();
         f.append(z[0]).space(); // choose
         f.append(z[1]).space(); // var
-        basePrintTree(z[2], f); // maybeBound
+        z[2].format(f); // maybeBound
         f.append(z[3]); // :
         f.increaseLevel();
         f.space();
-        basePrintTree(z[4], f); // condition
+        z[4].format(f); // condition
         f.decreaseLevel();
     }
 

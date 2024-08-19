@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
-
 public class Recursive extends TreeNode {
     public static final String IMAGE = "N_Recursive";
     public static final int KIND = 431;
@@ -23,7 +21,7 @@ public class Recursive extends TreeNode {
         var z = this.zero();
         f.append(z[0]).space(); // RECURSIVE
         for (int i = 1; i < z.length; i++) {
-            basePrintTree(z[i], f);
+            z[i].format(f);
         }
         f.nl();
     }

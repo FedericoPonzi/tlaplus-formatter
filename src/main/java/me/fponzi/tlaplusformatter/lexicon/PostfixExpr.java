@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
-
 public class PostfixExpr extends TreeNode {
     public static final String IMAGE = "N_PostfixExpr";
     public static final int KIND = 395;
@@ -20,8 +18,8 @@ public class PostfixExpr extends TreeNode {
 
     @Override
     public void format(FormattedSpec f) {
-        basePrintTree(this.zero()[0], f);
-        basePrintTree(this.zero()[1], f);
+        this.zero()[0].format(f);
+        this.zero()[1].format(f);
     }
 
 }

@@ -1,13 +1,11 @@
 package me.fponzi.tlaplusformatter.lexicon;
 
 import me.fponzi.tlaplusformatter.FormattedSpec;
+import me.fponzi.tlaplusformatter.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import me.fponzi.tlaplusformatter.TreeNode;
 
 import java.lang.invoke.MethodHandles;
-
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
 
 // Example: RecordCombine(S, T) ==\n" +
 //                "   {rc(s, t):s \\in S, t \\in T}
@@ -24,7 +22,7 @@ public class SetOfAll extends TreeNode {
     public void format(FormattedSpec f) {
         var z = this.zero();
         for (TreeNode treeNode : z) {
-            basePrintTree(treeNode, f);
+            treeNode.format(f);
             if (treeNode.getImage().equals(",")) f.space();
             if (treeNode.getImage().equals(":")) f.increaseLevel();
             if (treeNode.getImage().equals(":")) f.space();

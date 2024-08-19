@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
-
 // A == Head(s) - it's Head(s).
 public class OpApplication extends TreeNode {
     public static final String IMAGE = "N_OpApplication";
@@ -22,7 +20,7 @@ public class OpApplication extends TreeNode {
     @Override
     public void format(FormattedSpec f) {
         var z = this.zero();
-        basePrintTree(z[0], f); // Head - GeneralId
-        basePrintTree(z[1], f); // N_OpArgs
+        z[0].format(f); // Head - GeneralId
+        z[1].format(f); // N_OpArgs
     }
 }

@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
-
 // Example:
 // CR[n \in Nat ,v \in S ]==IF n = 0 THEN R(s, v) ELSE
 //   \/ CR[n - 1,
@@ -31,13 +29,13 @@ public class FunctionDefinition extends TreeNode {
             if (i % 2 == 1) { // comma
                 f.append(o[i]).space();
             } else {
-                basePrintTree(o[i], f);
+                o[i].format(f);
             }
         }
         f.append(o[o.length - 2]) // ==
                 .increaseLevel()
                 .space();
-        basePrintTree(o[o.length - 1], f); // Definition
+        o[o.length - 1].format(f); // Definition
         f.decreaseLevel();
 
     }

@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
-
 public class Substitution extends TreeNode {
     public static final String IMAGE = "N_Substitution";
     public static final int KIND = 420;
@@ -21,11 +19,11 @@ public class Substitution extends TreeNode {
     @Override
     public void format(FormattedSpec f) {
         var z = this.zero();
-        basePrintTree(z[0], f); // param
+        z[0].format(f); // param
         f.space();
         f.append(z[1]); // <-
         f.space();
-        basePrintTree(z[2], f); // expr
+        z[2].format(f); // expr
 
     }
 }

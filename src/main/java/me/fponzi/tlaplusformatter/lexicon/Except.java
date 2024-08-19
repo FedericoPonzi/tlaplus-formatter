@@ -1,13 +1,11 @@
 package me.fponzi.tlaplusformatter.lexicon;
 
 import me.fponzi.tlaplusformatter.FormattedSpec;
+import me.fponzi.tlaplusformatter.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import me.fponzi.tlaplusformatter.TreeNode;
 
 import java.lang.invoke.MethodHandles;
-
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
 
 public class Except extends TreeNode {
     public static final String IMAGE = "N_Except";
@@ -23,12 +21,12 @@ public class Except extends TreeNode {
         int lengthCheckpoint = f.out.length();
         var z = this.zero();
         f.append(z[0]); // [
-        basePrintTree(z[1], f); // generalId
+        z[1].format(f); // generalId
         f.space().append(z[2]).space(); // EXCEPT
         int indentSpace = f.out.length() - lengthCheckpoint;
         f.increaseIndent(indentSpace);
         for (int i = 3; i < z.length - 1; i++) {
-            basePrintTree(z[i], f);
+            z[i].format( f);
             if (i % 2 == 0) { // a comma
                 f.nl();
             }

@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
-
 // Examples: towers[from] or CR[n - 1, v]
 public class FcnAppl extends TreeNode {
     public static final String IMAGE = "N_FcnAppl";
@@ -21,14 +19,14 @@ public class FcnAppl extends TreeNode {
 
     @Override
     public void format(FormattedSpec f) {
-        basePrintTree(this.zero()[0], f); // generalId.
+        this.zero()[0].format(f); // generalId.
         var o = this.one();
         f.append(o[0]); // [
         for (int i = 1; i < o.length - 1; i++) {
             if (i % 2 == 0) { // comma
                 f.append(o[i]).space();
             } else {
-                basePrintTree(o[i], f);
+                o[i].format(f);
             }
         }
         f.append(o[o.length - 1]); // ]

@@ -1,7 +1,6 @@
 package me.fponzi.tlaplusformatter.lexicon;
 
 import me.fponzi.tlaplusformatter.FormattedSpec;
-import me.fponzi.tlaplusformatter.TLAPlusFormatter;
 import me.fponzi.tlaplusformatter.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +22,7 @@ public class Theorem  extends TreeNode {
         assert theoremKeyword.getImage().equals("THEOREM") && theoremKeyword.getKind() == 66;
         f.append(theoremKeyword).increaseLevel().nl();
         for (int i = 1; i < this.zero().length; i++) {
-            TLAPlusFormatter.basePrintTree(this.zero()[i], f);
+            this.zero()[i].format(f);
         }
         f.decreaseLevel().nl();
     }

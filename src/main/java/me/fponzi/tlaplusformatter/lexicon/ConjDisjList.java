@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
-
 public abstract class ConjDisjList extends TreeNode {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     public ConjDisjList(tla2sany.st.TreeNode node) {
@@ -31,7 +29,7 @@ public abstract class ConjDisjList extends TreeNode {
         LOG.debug("Found {}", node.getImage());
         f.append(node.zero()[0]); // "/\ "
         f.increaseLevel().space();
-        basePrintTree(node.zero()[1], f);
+        node.zero()[1].format(f);
         f.decreaseLevel();
     }
 

@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
-
 // Exmaple: N == INSTANCE B
 // Example: N == INSTANCE Reachable WITH vroot<-vrootBar, pc<-pcBar TODO
 public class ModuleDefinition extends TreeNode {
@@ -22,10 +20,10 @@ public class ModuleDefinition extends TreeNode {
 
     @Override
     public void format(FormattedSpec f) {
-        basePrintTree(this.one()[0], f); // IdentLHS
+        this.one()[0].format(f); // IdentLHS
         f.space().append(this.one()[1]); // ==
         f.increaseLevel().nl();
-        basePrintTree(this.one()[2], f); // N_NonLocalInstance.
+        this.one()[2].format(f); // N_NonLocalInstance.
         f.decreaseLevel().nl().nl();
     }
 

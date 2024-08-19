@@ -1,7 +1,6 @@
 package me.fponzi.tlaplusformatter.lexicon;
 
 import me.fponzi.tlaplusformatter.FormattedSpec;
-import me.fponzi.tlaplusformatter.TLAPlusFormatter;
 import me.fponzi.tlaplusformatter.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,17 +24,17 @@ public class Assume extends TreeNode {
         f.append(one[0])
                 .increaseLevel()
                 .nl();
-        TLAPlusFormatter.basePrintTree(one[1], f);
+        one[1].format(f);
         // TODO: additional isolated test
         // I think this is a bug in SANY or something unexpected on the parsing output side.
         if (one.length > 3 && one[2].getImage().equals("==")) {
             //it's an op declaration.
             // one[1] has the id
             f.space();
-            TLAPlusFormatter.basePrintTree(one[2], f); // ==
+            one[2].format(f); // ==
             f.increaseLevel();
             f.nl();
-            TLAPlusFormatter.basePrintTree(one[3], f); // content
+            one[3].format(f); // content
             f.decreaseLevel();
         }
         f.decreaseLevel()

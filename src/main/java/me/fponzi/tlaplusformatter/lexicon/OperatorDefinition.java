@@ -1,7 +1,6 @@
 package me.fponzi.tlaplusformatter.lexicon;
 
 import me.fponzi.tlaplusformatter.FormattedSpec;
-import me.fponzi.tlaplusformatter.TLAPlusFormatter;
 import me.fponzi.tlaplusformatter.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +27,14 @@ public class OperatorDefinition extends TreeNode {
         var o = this.one();
         for (int i = 0; i < o[0].zero().length; i++) {
             var ch = this.one()[0].zero()[i];
-            TLAPlusFormatter.basePrintTree(ch, f);
+            ch.format(f);
             if (i + 1 < o[0].zero().length && !(List.of(",", "(", ")").contains(o[0].zero()[i + 1].getImage())) && !Objects.equals("(", ch.getImage())) {
                 f.space();
             } else if (ch.getImage().equals(",")) f.space();
         }
         f.space().append(this.one()[1]); // ==
         f.increaseLevel().nl();
-        TLAPlusFormatter.basePrintTree(this.one()[2], f);
+        this.one()[2].format(f);
         f.decreaseLevel();
     }
 }

@@ -1,13 +1,11 @@
 package me.fponzi.tlaplusformatter.lexicon;
 
 import me.fponzi.tlaplusformatter.FormattedSpec;
+import me.fponzi.tlaplusformatter.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import me.fponzi.tlaplusformatter.TreeNode;
 
 import java.lang.invoke.MethodHandles;
-
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
 
 // \E coef \in [1..N -> -1..1] or \A QuantBound : ConjList.
 public class BoundedQuant extends TreeNode {
@@ -24,7 +22,7 @@ public class BoundedQuant extends TreeNode {
         var z = this.zero();
         f.append(z[0]).space(); // \E
         for (int i = 1; i < z.length - 2; i++) {
-            basePrintTree(z[i], f); // QuantBound
+            z[i].format(f); // QuantBound
             if (i % 2 == 0) { // ,
                 f.space();
             }
@@ -32,7 +30,7 @@ public class BoundedQuant extends TreeNode {
         f.append(z[z.length - 2]); // :
         f.increaseLevel();
         f.space();
-        basePrintTree(z[z.length - 1], f); // prop
+        z[z.length - 1].format(f); // prop
         f.decreaseLevel();
 
     }

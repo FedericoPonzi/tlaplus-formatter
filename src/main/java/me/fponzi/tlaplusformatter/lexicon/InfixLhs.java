@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
-
 // Example: R ** T in
 // R ** T == LET SR == Support(x)....
 public class InfixLhs extends TreeNode {
@@ -23,11 +21,11 @@ public class InfixLhs extends TreeNode {
 
     @Override
     public void format(FormattedSpec f) {
-            basePrintTree(this.zero()[0], f);
+            this.zero()[0].format(f);
             f.space();
-            basePrintTree(this.zero()[1], f);
+            this.zero()[1].format(f);
             f.space();
-            basePrintTree(this.zero()[2], f);
+            this.zero()[2].format(f);
 
     }
 

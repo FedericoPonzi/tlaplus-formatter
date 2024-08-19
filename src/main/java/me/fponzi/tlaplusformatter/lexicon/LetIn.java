@@ -7,8 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-import static me.fponzi.tlaplusformatter.TLAPlusFormatter.basePrintTree;
-
 public class LetIn extends TreeNode {
     public static final String IMAGE = "N_LetIn";
     public static final int KIND = 380;
@@ -24,7 +22,7 @@ public class LetIn extends TreeNode {
                 increaseIndent(4).nl(); // LET
         for (int i = 0; i < this.zero()[1].zero().length; i++) {
             var child = this.zero()[1].zero()[i];
-            basePrintTree(child, f);
+            child.format(f);
             if (i < this.zero()[1].zero().length - 1
                     && !child.getImage().equals("N_Recursive") // RECURSIVE prints its own new line.
             ) {
@@ -34,7 +32,7 @@ public class LetIn extends TreeNode {
         f.decreaseIndent(4).nl();
         f.append(this.zero()[2]); // IN
         f.increaseIndent(4).nl();
-        basePrintTree(this.zero()[3], f); // body
+        this.zero()[3].format(f); // body
         f.decreaseIndent(4);
     }
 }
