@@ -12,11 +12,9 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 public class TLAPlusFormatter {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -111,78 +109,9 @@ public class TLAPlusFormatter {
         f.append(extraSections[1]);
     }
 
-    private void printBody(TreeNode node) {
-        if (node.zero() == null) {
-            // no body defined in this module.
-            return;
-        }
-        for (var child : node.zero()) {
-            if (child.getImage().equals("N_OperatorDefinition") && child.getKind() == 389) {
-                FactoryRegistry.createInstance(child.getKind(), child.node).format(f);
-                f.nl().nl();
-            } else if (child.getImage().equals("N_FunctionDefinition")) {
-                FactoryRegistry.createInstance(child.getKind(), child.node).format(f);
-                f.nl();
-            } else {
-                basePrintTree(child, this.f);
-            }
-        }
-    }
-
     public void printTree(TreeNode node) {
         for (var child : node.zero()) {
-            if (child.getImage().equals("N_Body") && child.getKind() == 334) {
-                printBody(child);
-            } else {
-                basePrintTree(child, this.f);
-            }
-        }
-    }
-
-
-    public static void basePrintTree(TreeNode node, FormattedSpec f) {
-        if (node == null) {
-            return;
-        }
-        if (Stream.of("EXCEPT", "UNCHANGED", "UNION", "SUBSET", "DOMAIN", "INSTANCE").anyMatch(p -> node.getImage().equals(p))) {
-            // todo: handle the rest and this should fall in the default case below - print string and space
-            f.append(node).space();
-            return;
-        } else if (node.getImage().equals("N_GeneralId") || node.getImage().equals("N_GenPostfixOp") || node.getImage().equals("N_GenInfixOp")) {
-            // this might have as image an identifier like "Nat"
-            // but also an idPrefix in pos [0] and identifier in [1], like for !Nat.
-            // In this case it's easier to just delegate to basePrintTree
-            for (var ch : node.zero()) {
-                basePrintTree(ch, f);
-            }
-            return;
-        } else if (List.of(
-                423, 431, 419, 413, 408,
-                335, 424, 381, 387, 388,
-                352, 346, 356, 351, 336,
-                353, 399, 363, 376, 420,
-                349, 372, 426, 35, 332,
-                392, 341, 344, 369, 380,
-                389, 422, 371, 395, 383,
-                350, 345, 333, 35).contains(node.getKind())) {
-            FactoryRegistry.createInstance(node.getKind(), node.node).format(f);
-            return;
-        }
-
-        LOG.debug("Unhandled: {}", node.getImage());
-
-        if (!node.getImage().startsWith("N_")) {
-            f.append(node);
-        }
-        if (node.zero() != null) {
-            for (var child : node.zero()) {
-                basePrintTree(child, f);
-            }
-        }
-        if (node.one() != null) {
-            for (var child : node.one()) {
-                basePrintTree(child, f);
-            }
+            child.format(this.f);
         }
     }
 }

@@ -36,7 +36,6 @@ public class FactoryRegistry {
     public static TreeNode createInstance(int kindNumber, tla2sany.st.TreeNode node) {
         TreeNodeFactory<? extends TreeNode> factory = registry.get(kindNumber);
         if (factory != null) {
-            LOG.debug("Found facotry: {}", factory.createInstance(node).getClass().getSimpleName());
             return factory.createInstance(node);
         } else {
             //LOG.debug("No factory registered for kind number: " + kindNumber);

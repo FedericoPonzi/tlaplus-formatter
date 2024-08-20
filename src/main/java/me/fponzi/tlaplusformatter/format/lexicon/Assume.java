@@ -18,7 +18,6 @@ public class Assume extends TreeNode {
 
     @Override
     public void format(FormattedSpec f) {
-        LOG.debug("Found ASSUME");
         var one = this.one();
 
         f.append(one[0])

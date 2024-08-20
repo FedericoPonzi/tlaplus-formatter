@@ -15,7 +15,6 @@ public abstract class ConjDisjList extends TreeNode {
 
     @Override
     public void format(FormattedSpec f) {
-        LOG.debug("Found {}", this.getImage());
         for (int i = 0; i < this.zero().length; i++) {
             conjDisjItem(this.zero()[i], f);
             if (i < this.zero().length - 1) {
@@ -26,7 +25,6 @@ public abstract class ConjDisjList extends TreeNode {
 
     // todo can be refactored to its own class
     private static void conjDisjItem(TreeNode node, FormattedSpec f) {
-        LOG.debug("Found {}", node.getImage());
         f.append(node.zero()[0]); // "/\ "
         f.increaseLevel().space();
         node.zero()[1].format(f);

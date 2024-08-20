@@ -10,6 +10,10 @@ public abstract class TreeNode implements Formattable {
     public tla2sany.st.TreeNode node;
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    @Override
+    public void format(FormattedSpec f) {
+        f.append(this);
+    }
 
     public TreeNode(tla2sany.st.TreeNode node) {
         this.node = node;
