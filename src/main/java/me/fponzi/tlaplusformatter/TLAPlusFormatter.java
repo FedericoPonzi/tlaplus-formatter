@@ -1,27 +1,17 @@
 package me.fponzi.tlaplusformatter;
 
-import me.fponzi.tlaplusformatter.exceptions.SanyAbortException;
-import me.fponzi.tlaplusformatter.exceptions.SanyException;
-import me.fponzi.tlaplusformatter.exceptions.SanySemanticException;
-import me.fponzi.tlaplusformatter.exceptions.SanySyntaxException;
-import org.apache.commons.io.output.WriterOutputStream;
+import me.fponzi.tlaplusformatter.exceptions.SanyFrontendException;
+import me.fponzi.tlaplusformatter.format.FactoryRegistry;
+import me.fponzi.tlaplusformatter.format.FormattedSpec;
+import me.fponzi.tlaplusformatter.format.TreeNode;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tla2sany.drivers.FrontEndException;
-import tla2sany.drivers.SANY;
-import tla2sany.modanalyzer.ParseUnit;
-import tla2sany.modanalyzer.SpecObj;
-import util.SimpleFilenameToStream;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -35,19 +25,16 @@ public class TLAPlusFormatter {
     TreeNode root;
     File spec;
 
-    public TLAPlusFormatter(File specPath) throws IOException, FrontEndException {
-        root = getTreeNode(specPath.getAbsolutePath());
+    public TLAPlusFormatter(File specPath) throws IOException, SanyFrontendException {
+        root = SANYWrapper.load(specPath);
         this.spec = specPath;
 
         // Use Reflections library to find all classes that extend TreeNode
-        Reflections reflections = new Reflections("me.fponzi.tlaplusformatter.lexicon");
+        Reflections reflections = new Reflections("me.fponzi.tlaplusformatter.format.lexicon");
         Set<Class<? extends TreeNode>> classes = reflections.getSubTypesOf(TreeNode.class);
-        LOG.info("mmmmmh");
         for (Class<? extends TreeNode> clazz : classes) {
-            LOG.info("Registering: {}", clazz.getCanonicalName());
             FactoryRegistry.register(clazz);
         }
-
         format();
     }
 
@@ -65,7 +52,7 @@ public class TLAPlusFormatter {
      * @param spec
      * @throws IOException
      */
-    public TLAPlusFormatter(String spec) throws IOException, FrontEndException {
+    public TLAPlusFormatter(String spec) throws IOException, SanyFrontendException {
         this(storeToTmp(spec));
     }
 
@@ -124,71 +111,6 @@ public class TLAPlusFormatter {
         f.append(extraSections[1]);
     }
 
-
-    private static File sanyTempDir() throws IOException {
-        return Files.createTempDirectory("sanyimp").toFile();
-    }
-
-    public static void loadSpecObject(SpecObj specObj, File file, StringWriter errBuf) throws IOException, FrontEndException {
-        var outStream = WriterOutputStream
-                .builder()
-                .setWriter(errBuf)
-                .setCharset(StandardCharsets.UTF_8)
-                .get();
-
-        SANY.frontEndMain(
-                specObj,
-                file.getAbsolutePath(),
-                new PrintStream(outStream)
-        );
-        ThrowOnError(specObj);
-    }
-
-    private static void ThrowOnError(SpecObj specObj) {
-        var initErrors = specObj.getInitErrors();
-        if (initErrors.isFailure()) {
-            throw new SanyAbortException(initErrors.toString());
-        }
-        var contextErrors = specObj.getGlobalContextErrors();
-        if (contextErrors.isFailure()) {
-            throw new SanyAbortException(contextErrors.toString());
-        }
-        var parseErrors = specObj.getParseErrors();
-        if (parseErrors.isFailure()) {
-            throw new SanySyntaxException(parseErrors.toString());
-        }
-        var semanticErrors = specObj.getSemanticErrors();
-        if (semanticErrors.isFailure()) {
-            throw new SanySemanticException(semanticErrors.toString());
-        }
-        // the error level is above zero, so SANY failed for an unknown reason
-        if (specObj.getErrorLevel() > 0) {
-            throw new SanyException(
-                    String.format("Unknown SANY error (error level=%d)", specObj.getErrorLevel())
-            );
-        }
-    }
-
-    public TreeNode getTreeNode(String specPath) throws IOException, FrontEndException {
-        var file = new File(specPath);
-        // create a string buffer to write SANY's error messages
-        // use.toString() to retrieve the error messages
-        var errBuf = new StringWriter();
-        var parentDirPath = file.getAbsoluteFile().getParent();
-        // Resolver for filenames, patched for wired modules.
-        var filenameResolver = new SimpleFilenameToStream(parentDirPath);
-
-        // Set a unique tmpdir to avoid race-condition in SANY
-        // TODO: RM once https://github.com/tlaplus/tlaplus/issues/688 is fixed
-        System.setProperty("java.io.tmpdir", sanyTempDir().toString());
-
-        // call SANY
-        var specObj = new SpecObj(file.getAbsolutePath(), filenameResolver);
-        loadSpecObject(specObj, file, errBuf);
-        Hashtable<String, ParseUnit> parseUnitContext = specObj.parseUnitContext;
-        return FactoryRegistry.createInstance(-1, parseUnitContext.get(specObj.getRootModule().getName().toString()).getParseTree());
-    }
-
     private void printBody(TreeNode node) {
         if (node.zero() == null) {
             // no body defined in this module.
@@ -198,12 +120,6 @@ public class TLAPlusFormatter {
             if (child.getImage().equals("N_OperatorDefinition") && child.getKind() == 389) {
                 FactoryRegistry.createInstance(child.getKind(), child.node).format(f);
                 f.nl().nl();
-            } else if (child.getImage().startsWith("----") && child.getKind() == 35) {
-                f.nl().append(child).nl().nl();
-            } else if (child.getImage().equals("N_Assumption") && child.getKind() == 332) {
-                FactoryRegistry.createInstance(child.getKind(), child.node).format(f);
-            } else if (child.getImage().equals("N_ModuleDefinition") && child.getKind() == 383) {
-                FactoryRegistry.createInstance(child.getKind(), child.node).format(f);
             } else if (child.getImage().equals("N_FunctionDefinition")) {
                 FactoryRegistry.createInstance(child.getKind(), child.node).format(f);
                 f.nl();
@@ -215,17 +131,9 @@ public class TLAPlusFormatter {
 
     public void printTree(TreeNode node) {
         for (var child : node.zero()) {
-            if (child.getImage().equals("N_BeginModule") && child.getKind() == 333) {
-                FactoryRegistry.createInstance(child.getKind(), child.node).format(f);
-            } else if (child.getImage().equals("N_Extends") && child.getKind() == 350) {
-                FactoryRegistry.createInstance(child.getKind(), child.node).format(f);
-            } else if (child.getImage().equals("N_EndModule") && child.getKind() == 345) {
-                FactoryRegistry.createInstance(child.getKind(), child.node).format(f);
-            } else if (child.getImage().equals("N_Body") && child.getKind() == 334) {
+            if (child.getImage().equals("N_Body") && child.getKind() == 334) {
                 printBody(child);
             } else {
-                // TODO: throw exception, I think this should never happen
-                LOG.debug("Unhandled tree node: {}", child.getImage());
                 basePrintTree(child, this.f);
             }
         }
@@ -254,8 +162,9 @@ public class TLAPlusFormatter {
                 352, 346, 356, 351, 336,
                 353, 399, 363, 376, 420,
                 349, 372, 426, 35, 332,
-                392, 341, 344,369, 380,
-                389, 422, 371, 395).contains(node.getKind())) {
+                392, 341, 344, 369, 380,
+                389, 422, 371, 395, 383,
+                350, 345, 333, 35).contains(node.getKind())) {
             FactoryRegistry.createInstance(node.getKind(), node.node).format(f);
             return;
         }

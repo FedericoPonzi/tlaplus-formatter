@@ -1,10 +1,10 @@
 package me.fponzi.tlaplusformatter;
 
 import ch.qos.logback.classic.LoggerContext;
+import me.fponzi.tlaplusformatter.exceptions.SanyFrontendException;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tla2sany.drivers.FrontEndException;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class Main {
     }
 
     //Generate
-    public static void main(String[] args) throws IOException, FrontEndException {
+    public static void main(String[] args) throws IOException, SanyFrontendException {
 
         Options options = new Options();
         options.addOption("v", "verbosity", true, "Set the verbosity level (ERROR, WARN, INFO, DEBUG)");

@@ -1,5 +1,6 @@
 package me.fponzi.tlaplusformatter;
 
+import me.fponzi.tlaplusformatter.format.TreeNode;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
