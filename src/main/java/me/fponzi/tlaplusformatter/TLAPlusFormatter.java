@@ -4,6 +4,7 @@ import me.fponzi.tlaplusformatter.exceptions.SanyFrontendException;
 import me.fponzi.tlaplusformatter.format.FactoryRegistry;
 import me.fponzi.tlaplusformatter.format.FormattedSpec;
 import me.fponzi.tlaplusformatter.format.TreeNode;
+import me.fponzi.tlaplusformatter.format.lexicon.TlaModule;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,6 +56,15 @@ public class TLAPlusFormatter {
         this(storeToTmp(spec));
     }
 
+    private void format() throws IOException {
+        f = new FormattedSpec();
+        var extraSections = getPreAndPostModuleSectionsFromSpecFile(spec.toPath());
+        assert root.getKind() == TlaModule.KIND;
+        f.append(extraSections[0]);
+        root.format(f);
+        f.append(extraSections[1]);
+    }
+
     static String getModuleName(String spec) {
         String regex = "----\\s?MODULE\\s+(\\w+)\\s?----";
         Pattern pattern = Pattern.compile(regex);
@@ -92,26 +103,18 @@ public class TLAPlusFormatter {
         return new String[]{preModuleSection.toString(), postModuleSection.toString()};
     }
 
-    private void format() {
-        f = new FormattedSpec();
-        String[] extraSections = new String[]{"", ""};
+    private String[] getPreAndPostModuleSectionsFromSpecFile(Path spec) throws IOException {
         try {
-            String content = Files.readString(spec.toPath());
+            String content = Files.readString(spec);
             //read all the content of spec:
             var startOfModuleRow = root.zero()[0].getLocation().getCoordinates()[0];
             var endOfModuleRow = root.zero()[3].getLocation().getCoordinates()[0];
-            extraSections = getPreAndPostModuleSections(content, startOfModuleRow, endOfModuleRow);
-        } catch (Exception e) {
-            LOG.error("Failed to read content of the spec to get pre and post module sections: " + e);
+            return getPreAndPostModuleSections(content, startOfModuleRow, endOfModuleRow);
+        } catch (IOException e) {
+            LOG.error("Failed to read content of the spec to get pre and post module sections: {}", String.valueOf(e));
+            throw e;
         }
-        f.append(extraSections[0]);
-        printTree(root);
-        f.append(extraSections[1]);
     }
 
-    public void printTree(TreeNode node) {
-        for (var child : node.zero()) {
-            child.format(this.f);
-        }
-    }
+
 }
