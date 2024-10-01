@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.lamport:tla2tools:1.7.0-SNAPSHOT")
+    implementation("org.lamport:tla2tools:1.8.0-SNAPSHOT")
     implementation ("commons-io:commons-io:2.16.1")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
