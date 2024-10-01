@@ -109,6 +109,9 @@ class TLAPlusFormatterTest {
         testSpecFiles("Slush");
     }
 
+    @Test
+    void testSubmodules(){testSpecFiles("Submodules");}
+
     // creates a temp folder
     // stores input and expected there
     // run the formatter do asserts
