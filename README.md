@@ -5,10 +5,10 @@ This is a formatter for the TLA<sup>+</sup> language.
 
 It uses tlaplus tools' SANY library to parse your specification, and it applies some (at the moment) predefined format to it.
 
-This is still _ALPHA_ software, not everything is handled at the moment, so it might break your specs.
+This is still _ALPHA_ software, feel free to try it out and leave feedback but be aware it might break your specs.
 
 ## Project Goals:
-* A formatter for the tla+ language.
+* A formatter for the TLA+ language. Pluscal is currently not a priority.
 * It should be configurable but also provide sane defaults.
 * It should never add useless chars (no extra spaces or extra newlines)
 * It should never break any specs. No user configuration should ever lead to broken specs.
@@ -18,7 +18,7 @@ This is still _ALPHA_ software, not everything is handled at the moment, so it m
 ## Configurations:
 If you have specific requests for configuration options you would like to have, please consider opening an issue.
 
-Currently the idea is to follow the same ideas behind rustfmt. A user level formatter config and a project level formatter config.
+Currently, the idea is to follow the same ideas behind rustfmt. A user level formatter config and a project level formatter config.
 
 ## Example
 To see some examples of current reformatting, compare:
