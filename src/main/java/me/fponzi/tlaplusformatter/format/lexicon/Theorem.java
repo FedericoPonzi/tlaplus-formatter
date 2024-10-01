@@ -19,7 +19,7 @@ public class Theorem  extends TreeNode {
     @Override
     public void format(FormattedSpec f) {
         var theoremKeyword = this.zero()[0];
-        assert theoremKeyword.getImage().equals("THEOREM") && theoremKeyword.getKind() == 66;
+        assert theoremKeyword.getImage().equals("THEOREM") && theoremKeyword.getKind() == 67;
         f.append(theoremKeyword).increaseLevel().nl();
         for (int i = 1; i < this.zero().length; i++) {
             this.zero()[i].format(f);

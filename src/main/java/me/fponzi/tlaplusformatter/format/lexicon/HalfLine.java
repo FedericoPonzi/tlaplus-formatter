@@ -9,7 +9,7 @@ import java.lang.invoke.MethodHandles;
 
 public class HalfLine extends TreeNode {
     public static final String IMAGE = "----";
-    public static final int KIND = 35;
+    public static final int KIND = 36;
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public HalfLine(tla2sany.st.TreeNode node) {
