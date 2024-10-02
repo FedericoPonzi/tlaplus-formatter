@@ -708,6 +708,24 @@ class TLAPlusFormatterTest {
                                                                             /\ \A pr \in prs: pr.votes[s].bal =< bc[1]
      */
 
+    @Test
+    public void testExtendsTlaps() {
+        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "EXTENDS TLAPS, Naturals\n" +
+                "CONSTANT x\n" +
+                "THEOREM x \\in Nat \\land x > 10\n" +
+                "=============================================================================\n";
+
+        var expected = "------------------------------ MODULE Spec -----------------------------\n\n" +
+                "EXTENDS TLAPS, Naturals\n" +
+                "\n" +
+                "CONSTANT\n" +
+                "         x\n" +
+                "THEOREM\n" +
+                "        x \\in Nat \\land x > 10\n" +
+                "=============================================================================\n";
+        assertSpecEquals(expected, spec);
+    }
 
 }
 
