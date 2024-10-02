@@ -10,11 +10,12 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class Main {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
+    private static final String VERBOSITY_OPTION = "v";
+    private static final String DEFAULT_VERBOSITY_OPTION = "INFO";
+    public static final String ERROR_NOT_ENOUGH_ARGS = "Please provide one or two file paths (input and optionally output) as arguments.";
     private static void printHelp() {
         HelpFormatter formatter = new HelpFormatter();
         String header = "A TLA+ formatter. Use it to reformat your specs.";
@@ -22,11 +23,9 @@ public class Main {
         formatter.printHelp("java -jar tlaplus-formatter.jar <FILE>", header, new Options(), footer, true);
     }
 
-    //Generate
-    public static void main(String[] args) throws IOException, SanyFrontendException {
-
+    public static int mainWrapper(String[] args) {
         Options options = new Options();
-        options.addOption("v", "verbosity", true, "Set the verbosity level (ERROR, WARN, INFO, DEBUG)");
+        options.addOption(VERBOSITY_OPTION, "verbosity", true, "Set the verbosity level (ERROR, WARN, *INFO, DEBUG)");
 
         CommandLine cmd;
         try {
@@ -34,48 +33,70 @@ public class Main {
             CommandLineParser parser = new DefaultParser();
             cmd = parser.parse(options, args);
 
-            // the default log level is DEBUG.
-            setLogLevel("DEBUG");
+            // Set the default log level to INFO
+            setLogLevel(DEFAULT_VERBOSITY_OPTION);
+
             // Set the log level based on the verbosity option
-            if (cmd.hasOption("v")) {
-                String verbosity = cmd.getOptionValue("v").toUpperCase();
-                setLogLevel(verbosity);
+            if (cmd.hasOption(VERBOSITY_OPTION)) {
+                String verbosity = cmd.getOptionValue(VERBOSITY_OPTION).toUpperCase();
+                try {
+                    setLogLevel(verbosity);
+                } catch (IllegalArgumentException e) {
+                    logger.error("Invalid log level: {}", verbosity);
+                    printHelp();
+                    return 1;
+                }
             }
 
             // Get the remaining arguments (positional arguments)
             String[] remainingArgs = cmd.getArgs();
 
-            if (remainingArgs.length > 2 || remainingArgs.length == 0) {
-                System.err.println("Please provide at most two file paths (input and optionally output) as arguments.");
+            if (remainingArgs.length == 0 || remainingArgs.length > 2) {
+                logger.error("Please provide one or two file paths (input and optionally output) as arguments.");
                 printHelp();
-                System.exit(1);
+                return 1;
             }
 
-            // Get the file path from the positional arguments
-            var file = new File(remainingArgs[0]);
-            var outputFile = new File(remainingArgs[1]);
+            // Get the input file path from the positional arguments
+            File inputFile = new File(remainingArgs[0]);
+            if (!inputFile.exists()) {
+                logger.error("Input file does not exist: {}", inputFile.getAbsolutePath());
+                return 1;
+            }
 
-            var tree = new TLAPlusFormatter(file);
-            System.out.println(tree.getOutput());
+            TLAPlusFormatter formatter = new TLAPlusFormatter(inputFile);
+            String formattedOutput = formatter.getOutput();
 
-            Path path = outputFile.toPath(); // convert File to Path
-            try {
-                Files.write(path, tree.getOutput().getBytes()); // write "output" to the file
-            } catch (IOException e) {
-                System.err.println("An error occurred while writing to the file: " + e.getMessage());
+            if (remainingArgs.length == 2) {
+                // If output file is specified, write to the file
+                File outputFile = new File(remainingArgs[1]);
+                Files.writeString(outputFile.toPath(), formattedOutput);
+                logger.info("Formatted output written to: {}", outputFile.getAbsolutePath());
+            } else {
+                // If no output file is specified, print to stdout
+                System.out.println(formattedOutput);
             }
 
         } catch (ParseException e) {
-            System.err.println("Error parsing command line arguments: " + e.getMessage());
+            logger.error("Error parsing command line arguments: {}", e.getMessage());
             printHelp();
-            System.exit(1);
+            return 1;
+        } catch (IOException | SanyFrontendException e) {
+            logger.error("An error occurred while processing the file: {}", e.getMessage());
+            return 1;
         }
+        return 0;
+    }
+
+    //Generate
+    public static void main(String[] args) throws IOException, SanyFrontendException {
+        System.exit(mainWrapper(args));
     }
 
     private static void setLogLevel(String levelStr) {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
         ch.qos.logback.classic.Level level = ch.qos.logback.classic.Level.toLevel(levelStr, ch.qos.logback.classic.Level.INFO);
         context.getLogger("root").setLevel(level);
-        logger.info("Log level set to {}", level);
+        logger.debug("Log level set to {}", level);
     }
 }
