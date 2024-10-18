@@ -169,59 +169,59 @@ class TLAPlusFormatterTest {
 
     @Test
     public void testFormatVariables() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "VARIABLES x, y\n" +
-                "=============================================================================\n";
+                "====\n";
 
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "VARIABLES\n" +
                 "          x,\n" +
                 "          y\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testConstants() {
         // using Constants
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "CONSTANTS x, y\n" +
-                "=============================================================================\n";
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "====\n";
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "CONSTANTS\n" +
                 "          x,\n" +
                 "          y\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testConstantsParamsIdentDecl() {
         // using Constants
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "CONSTANTS  CalculateHash(_,_,_)\n" +
-                "=============================================================================\n";
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "====\n";
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "CONSTANTS\n" +
                 "          CalculateHash(_,_,_)\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
 
     }
 
     @Test
     public void testFormatAssume() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals\n" +
                 "CONSTANT x\n" +
                 "ASSUME x \\in Nat\n" +
-                "=============================================================================\n";
+                "====\n";
 
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "EXTENDS Naturals\n\n" +
                 "CONSTANT\n" +
@@ -229,20 +229,20 @@ class TLAPlusFormatterTest {
                 "ASSUME\n" +
                 "       x \\in Nat\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testFormatAssumeConjList() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals\n" +
                 "CONSTANT x\n" +
                 "ASSUME /\\ x \\in Nat\n" +
                 "       /\\ x > 10\n" +
-                "=============================================================================\n";
+                "====\n";
 
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "EXTENDS Naturals\n\n" +
                 "CONSTANT\n" +
@@ -251,13 +251,13 @@ class TLAPlusFormatterTest {
                 "       /\\ x \\in Nat\n" +
                 "       /\\ x > 10\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     void testFormatIfThenElseConjDisjList() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals\n" +
                 "CONSTANTS\n" +
                 "  Prisoner,\n" +
@@ -276,8 +276,8 @@ class TLAPlusFormatterTest {
                 "            \\/ UNCHANGED <<switchAUp, count>>\n" +
                 "  /\\ UNCHANGED timesSwitched\n" +
                 "\n" +
-                "=============================================================================\n";
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "====\n";
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "EXTENDS Naturals\n" +
                 "\n" +
@@ -302,18 +302,18 @@ class TLAPlusFormatterTest {
                 "                       \\/ UNCHANGED <<switchAUp, count>>\n" +
                 "               /\\ UNCHANGED timesSwitched\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testLetIn() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "MH == LET x == 1\n" +
                 "          b == 2 IN 10" +
-                "=============================================================================\n";
+                "====\n";
 
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "MH ==\n" +
                 "      LET\n" +
@@ -324,51 +324,51 @@ class TLAPlusFormatterTest {
                 "      IN\n" +
                 "          10\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testTheorem() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals\n" +
                 "CONSTANT x\n" +
                 "THEOREM x \\in Nat \\land x > 10\n" +
-                "=============================================================================\n";
+                "====\n";
 
-        var expected = "------------------------------ MODULE Spec -----------------------------\n\n" +
+        var expected = "----- MODULE Spec -----\n\n" +
                 "EXTENDS Naturals\n" +
                 "\n" +
                 "CONSTANT\n" +
                 "         x\n" +
                 "THEOREM\n" +
                 "        x \\in Nat \\land x > 10\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testTheoremAssign() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "CONSTANT TypeInvariant, Spec\n" +
                 "THEOREM Safety == Spec => TypeInvariant\n\n" +
-                "=============================================================================\n";
+                "====\n";
 
         // TODO: (safety==Spec)
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "CONSTANT\n" +
                 "         TypeInvariant,\n" +
                 "         Spec\n" +
                 "THEOREM\n" +
                 "        Safety==Spec => TypeInvariant\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testRecursive() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT N\n" +
                 "VARIABLE y\n" +
@@ -381,9 +381,9 @@ class TLAPlusFormatterTest {
                 "             S == {x \\in 1..max : /\\ (r-1) =< (wt - x)\n" +
                 "                                  /\\ wt =< x*r          }\n" +
                 "         IN UNION { Partitions(<<x>> \\o seq, wt - x ) : x \\in S }\n" +
-                "=============================================================================\n";
+                "====\n";
 
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "\n" +
@@ -415,19 +415,19 @@ class TLAPlusFormatterTest {
                 "                            IN\n" +
                 "                                UNION {Partitions(<<x>> \\o seq, wt - x): x \\in S}\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testSubsetOf() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT max\n" +
                 "S ==\n" +
                 " { x \\in 1 .. max: x < max}\n" +
-                "=============================================================================\n";
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "====\n";
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "\n" +
@@ -436,18 +436,18 @@ class TLAPlusFormatterTest {
                 "S ==\n" +
                 "     { x \\in 1 .. max: x < max }\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testBoundedQuant() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT max\n" +
                 "S == \\A a \\in 1..max: \\E b \\in 1..max: a < b \n" +
-                "=============================================================================\n";
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "====\n";
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "\n" +
@@ -456,19 +456,19 @@ class TLAPlusFormatterTest {
                 "S ==\n" +
                 "     \\A a \\in 1 .. max: \\E b \\in 1 .. max: a < b\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testDisjList() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT max, wt, r\n" +
                 "S == {x \\in 1..max : /\\ (r-1) =< (wt - x)\n" +
                 "                                  /\\ wt =< x*r          }" +
-                "=============================================================================\n";
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "====\n";
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "\n" +
@@ -479,20 +479,20 @@ class TLAPlusFormatterTest {
                 "S ==\n" +
                 "     { x \\in 1 .. max: /\\ (r - 1) =< (wt - x) /\\ wt =< x * r }\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testFcnApplExcept() {
         // TODO:
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "VARIABLE towers\n" +
                 "Move(from, to, disk) ==  towers' = [towers EXCEPT ![from] = towers[from] - disk,  \\* Remaining tower does not change\n" +
                 "                                                    ![to] = towers[to] + disk]\n" +
-                "=============================================================================\n";
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "====\n";
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "\n" +
@@ -504,13 +504,13 @@ class TLAPlusFormatterTest {
                 "                                                 \\* Remaining tower does not change\n" +
                 "                                                 ![to]=towers[to] + disk]\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testFnAppl_FnDefinition_IfElse_LetIn() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals, FiniteSets\n" +
                 "R(s,v) == 0 \n" +
                 "L(s,t, S) == LET\n" +
@@ -525,8 +525,8 @@ class TLAPlusFormatterTest {
                 "                            /\\ s \\in S\n" +
                 "                            /\\ t \\in S\n" +
                 "                            /\\ CR[Cardinality(S) - 1,t]\n" +
-                "=============================================================================\n";
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "====\n";
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "EXTENDS Naturals, FiniteSets\n" +
                 "\n" +
@@ -547,13 +547,13 @@ class TLAPlusFormatterTest {
                 "                  /\\ t \\in S\n" +
                 "                  /\\ CR[Cardinality(S) - 1, t]\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testBound() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT a\n" +
                 "Support(x) == 0\n" +
@@ -561,8 +561,8 @@ class TLAPlusFormatterTest {
                 "              ST == Support(T)\n" +
                 "          IN  {<<r, t>> \\in SR \\X ST :\n" +
                 "                \\E s \\in SR \\cap ST : (<<r, s>> \\in R) /\\ (<<s, t>> \\in T)}" +
-                "=============================================================================\n";
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "====\n";
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "\n" +
@@ -580,19 +580,19 @@ class TLAPlusFormatterTest {
                 "          IN\n" +
                 "              { <<r,t>> \\in SR \\X ST: \\E s \\in SR \\cap ST: (<<r, s>> \\in R) /\\ (<<s, t>> \\in T) }\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testPrefixEpr() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT Proc, pc\n" +
                 "AgrrLtl ==\n" +
                 "  [](~(\\E i \\in Proc, j \\in Proc :  pc[i] = \"COMMIT\" /\\ pc[j] = \"ABORT\"))\n\n" +
-                "=============================================================================\n";
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "====\n";
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "\n" +
@@ -602,20 +602,20 @@ class TLAPlusFormatterTest {
                 "AgrrLtl ==\n" +
                 "           [](~(\\E i \\in Proc, j \\in Proc: pc[i] = \"COMMIT\" /\\ pc[j] = \"ABORT\"))\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testInstance() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT a\n" +
                 "N == INSTANCE Naturals\n" +
                 "\n" +
                 "UndefinedHashesExist == N!Nat\n" +
-                "=============================================================================\n";
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "====\n";
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "\n" +
@@ -627,21 +627,21 @@ class TLAPlusFormatterTest {
                 "UndefinedHashesExist ==\n" +
                 "                        N!Nat\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testInstanceWith() {
 
-        var spec2 = "------------------------------ MODULE Spec2 -----------------------------\n" +
+        var spec2 = "----- MODULE Spec2 -----\n" +
                 "CONSTANT pc, vroot\n" +
-                "=============================================================================\n";
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+                "====\n";
+        var spec = "----- MODULE Spec -----\n" +
                 "CONSTANT vrootBar, pcBar\n" +
                 "N == INSTANCE Spec2 WITH vroot <- vrootBar, pc <- pcBar\n" +
-                "=============================================================================\n";
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "====\n";
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "CONSTANT\n" +
                 "         vrootBar,\n" +
@@ -650,21 +650,21 @@ class TLAPlusFormatterTest {
                 "     INSTANCE Spec2 WITH vroot <- vrootBar,\n" +
                 "                         pc <- pcBar\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
 
         assertSpecEquals(expected, spec, spec2);
     }
 
     @Test
     public void testSetOfAllMultipleQuantifiers() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT a\n" +
                 "\n" +
                 " RecordCombine(S, T) ==\n" +
                 "   {a : s \\in S, t \\in T}" +
-                "=============================================================================\n";
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "====\n";
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "\n" +
@@ -673,18 +673,18 @@ class TLAPlusFormatterTest {
                 "RecordCombine(S, T) ==\n" +
                 "                       {a: s \\in S, t \\in T}\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testOdot() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Integers\n" +
                 "a / b     == IF b /= 0 THEN <<a, b>> ELSE CHOOSE x \\in {} : TRUE\n" +
                 "a \\odot b == (a[1]*b[1]) / (a[2]*b[2])\n\n" +
-                "=============================================================================\n";
-        var expected = "------------------------------ MODULE Spec -----------------------------\n" +
+                "====\n";
+        var expected = "----- MODULE Spec -----\n" +
                 "\n" +
                 "EXTENDS Integers\n" +
                 "\n" +
@@ -699,7 +699,7 @@ class TLAPlusFormatterTest {
                 "a \\odot b ==\n" +
                 "             (a[1] * b[1]) / (a[2] * b[2])\n" +
                 "\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
     // TODO: test choose, also test:
@@ -710,20 +710,20 @@ class TLAPlusFormatterTest {
 
     @Test
     public void testExtendsTlaps() {
-        var spec = "------------------------------ MODULE Spec -----------------------------\n" +
+        var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS TLAPS, Naturals\n" +
                 "CONSTANT x\n" +
                 "THEOREM x \\in Nat \\land x > 10\n" +
-                "=============================================================================\n";
+                "====\n";
 
-        var expected = "------------------------------ MODULE Spec -----------------------------\n\n" +
+        var expected = "----- MODULE Spec -----\n\n" +
                 "EXTENDS TLAPS, Naturals\n" +
                 "\n" +
                 "CONSTANT\n" +
                 "         x\n" +
                 "THEOREM\n" +
                 "        x \\in Nat \\land x > 10\n" +
-                "=============================================================================\n";
+                "====\n";
         assertSpecEquals(expected, spec);
     }
 

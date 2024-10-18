@@ -88,8 +88,7 @@ public class Main {
         return 0;
     }
 
-    //Generate
-    public static void main(String[] args) throws IOException, SanyFrontendException {
+    public static void main(String[] args) {
         System.exit(mainWrapper(args));
     }
 
