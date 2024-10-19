@@ -5,6 +5,35 @@ import org.junit.jupiter.api.Test;
 class TLAPlusFormatterTest extends SanyTester {
 
     @Test
+    public void testPlayground() {
+        var spec = "----- MODULE Spec -----\n" +
+                "EXTENDS TLC, Sequences\n" +
+                "CONSTANTS n1, n2, n3\n" +
+                "Next == <<1, [counter |-> (n1 :> (n1 :> 0 @@ n2 :> 0) @@ n2 :> (n1 :> 0 @@ n2 :> 0))]>>\n" +
+                "====\n";
+
+        var expected = "----- MODULE Spec -----\n" +
+                "\n" +
+                "EXTENDS TLC, Sequences\n" +
+                "\n" +
+                "CONSTANTS\n" +
+                "          n1,\n" +
+                "          n2,\n" +
+                "          n3\n" +
+                "Next ==\n" +
+                "        <<\n" +
+                "           1,\n" +
+                "           [\n" +
+                "             counter |-> (n1 :> (n1 :> 0 @@ n2 :> 0) @@ n2 :> (n1 :> 0 @@ n2 :> 0))\n" +
+                "           ]\n" +
+                "        >>\n" +
+                "\n" +
+                "====\n";
+
+        assertSpecEquals(expected, spec);
+    }
+
+    @Test
     void testFormatHourClock() {
         testSpecFiles("HourClock");
     }
@@ -623,31 +652,5 @@ class TLAPlusFormatterTest extends SanyTester {
                 "====\n";
         assertSpecEquals(expected, spec);
     }
-    @Test
-    public void testPlayground() {
-        var spec = "----- MODULE Spec -----\n" +
-                "EXTENDS TLAPS, Naturals\n" +
-                "VARIABLES pick, message, sampleSet, loopVariant\n" +
-                "Next == UNCHANGED <<pick, message, sampleSet, loopVariant>>\n" +
-                "====\n";
-
-        var expected = "----- MODULE Spec -----\n" +
-                "\n" +
-                "EXTENDS TLAPS, Naturals\n" +
-                "\n" +
-                "VARIABLES\n" +
-                "          pick,\n" +
-                "          message,\n" +
-                "          sampleSet,\n" +
-                "          loopVariant\n" +
-                "\n" +
-                "Next ==\n" +
-                "        UNCHANGED <<pick, message, sampleSet, loopVariant>>\n" +
-                "\n" +
-                "====\n";
-
-        assertSpecEquals(expected, spec);
-    }
-
 }
 

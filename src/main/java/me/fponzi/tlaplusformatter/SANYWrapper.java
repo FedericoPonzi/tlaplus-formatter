@@ -45,7 +45,7 @@ public class SANYWrapper {
         var specObj = new SpecObj(file.getAbsolutePath(), filenameResolver);
         loadSpecObject(specObj, file, errBuf);
         Hashtable<String, ParseUnit> parseUnitContext = specObj.parseUnitContext;
-        return FactoryRegistry.createInstance(-1, parseUnitContext.get(specObj.getRootModule().getName().toString()).getParseTree());
+        return FactoryRegistry.createInstance(parseUnitContext.get(specObj.getRootModule().getName().toString()).getParseTree());
     }
 
     public static void loadSpecObject(SpecObj specObj, File file, StringWriter errBuf) throws IOException, SanyFrontendException {

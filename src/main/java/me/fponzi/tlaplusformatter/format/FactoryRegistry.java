@@ -33,8 +33,8 @@ public class FactoryRegistry {
         }
     }
 
-    public static TreeNode createInstance(int kindNumber, tla2sany.st.TreeNode node) {
-        TreeNodeFactory<? extends TreeNode> factory = registry.get(kindNumber);
+    public static TreeNode createInstance(tla2sany.st.TreeNode node) {
+        TreeNodeFactory<? extends TreeNode> factory = registry.get(node.getKind());
         if (factory != null) {
             return factory.createInstance(node);
         } else {

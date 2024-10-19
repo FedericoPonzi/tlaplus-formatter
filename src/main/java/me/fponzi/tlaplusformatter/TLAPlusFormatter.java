@@ -26,15 +26,15 @@ public class TLAPlusFormatter {
     File spec;
 
     public TLAPlusFormatter(File specPath) throws IOException, SanyFrontendException {
-        root = SANYWrapper.load(specPath);
-        this.spec = specPath;
-
         // Use Reflections library to find all classes that extend TreeNode
         Reflections reflections = new Reflections("me.fponzi.tlaplusformatter.format.lexicon");
         Set<Class<? extends TreeNode>> classes = reflections.getSubTypesOf(TreeNode.class);
         for (Class<? extends TreeNode> clazz : classes) {
             FactoryRegistry.register(clazz);
         }
+        root = SANYWrapper.load(specPath);
+        this.spec = specPath;
+
         format();
     }
 

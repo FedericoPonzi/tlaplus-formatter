@@ -27,7 +27,7 @@ public abstract class TreeNode implements Formattable {
 
         for (int i = 0; i < ret.length; i++) {
 
-            ret[i] = FactoryRegistry.createInstance(node[i].getKind(), node[i]);
+            ret[i] = FactoryRegistry.createInstance(node[i]);
         }
         return ret;
     }
