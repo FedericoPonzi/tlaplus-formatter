@@ -18,12 +18,14 @@ public class PrefixExpr extends TreeNode {
 
     @Override
     public void format(FormattedSpec f) {
-        // Example: [](A) -> N_GenPrefixOp N_ParenExpr
-        // where [] is the genPrefix.
+        // Example: [](A) parsed to N_GenPrefixOp N_ParenExpr
+        // where [] is the GenericPrefixOperator.
 
         var z = this.zero();
         z[0].format(f); // prefix
+        f.increaseLevel();
         z[1].format(f); // expr
+        f.decreaseLevel();
     }
 
 

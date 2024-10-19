@@ -20,16 +20,16 @@ public class SetEnumerate extends TreeNode {
     public void format(FormattedSpec f) {
         var z = this.zero();
         z[0].format(f); // {
-        f.increaseLevel().nl();
+        f.increaseLevel().nl(this, false);
         for (int i = 1; i < z.length - 1; i++) {
             z[i].format(f);
             if (z[i + 1].getImage().equals(",")) {
                 z[++i].format(f);
-                f.nl();
+                f.nl(this);
             }
         }
         f.decreaseLevel();
-        f.nl();
+        f.nl(this, false);
         z[z.length - 1].format(f);
     }
 

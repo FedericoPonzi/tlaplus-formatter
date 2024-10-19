@@ -21,16 +21,16 @@ public class Tuple extends TreeNode {
         var z = this.zero();
         var len = z.length;
         f.append(z[0]); // <<
-        f.increaseLevel().nl();
+        f.increaseLevel().nl(this, false);
         for (int i = 1; i < len - 1; i++) {
             this.zero()[i].format(f);
-            if (z[i+1].getImage().equals(",")) {
+            if (z[i + 1].getImage().equals(",")) {
                 f.append(z[++i]);
-                f.nl();
+                f.nl(this);
             }
         }
         f.decreaseLevel();
-        f.nl();
+        f.nl(this, false);
         f.append(this.zero()[len - 1]);
     }
 }

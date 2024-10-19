@@ -23,7 +23,7 @@ public class FormattedSpec {
 
     public FormattedSpec increaseLevel() {
         indentLevels.push(indent.length());
-        setIndent(getLineLength()); // TODO: customization ? By default it's 0
+        setIndent(getLineLength());
         return this;
     }
 
@@ -41,6 +41,48 @@ public class FormattedSpec {
         out.append(indent);
         return this;
     }
+
+    /**
+     * If the inner node is not too long,
+     * we just add a space, otherwise we add a new line
+     * and increase the level.
+     * @param node
+     * @return
+     */
+    public FormattedSpec nl(TreeNode node) {
+        return nl(node, true);
+    }
+
+    public FormattedSpec nl(TreeNode node, boolean space) {
+        if(node.shouldAddNewLine()){
+            nl();
+        } else {
+            if(space) {
+                space();
+            }
+        }
+        return this;
+    }
+
+    public FormattedSpec increaseLevel(TreeNode node) {
+        if(node.shouldAddNewLine()) {
+            increaseLevel();
+        }
+        return this;
+    }
+    /**
+     * If we increased level because of this node,
+     * this can be used to pop the level.
+     * @param node
+     * @return
+     */
+    public FormattedSpec decreaseLevel(TreeNode node) {
+        if(node.shouldAddNewLine()) {
+            decreaseLevel();
+        }
+        return this;
+    }
+
 
     public FormattedSpec space() {
         out.append(" ");
@@ -61,7 +103,6 @@ public class FormattedSpec {
         this.indent = " ".repeat(val);
         return this;
     }
-
     public FormattedSpec increaseIndent(int val) {
         this.indent = " ".repeat(this.indent.length() + val);
         return this;

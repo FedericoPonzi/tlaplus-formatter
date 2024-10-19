@@ -226,7 +226,7 @@ Blue ==
         "Blue"
 
 Color ==
-         {Red,Blue}
+         {Red, Blue}
 
 NoColor ==
            CHOOSE c : c \notin Color
@@ -327,7 +327,14 @@ RespondToQueryMessage(self) ==
                                                                                           Pick(self)
                                                                         IN
                                                                             /\ pick' = [pick EXCEPT ![HostOf[self]]=color]
-                                                                            /\ message' = ((message \ {msg}) \cup {[type|->QueryReplyMessageType,src|->self,dst|->msg.src,color|->color]})
+                                                                            /\ message' = ((message \ {msg}) \cup {
+                                                                                                                    [
+                                                                                                                      type |-> QueryReplyMessageType,
+                                                                                                                      src |-> self,
+                                                                                                                      dst |-> msg.src,
+                                                                                                                      color |-> color
+                                                                                                                    ]
+                                                                                                                  })
                                /\ pc' = [pc EXCEPT ![self]="QueryReplyLoop"]
                                /\ UNCHANGED <<sampleSet, loopVariant>>
 
@@ -359,7 +366,12 @@ QuerySampleSet(self) ==
                                                       { pid \in SlushQueryProcess: HostOf[pid] \in otherNodes }
                            IN
                                { pidSet \in SUBSET otherQueryProcesses: Cardinality(pidSet) = SampleSetSize }: /\ sampleSet' = [sampleSet EXCEPT ![self]=possibleSampleSet]
-                                                                                                               /\ message' = (message \cup {[type|->QueryMessageType,src|->self,dst|->pid,color|->Pick(self)]: pid \in sampleSet'[self]})
+                                                                                                               /\ message' = (message \cup {[
+                                                                                                                                              type |-> QueryMessageType,
+                                                                                                                                              src |-> self,
+                                                                                                                                              dst |-> pid,
+                                                                                                                                              color |-> Pick(self)
+                                                                                                                                           ]: pid \in sampleSet'[self]})
                         /\ pc' = [pc EXCEPT ![self]="TallyQueryReplies"]
                         /\ UNCHANGED <<pick, loopVariant>>
 
@@ -397,7 +409,12 @@ TallyQueryReplies(self) ==
 
 SlushLoopTermination(self) ==
                               /\ pc[self] = "SlushLoopTermination"
-                              /\ message' = (message \cup {[type|->TerminationMessageType,pid|->self]})
+                              /\ message' = (message \cup {
+                                                            [
+                                                              type |-> TerminationMessageType,
+                                                              pid |-> self
+                                                            ]
+                                                          })
                               /\ pc' = [pc EXCEPT ![self]="Done"]
                               /\ UNCHANGED <<pick, sampleSet, loopVariant>>
 

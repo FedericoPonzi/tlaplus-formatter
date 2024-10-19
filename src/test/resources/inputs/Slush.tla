@@ -311,9 +311,7 @@ WaitForQueryMessageOrTermination(self) == /\ pc[self] = "WaitForQueryMessageOrTe
                                           /\ IF Terminate
                                                 THEN /\ pc' = [pc EXCEPT ![self] = "QueryReplyLoop"]
                                                 ELSE /\ pc' = [pc EXCEPT ![self] = "RespondToQueryMessage"]
-                                          /\ UNCHANGED << pick, message,
-                                                          sampleSet,
-                                                          loopVariant >>
+                                          /\ UNCHANGED << pick, message, sampleSet, loopVariant >>
 
 RespondToQueryMessage(self) == /\ pc[self] = "RespondToQueryMessage"
                                /\ \E msg \in PendingQueryMessage(self):
@@ -334,15 +332,13 @@ SlushQuery(self) == QueryReplyLoop(self)
 RequireColorAssignment(self) == /\ pc[self] = "RequireColorAssignment"
                                 /\ Pick(self) /= NoColor
                                 /\ pc' = [pc EXCEPT ![self] = "ExecuteSlushLoop"]
-                                /\ UNCHANGED << pick, message, sampleSet,
-                                                loopVariant >>
+                                /\ UNCHANGED << pick, message, sampleSet, loopVariant >>
 
 ExecuteSlushLoop(self) == /\ pc[self] = "ExecuteSlushLoop"
                           /\ IF loopVariant[self] < SlushIterationCount
                                 THEN /\ pc' = [pc EXCEPT ![self] = "QuerySampleSet"]
                                 ELSE /\ pc' = [pc EXCEPT ![self] = "SlushLoopTermination"]
-                          /\ UNCHANGED << pick, message, sampleSet,
-                                          loopVariant >>
+                          /\ UNCHANGED << pick, message, sampleSet, loopVariant >>
 
 QuerySampleSet(self) == /\ pc[self] = "QuerySampleSet"
                         /\ \E possibleSampleSet \in LET

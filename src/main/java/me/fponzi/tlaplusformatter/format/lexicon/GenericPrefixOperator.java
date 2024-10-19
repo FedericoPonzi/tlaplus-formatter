@@ -8,23 +8,22 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 
 /**
- * Entry point for the format.
- * it represents a TLA+ Module.
+ * Examples: UNCHANGED <<1,2,3>>
  */
-public class TlaModule extends TreeNode {
-    public static final String IMAGE = "N_Module";
-    public static final int KIND = 382;
+public class GenericPrefixOperator extends TreeNode {
+    public static final String IMAGE = "N_GenPrefixOp";
+    public static final int KIND = 362;
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public TlaModule(tla2sany.st.TreeNode node) {
+    public GenericPrefixOperator(tla2sany.st.TreeNode node) {
         super(node);
     }
 
     @Override
     public void format(FormattedSpec f) {
-        if(this.zero() == null) return;
-        for (var child : this.zero()) {
-            child.format(f);
-        }
+        var z = zero();
+        z[0].format(f); // this is usually `""`
+        z[1].format(f); // this is the actual operator, like UNCHANGED or `~`.
+        // the arguments are defined in PrefixExpr.
     }
 }

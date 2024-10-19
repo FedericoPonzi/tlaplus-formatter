@@ -20,6 +20,7 @@ public class GenericTreeNode extends TreeNode {
         SYMBOLS.put(87, ",");
         SYMBOLS.put(88, ":");
         SYMBOLS.put(90, ".");
+        SYMBOLS.put(91, ".");
         SYMBOLS.put(93, "(");
         SYMBOLS.put(94, ")");
         SYMBOLS.put(95, ")");
