@@ -22,9 +22,10 @@ public class GenericTreeNode extends TreeNode {
         SYMBOLS.put(90, ".");
         SYMBOLS.put(93, "(");
         SYMBOLS.put(94, ")");
+        SYMBOLS.put(95, ")");
         SYMBOLS.put(96, "[");
         SYMBOLS.put(97, "]_");
-        SYMBOLS.put(98, "]");
+        SYMBOLS.put(99, "]");
         SYMBOLS.put(101, "{");
         SYMBOLS.put(102, "}");
         SYMBOLS.put(103, "<<");
@@ -32,13 +33,16 @@ public class GenericTreeNode extends TreeNode {
         SYMBOLS.put(106, "!");
         SYMBOLS.put(107, "->");
         SYMBOLS.put(109, "|->");
+        SYMBOLS.put(111, ""); // any number
         SYMBOLS.put(122, "[]"); // similar to 401?
         SYMBOLS.put(132, "/");
         SYMBOLS.put(195, "**");
+        SYMBOLS.put(294, ""); // any identifier, like `counter`
         SYMBOLS.put(373, "-");
         SYMBOLS.put(397, "'");
         SYMBOLS.put(401, "[]");
         SYMBOLS.put(428, "=");
+        SYMBOLS.put(418, ""); // any string, like `"MCCRDT"`
     }
 
     public GenericTreeNode(tla2sany.st.TreeNode node) {

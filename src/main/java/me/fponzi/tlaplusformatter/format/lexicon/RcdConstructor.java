@@ -7,30 +7,33 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-public class Tuple extends TreeNode {
-    public static final String IMAGE = "N_Tuple";
-    public static final int KIND = 423;
+/**
+ * Example: [ action |-> {} ]
+ * it's '[', N_FieldVal, ']'.
+ */
+public class RcdConstructor extends TreeNode {
+    public static final String IMAGE = "RcdConstructor";
+    public static final int KIND = 409;
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public Tuple(tla2sany.st.TreeNode node) {
+    public RcdConstructor(tla2sany.st.TreeNode node) {
         super(node);
     }
 
     @Override
     public void format(FormattedSpec f) {
         var z = this.zero();
-        var len = z.length;
-        f.append(z[0]); // <<
-        f.increaseLevel().nl();
-        for (int i = 1; i < len - 1; i++) {
-            this.zero()[i].format(f);
-            if (z[i+1].getImage().equals(",")) {
-                f.append(z[++i]);
-                f.nl();
+        z[0].format(f);
+        f.increaseLevel();
+        f.nl();
+        for (int i = 1; i < z.length - 1; i++) {
+            z[i].format(f);
+            if (z[i + 1].getImage().equals(",")) {
+                f.append(z[++i]).nl();
             }
         }
         f.decreaseLevel();
         f.nl();
-        f.append(this.zero()[len - 1]);
+        z[z.length - 1].format(f);
     }
 }

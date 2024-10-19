@@ -23,7 +23,7 @@ public class FormattedSpec {
 
     public FormattedSpec increaseLevel() {
         indentLevels.push(indent.length());
-        setIndent(getLineLength());
+        setIndent(getLineLength()); // TODO: customization ? By default it's 0
         return this;
     }
 
@@ -61,6 +61,7 @@ public class FormattedSpec {
         this.indent = " ".repeat(val);
         return this;
     }
+
     public FormattedSpec increaseIndent(int val) {
         this.indent = " ".repeat(this.indent.length() + val);
         return this;

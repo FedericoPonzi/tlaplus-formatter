@@ -85,6 +85,11 @@ class TLAPlusFormatterTest {
     }
 
     @Test
+    void testFormatComplex() {
+        testSpecFiles("RecordsWithNestedRecordsAndSequences");
+    }
+
+    @Test
     void testFormatStones() {
         testSpecFiles("Stones");
     }
@@ -727,5 +732,22 @@ class TLAPlusFormatterTest {
         assertSpecEquals(expected, spec);
     }
 
+    @Test
+    public void testFieldVal() {
+        var spec = "----- MODULE Spec -----\n" +
+                "EXTENDS Sequences, TLC\n" +
+                "A == [module |-> \"MCCRDT\"]\n" +
+                "====\n";
+
+        var expected = "----- MODULE Spec -----\n\n" +
+                "EXTENDS TLAPS, Naturals\n" +
+                "\n" +
+                "CONSTANT\n" +
+                "         x\n" +
+                "THEOREM\n" +
+                "        x \\in Nat \\land x > 10\n" +
+                "====\n";
+        assertSpecEquals(expected, spec);
+    }
 }
 

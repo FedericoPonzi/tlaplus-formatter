@@ -31,6 +31,15 @@ public abstract class TreeNode implements Formattable {
         }
         return ret;
     }
+    // If the remainder of the tree is not too long, don't add unnecessary new lines.
+    public boolean shouldAddNewLine() {
+        var startCol = node.getLocation().beginColumn();
+        var startRow = node.getLocation().beginLine();
+        var endCol = node.getLocation().endColumn();
+        var endRow = node.getLocation().endLine();
+        var addNewline = startRow != endRow || endCol - startCol > 50;
+        return addNewline;
+    }
 
     public TreeNode[] zero() {
         return toInternal(node.zero());
