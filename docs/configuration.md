@@ -10,7 +10,7 @@ You can also use `tlaplusformatter --sample-config > ~/.tlaplus-formatter/config
 ```
 [general]
 indentSizeSpaces = 4
-startDefinitonOnNewLine = true
+startDefinitionOnNewLine = true
 alignDefinitionWithDeclaration = true
 [keywords.module]
 Dashes = Ignore
@@ -34,10 +34,10 @@ These settings define general and default behaviors. Some of them can be tuned p
 ```
 [general]
 indentSizeSpaces = 4
-startDefinitonOnNewLine = true
+startDefinitionOnNewLine = true
 alignDefinitionWithDeclaration = true
 ```
-### `startDefinitonOnNewLine: boolean`
+### `startDefinitionOnNewLine: boolean`
 The general default to start all definitions on a new line.
 * Possible value: `true` or `false`.
 * Default value: `true`.
@@ -126,7 +126,7 @@ This is the default setting:
 ```
 [keyword.extends]
 MultipleSeparateLines = true
-startDefinitonOnNewLine = true
+startDefinitionOnNewLine = true
 ```
 * `MultipleSeparateLines`: `boolean`. When set to `true`, if there are multiple extended modules the list will start on a new line.
 
@@ -138,5 +138,5 @@ This is the default setting:
 ```
 [keyword.extends]
 MultipleSeparateLines = true
-startDefinitonOnNewLine = true
+startDefinitionOnNewLine = true
 ```
