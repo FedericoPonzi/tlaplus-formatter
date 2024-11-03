@@ -15,7 +15,6 @@ public class Main {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final String VERBOSITY_OPTION = "v";
     private static final String DEFAULT_VERBOSITY_OPTION = "INFO";
-    public static final String ERROR_NOT_ENOUGH_ARGS = "Please provide one or two file paths (input and optionally output) as arguments.";
     private static void printHelp() {
         HelpFormatter formatter = new HelpFormatter();
         String header = "A TLA+ formatter. Use it to reformat your specs.";

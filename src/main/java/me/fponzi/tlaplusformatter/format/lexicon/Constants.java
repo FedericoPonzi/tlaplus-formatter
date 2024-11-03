@@ -21,8 +21,6 @@ public class Constants extends TreeNode {
     // Example: CONSTANT CalculateHash(_,_,_),
     @Override
     public void format(FormattedSpec f) {
-        LOG.debug("CONSTANTS");
-
         var constant = this.zero()[0].zero()[0];
         var indent = constant.getImage().length() + 1;
         f.append(constant).increaseIndent(indent).nl();
