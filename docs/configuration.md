@@ -87,7 +87,7 @@ HCnxt ==
 
 ## Module / `keywords.module`
 A module is defined as:
-* five or more dashes,
+* four or more dashes,
 * the keyword MODULE,
 * the module's name
 * Four or more dashes.
