@@ -18,6 +18,6 @@ public class HalfLine extends TreeNode {
 
     @Override
     public void format(FormattedSpec f) {
-        f.nl().append(this).nl().nl();
+        f.append(this);
     }
 }

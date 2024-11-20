@@ -1,5 +1,4 @@
 -------------------------- MODULE TransitiveClosure -------------------------
-
 (***************************************************************************)
 (* Mathematicians define a relation R to be a set of ordered pairs, and    *)
 (* write `s R t' to mean `<<s, t>> \in R'.  The transitive closure TC(R)   *)
@@ -219,5 +218,4 @@ ASSUME
                                                                          Support(R)
                                                                 IN
                                                                     \A s, t \in S: TC5(RR, S, s, t) <=> (<<s, t>> \in TC1(R))
-
 =============================================================================

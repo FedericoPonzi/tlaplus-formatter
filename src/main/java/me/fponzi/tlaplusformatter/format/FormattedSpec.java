@@ -92,6 +92,9 @@ public class FormattedSpec {
     public FormattedSpec append(TreeNode node) {
         for (String c: node.getPreComments()) {
             // Inline comments (that start with \n) include their new line character at the end.
+            // TODO: they do not include all the subsequent \n - they are coalesced during parsing.
+            // This means we will add all the new lines between this comment and the next statement before the comment itself.
+            // check TreeNode#getPreCommentsRec.
             out.append(c.trim());
             this.nl();
         }

@@ -24,7 +24,7 @@ public class ModuleDefinition extends TreeNode {
         f.space().append(this.one()[1]); // ==
         f.increaseLevel().nl();
         this.one()[2].format(f); // N_NonLocalInstance.
-        f.decreaseLevel().nl().nl();
+        f.decreaseLevel();
     }
 
 }

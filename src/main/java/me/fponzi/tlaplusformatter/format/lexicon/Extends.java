@@ -26,6 +26,5 @@ public class Extends extends TreeNode {
                 f.space();
             }
         }
-        f.nl().nl();
     }
 }

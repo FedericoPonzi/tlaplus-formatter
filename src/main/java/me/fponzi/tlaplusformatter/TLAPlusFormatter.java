@@ -92,14 +92,16 @@ public class TLAPlusFormatter {
         String[] lines = spec.split("\\R"); // Split by any line terminator
         StringBuilder preModuleSection = new StringBuilder();
         StringBuilder postModuleSection = new StringBuilder();
-
-        for (int i = 0; i < lines.length; i++) {
-            if (i < startLine - 1) {
-                preModuleSection.append(lines[i]).append(System.lineSeparator());
-            } else if (i > endLine - 1) {
-                postModuleSection.append(lines[i]).append(System.lineSeparator());
-            }
+        for (int i = 0; i < startLine - 1; i++) {
+            preModuleSection.append(lines[i]).append(System.lineSeparator());
         }
+        for (int i = endLine; i < lines.length; i++) {
+            postModuleSection.append(System.lineSeparator()).append(lines[i]);
+        }
+        if(spec.endsWith("\n")) {
+            postModuleSection.append(System.lineSeparator());
+        }
+
         return new String[]{preModuleSection.toString(), postModuleSection.toString()};
     }
 

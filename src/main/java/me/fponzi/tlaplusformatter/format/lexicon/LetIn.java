@@ -23,9 +23,7 @@ public class LetIn extends TreeNode {
         for (int i = 0; i < this.zero()[1].zero().length; i++) {
             var child = this.zero()[1].zero()[i];
             child.format(f);
-            if (i < this.zero()[1].zero().length - 1
-                    && !child.getImage().equals("N_Recursive") // RECURSIVE prints its own new line.
-            ) {
+            if (i < this.zero()[1].zero().length - 1) {
                 f.nl();
             }
         }

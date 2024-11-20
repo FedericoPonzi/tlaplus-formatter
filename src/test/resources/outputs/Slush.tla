@@ -21,6 +21,7 @@ CONSTANTS
           SlushIterationCount,
           SampleSetSize,
           PickFlipThreshold
+
 ASSUME
        /\ Cardinality(Node) = Cardinality(SlushLoopProcess)
        /\ Cardinality(Node) = Cardinality(SlushQueryProcess)
@@ -459,6 +460,7 @@ Spec ==
 
 Termination ==
                <>(\A self \in ProcSet: pc[self] = "Done")
+
 
 \* END TRANSLATION
 =============================================================================

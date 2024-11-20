@@ -22,8 +22,6 @@ public class BeginModule extends TreeNode {
                 .space()
                 .append(this.zero()[1]) // name
                 .space()
-                .append(this.zero()[2]) // ----
-                .nl()
-                .nl();
+                .append(this.zero()[2]); // ----
     }
 }

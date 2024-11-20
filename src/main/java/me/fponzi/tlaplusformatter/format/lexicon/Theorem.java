@@ -24,6 +24,6 @@ public class Theorem  extends TreeNode {
         for (int i = 1; i < this.zero().length; i++) {
             this.zero()[i].format(f);
         }
-        f.decreaseLevel().nl();
+        f.decreaseLevel();
     }
 }
