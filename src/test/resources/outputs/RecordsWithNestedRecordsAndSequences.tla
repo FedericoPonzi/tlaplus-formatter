@@ -1,11 +1,11 @@
 ---- MODULE RecordsWithNestedRecordsAndSequences -----
-
 EXTENDS TLC, Sequences
 
 CONSTANTS
           n1,
           n2,
           n3
+
 Foo2 ==
         [
           action |-> {

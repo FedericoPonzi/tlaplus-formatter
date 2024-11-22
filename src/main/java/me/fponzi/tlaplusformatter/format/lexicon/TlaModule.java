@@ -19,12 +19,27 @@ public class TlaModule extends TreeNode {
     public TlaModule(tla2sany.st.TreeNode node) {
         super(node);
     }
-
     @Override
     public void format(FormattedSpec f) {
         if(this.zero() == null) return;
+        // Used to respect the newlines between different declartations
+        // in the module's body.
+        var lastRowPosition = getBeginLineSkipComments();
         for (var child : this.zero()) {
+            if(child.getLocation().beginLine() == Integer.MAX_VALUE) {
+                // Parsing of TlaModule will return a child also for elements that are missing.
+                // For example, if a module doesn't extends anything, an EXTENDS will still be included.
+                // So we just go ahead and skip it.
+                continue;
+            }
+            var nextItemStart = child.getBeginLineSkipComments();
+            while(nextItemStart > lastRowPosition) {
+                f.nl();
+                lastRowPosition++;
+            }
             child.format(f);
+            lastRowPosition = child.getLocation().endLine();
         }
+
     }
 }

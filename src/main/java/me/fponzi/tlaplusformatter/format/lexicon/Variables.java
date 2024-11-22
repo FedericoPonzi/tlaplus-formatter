@@ -27,8 +27,6 @@ public class Variables extends TreeNode {
                 f.nl();
             }
         }
-        f.decreaseIndent(indent)
-                .nl()
-                .nl();
+        f.decreaseIndent(indent);
     }
 }

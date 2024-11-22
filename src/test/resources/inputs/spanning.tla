@@ -2,6 +2,7 @@
 EXTENDS Integers
 CONSTANTS Proc, NoPrnt, root, nbrs
 ASSUME NoPrnt \notin Proc /\ nbrs \subseteq Proc \times Proc
+
 VARIABLES prnt, rpt, msg
 vars == <<prnt, rpt, msg>>
 

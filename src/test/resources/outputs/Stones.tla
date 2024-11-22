@@ -1,6 +1,5 @@
 Spec taken from github.com/tlaplus/Examples.
 ------------------------------- MODULE Stones -------------------------------
-
 (***************************************************************************)
 (* The following problem was posed on an American radio program called Car *)
 (* Talk.  Given a stone that weighs 40 pound and a balance scale, cut the  *)

@@ -1,5 +1,4 @@
 ------------------------------- MODULE TowerOfHanoi -------------------------------
-
 EXTENDS Naturals, Bits, FiniteSets, TLC
 
 (***************************************************************************)
@@ -39,12 +38,12 @@ Sum(f) ==
 CONSTANT
          D,
          N
+
 (***************************************************************************)
 (* Towers of Hanoi with N towers                                           *)
 (***************************************************************************)
 VARIABLES
           towers
-
 vars ==
         <<towers>>
 
@@ -71,7 +70,6 @@ Init ==
                                           2 ^ D - 1
                                      ELSE
                                           0]
-
 \* all towers are empty except all disks are on the first Tower
 (***************************************************************************)
 (* TRUE iff the tower is empty                                             *)
@@ -91,7 +89,6 @@ IsOnTower(tower, disk) ==
 IsSmallestDisk(tower, disk) ==
                                /\ IsOnTower(tower, disk)
                                /\ tower & (disk - 1) = 0
-
 \* All less significant bits are 0
 (***************************************************************************)
 (* TRUE iff disk can be moved off of tower                                 *)

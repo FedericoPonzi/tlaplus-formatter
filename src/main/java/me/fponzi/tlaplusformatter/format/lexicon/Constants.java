@@ -34,6 +34,6 @@ public class Constants extends TreeNode {
                 child.format(f);
             }
         }
-        f.decreaseIndent(indent).nl();
+        f.decreaseIndent(indent);
     }
 }

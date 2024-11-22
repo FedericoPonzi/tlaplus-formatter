@@ -23,6 +23,5 @@ public class Recursive extends TreeNode {
         for (int i = 1; i < z.length; i++) {
             z[i].format(f);
         }
-        f.nl();
     }
 }

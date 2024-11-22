@@ -22,13 +22,18 @@ public class Body extends TreeNode {
             // no body defined in this module.
             return;
         }
+        // Used to respect the newlines between different declartations
+        // in the module's body.
+        var lastRowPosition = getBeginLineSkipComments();
+
         for (var child : this.zero()) {
-            child.format(f);
-            if (child.getImage().equals("N_OperatorDefinition") && child.getKind() == 389) {
-                f.nl().nl();
-            } else if (child.getImage().equals("N_FunctionDefinition")) {
+            var nextItemStart = child.getBeginLineSkipComments();
+            while(nextItemStart > lastRowPosition) {
                 f.nl();
+                lastRowPosition++;
             }
+            child.format(f);
+            lastRowPosition = child.getLocation().endLine();
         }
     }
 

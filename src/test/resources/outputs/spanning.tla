@@ -1,7 +1,5 @@
 ------------------------------ MODULE spanning ------------------------------
-
 EXTENDS Integers
-
 CONSTANTS
           Proc,
           NoPrnt,
@@ -14,7 +12,6 @@ VARIABLES
           prnt,
           rpt,
           msg
-
 vars ==
         <<prnt, rpt, msg>>
 

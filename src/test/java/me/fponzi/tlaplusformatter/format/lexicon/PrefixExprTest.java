@@ -3,8 +3,6 @@ package me.fponzi.tlaplusformatter.format.lexicon;
 import me.fponzi.tlaplusformatter.SanyTester;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class PrefixExprTest extends SanyTester {
 
     @Test
@@ -16,16 +14,13 @@ class PrefixExprTest extends SanyTester {
                 "====\n";
 
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "VARIABLES\n" +
                 "          pick,\n" +
                 "          message,\n" +
                 "          sampleSet,\n" +
                 "          loopVariant\n" +
-                "\n" +
                 "Next ==\n" +
                 "        UNCHANGED <<pick, message, sampleSet, loopVariant>>\n" +
-                "\n" +
                 "====\n";
 
         assertSpecEquals(expected, spec);
@@ -39,13 +34,11 @@ class PrefixExprTest extends SanyTester {
                 "====\n";
 
         expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "VARIABLES\n" +
                 "          pick,\n" +
                 "          message,\n" +
                 "          sampleSet,\n" +
                 "          loopVariant\n" +
-                "\n" +
                 "Next ==\n" +
                 "        UNCHANGED <<\n" +
                 "                     pick,\n" +
@@ -53,7 +46,6 @@ class PrefixExprTest extends SanyTester {
                 "                     sampleSet,\n" +
                 "                     loopVariant\n" +
                 "                   >>\n" +
-                "\n" +
                 "====\n";
 
         assertSpecEquals(expected, spec);

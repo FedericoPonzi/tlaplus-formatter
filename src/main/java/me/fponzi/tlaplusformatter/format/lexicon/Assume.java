@@ -36,8 +36,6 @@ public class Assume extends TreeNode {
             one[3].format(f); // content
             f.decreaseLevel();
         }
-        f.decreaseLevel()
-                .nl()
-                .nl();
+        f.decreaseLevel();
     }
 }

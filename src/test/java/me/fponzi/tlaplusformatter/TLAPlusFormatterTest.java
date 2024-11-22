@@ -13,9 +13,7 @@ class TLAPlusFormatterTest extends SanyTester {
                 "====\n";
 
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "EXTENDS TLC, Sequences\n" +
-                "\n" +
                 "CONSTANTS\n" +
                 "          n1,\n" +
                 "          n2,\n" +
@@ -27,7 +25,6 @@ class TLAPlusFormatterTest extends SanyTester {
                 "             counter |-> (n1 :> (n1 :> 0 @@ n2 :> 0) @@ n2 :> (n1 :> 0 @@ n2 :> 0))\n" +
                 "           ]\n" +
                 "        >>\n" +
-                "\n" +
                 "====\n";
 
         assertSpecEquals(expected, spec);
@@ -60,6 +57,7 @@ class TLAPlusFormatterTest extends SanyTester {
 
     @Test
     void testFormatSpanning() {
+        // TODO: for some reason at the end there is a \n==== instead of \n\n===== (check input file)
         testSpecFiles("spanning");
     }
 
@@ -75,28 +73,30 @@ class TLAPlusFormatterTest extends SanyTester {
     @Test
     void testFormatModule() {
         var spec = "---- MODULE Spec ----\n======";
-        var expected = "---- MODULE Spec ----\n\n======\n";
+        var expected = "---- MODULE Spec ----\n======";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     void testFormatModule2() {
         var spec = "---- MODULE Spec ----\n\n======";
-        var expected = "---- MODULE Spec ----\n\n======\n";
+        var expected = "---- MODULE Spec ----\n\n======";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     void testFormatExtends() {
         var spec = "---- MODULE Spec ----\nEXTENDS Naturals\n======";
-        var expected = "---- MODULE Spec ----\n\nEXTENDS Naturals\n\n======\n";
+        var expected = "---- MODULE Spec ----\nEXTENDS Naturals\n======";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testFormatVariables() {
         var spec = "----- MODULE Spec -----\n" +
+                "\n" +
                 "VARIABLES x, y\n" +
+                "\n" +
                 "====\n";
 
         var expected = "----- MODULE Spec -----\n" +
@@ -113,6 +113,7 @@ class TLAPlusFormatterTest extends SanyTester {
     public void testConstants() {
         // using Constants
         var spec = "----- MODULE Spec -----\n" +
+                "\n" +
                 "CONSTANTS x, y\n" +
                 "====\n";
         var expected = "----- MODULE Spec -----\n" +
@@ -128,6 +129,7 @@ class TLAPlusFormatterTest extends SanyTester {
     public void testConstantsParamsIdentDecl() {
         // using Constants
         var spec = "----- MODULE Spec -----\n" +
+                "\n" +
                 "CONSTANTS  CalculateHash(_,_,_)\n" +
                 "====\n";
         var expected = "----- MODULE Spec -----\n" +
@@ -148,13 +150,11 @@ class TLAPlusFormatterTest extends SanyTester {
                 "====\n";
 
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
-                "EXTENDS Naturals\n\n" +
+                "EXTENDS Naturals\n" +
                 "CONSTANT\n" +
                 "         x\n" +
                 "ASSUME\n" +
                 "       x \\in Nat\n" +
-                "\n" +
                 "====\n";
         assertSpecEquals(expected, spec);
     }
@@ -169,14 +169,12 @@ class TLAPlusFormatterTest extends SanyTester {
                 "====\n";
 
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
-                "EXTENDS Naturals\n\n" +
+                "EXTENDS Naturals\n" +
                 "CONSTANT\n" +
                 "         x\n" +
                 "ASSUME\n" +
                 "       /\\ x \\in Nat\n" +
                 "       /\\ x > 10\n" +
-                "\n" +
                 "====\n";
         assertSpecEquals(expected, spec);
     }
@@ -204,9 +202,7 @@ class TLAPlusFormatterTest extends SanyTester {
                 "\n" +
                 "====\n";
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "EXTENDS Naturals\n" +
-                "\n" +
                 "CONSTANTS\n" +
                 "          Prisoner,\n" +
                 "          Counter\n" +
@@ -229,6 +225,7 @@ class TLAPlusFormatterTest extends SanyTester {
                 "               /\\ UNCHANGED timesSwitched\n" +
                 "\n" +
                 "====\n";
+        // TODO: where did the new line before the ==== go?!?!
         assertSpecEquals(expected, spec);
     }
 
@@ -236,11 +233,10 @@ class TLAPlusFormatterTest extends SanyTester {
     public void testLetIn() {
         var spec = "----- MODULE Spec -----\n" +
                 "MH == LET x == 1\n" +
-                "          b == 2 IN 10" +
+                "          b == 2 IN 10\n" +
                 "====\n";
 
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "MH ==\n" +
                 "      LET\n" +
                 "          x ==\n" +
@@ -249,7 +245,6 @@ class TLAPlusFormatterTest extends SanyTester {
                 "               2\n" +
                 "      IN\n" +
                 "          10\n" +
-                "\n" +
                 "====\n";
         assertSpecEquals(expected, spec);
     }
@@ -262,9 +257,8 @@ class TLAPlusFormatterTest extends SanyTester {
                 "THEOREM x \\in Nat \\land x > 10\n" +
                 "====\n";
 
-        var expected = "----- MODULE Spec -----\n\n" +
+        var expected = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals\n" +
-                "\n" +
                 "CONSTANT\n" +
                 "         x\n" +
                 "THEOREM\n" +
@@ -277,12 +271,11 @@ class TLAPlusFormatterTest extends SanyTester {
     public void testTheoremAssign() {
         var spec = "----- MODULE Spec -----\n" +
                 "CONSTANT TypeInvariant, Spec\n" +
-                "THEOREM Safety == Spec => TypeInvariant\n\n" +
+                "THEOREM Safety == Spec => TypeInvariant\n" +
                 "====\n";
 
         // TODO: (safety==Spec)
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "CONSTANT\n" +
                 "         TypeInvariant,\n" +
                 "         Spec\n" +
@@ -310,14 +303,11 @@ class TLAPlusFormatterTest extends SanyTester {
                 "====\n";
 
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "EXTENDS Naturals, Sequences\n" +
-                "\n" +
                 "CONSTANT\n" +
                 "         N\n" +
                 "VARIABLE\n" +
                 "         y\n" +
-                "\n" +
                 "RECURSIVE Partitions(_,_)\n" +
                 "Partitions(seq, wt) ==\n" +
                 "                       IF\n" +
@@ -340,7 +330,6 @@ class TLAPlusFormatterTest extends SanyTester {
                 "                                                       /\\ wt =< x * r }\n" +
                 "                            IN\n" +
                 "                                UNION {Partitions(<<x>> \\o seq, wt - x): x \\in S}\n" +
-                "\n" +
                 "====\n";
         assertSpecEquals(expected, spec);
     }
@@ -354,14 +343,11 @@ class TLAPlusFormatterTest extends SanyTester {
                 " { x \\in 1 .. max: x < max}\n" +
                 "====\n";
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "EXTENDS Naturals, Sequences\n" +
-                "\n" +
                 "CONSTANT\n" +
                 "         max\n" +
                 "S ==\n" +
                 "     { x \\in 1 .. max: x < max }\n" +
-                "\n" +
                 "====\n";
         assertSpecEquals(expected, spec);
     }
@@ -374,14 +360,11 @@ class TLAPlusFormatterTest extends SanyTester {
                 "S == \\A a \\in 1..max: \\E b \\in 1..max: a < b \n" +
                 "====\n";
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "EXTENDS Naturals, Sequences\n" +
-                "\n" +
                 "CONSTANT\n" +
                 "         max\n" +
                 "S ==\n" +
                 "     \\A a \\in 1 .. max: \\E b \\in 1 .. max: a < b\n" +
-                "\n" +
                 "====\n";
         assertSpecEquals(expected, spec);
     }
@@ -392,36 +375,31 @@ class TLAPlusFormatterTest extends SanyTester {
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT max, wt, r\n" +
                 "S == {x \\in 1..max : /\\ (r-1) =< (wt - x)\n" +
-                "                                  /\\ wt =< x*r          }" +
+                "                                  /\\ wt =< x*r          }\n" +
                 "====\n";
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "EXTENDS Naturals, Sequences\n" +
-                "\n" +
                 "CONSTANT\n" +
                 "         max,\n" +
                 "         wt,\n" +
                 "         r\n" +
                 "S ==\n" +
                 "     { x \\in 1 .. max: /\\ (r - 1) =< (wt - x) /\\ wt =< x * r }\n" +
-                "\n" +
                 "====\n";
         assertSpecEquals(expected, spec);
     }
 
     @Test
     public void testFcnApplExcept() {
-        // TODO:
         var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "VARIABLE towers\n" +
+                "\n" +
                 "Move(from, to, disk) ==  towers' = [towers EXCEPT ![from] = towers[from] - disk,  \\* Remaining tower does not change\n" +
                 "                                                    ![to] = towers[to] + disk]\n" +
                 "====\n";
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "EXTENDS Naturals, Sequences\n" +
-                "\n" +
                 "VARIABLE\n" +
                 "         towers\n" +
                 "\n" +
@@ -429,7 +407,6 @@ class TLAPlusFormatterTest extends SanyTester {
                 "                        towers' = [towers EXCEPT ![from]=towers[from] - disk,\n" +
                 "                                                 \\* Remaining tower does not change\n" +
                 "                                                 ![to]=towers[to] + disk]\n" +
-                "\n" +
                 "====\n";
         assertSpecEquals(expected, spec);
     }
@@ -453,12 +430,9 @@ class TLAPlusFormatterTest extends SanyTester {
                 "                            /\\ CR[Cardinality(S) - 1,t]\n" +
                 "====\n";
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "EXTENDS Naturals, FiniteSets\n" +
-                "\n" +
                 "R(s, v) ==\n" +
                 "           0\n" +
-                "\n" +
                 "L(s, t, S) ==\n" +
                 "              LET\n" +
                 "                  CR[n \\in Nat, v \\in S] == IF\n" + // escape chars disalign the vertical align in this view
@@ -472,7 +446,6 @@ class TLAPlusFormatterTest extends SanyTester {
                 "                  /\\ s \\in S\n" +
                 "                  /\\ t \\in S\n" +
                 "                  /\\ CR[Cardinality(S) - 1, t]\n" +
-                "\n" +
                 "====\n";
         assertSpecEquals(expected, spec);
     }
@@ -486,17 +459,14 @@ class TLAPlusFormatterTest extends SanyTester {
                 "R ** T == LET SR == Support(R)\n" +
                 "              ST == Support(T)\n" +
                 "          IN  {<<r, t>> \\in SR \\X ST :\n" +
-                "                \\E s \\in SR \\cap ST : (<<r, s>> \\in R) /\\ (<<s, t>> \\in T)}" +
+                "                \\E s \\in SR \\cap ST : (<<r, s>> \\in R) /\\ (<<s, t>> \\in T)}\n" +
                 "====\n";
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "EXTENDS Naturals, Sequences\n" +
-                "\n" +
                 "CONSTANT\n" +
                 "         a\n" +
                 "Support(x) ==\n" +
                 "              0\n" +
-                "\n" +
                 "R ** T ==\n" +
                 "          LET\n" +
                 "              SR ==\n" +
@@ -505,7 +475,6 @@ class TLAPlusFormatterTest extends SanyTester {
                 "                    Support(T)\n" +
                 "          IN\n" +
                 "              { <<r,t>> \\in SR \\X ST: \\E s \\in SR \\cap ST: (<<r, s>> \\in R) /\\ (<<s, t>> \\in T) }\n" +
-                "\n" +
                 "====\n";
         assertSpecEquals(expected, spec);
     }
@@ -516,18 +485,15 @@ class TLAPlusFormatterTest extends SanyTester {
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT Proc, pc\n" +
                 "AgrrLtl ==\n" +
-                "  [](~(\\E i \\in Proc, j \\in Proc :  pc[i] = \"COMMIT\" /\\ pc[j] = \"ABORT\"))\n\n" +
+                "  [](~(\\E i \\in Proc, j \\in Proc :  pc[i] = \"COMMIT\" /\\ pc[j] = \"ABORT\"))\n" +
                 "====\n";
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "EXTENDS Naturals, Sequences\n" +
-                "\n" +
                 "CONSTANT\n" +
                 "         Proc,\n" +
                 "         pc\n" +
                 "AgrrLtl ==\n" +
                 "           [](~(\\E i \\in Proc, j \\in Proc: pc[i] = \"COMMIT\" /\\ pc[j] = \"ABORT\"))\n" +
-                "\n" +
                 "====\n";
         assertSpecEquals(expected, spec);
     }
@@ -542,9 +508,7 @@ class TLAPlusFormatterTest extends SanyTester {
                 "UndefinedHashesExist == N!Nat\n" +
                 "====\n";
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "EXTENDS Naturals, Sequences\n" +
-                "\n" +
                 "CONSTANT\n" +
                 "         a\n" +
                 "N ==\n" +
@@ -552,7 +516,6 @@ class TLAPlusFormatterTest extends SanyTester {
                 "\n" +
                 "UndefinedHashesExist ==\n" +
                 "                        N!Nat\n" +
-                "\n" +
                 "====\n";
         assertSpecEquals(expected, spec);
     }
@@ -564,6 +527,7 @@ class TLAPlusFormatterTest extends SanyTester {
                 "CONSTANT pc, vroot\n" +
                 "====\n";
         var spec = "----- MODULE Spec -----\n" +
+                "\n" +
                 "CONSTANT vrootBar, pcBar\n" +
                 "N == INSTANCE Spec2 WITH vroot <- vrootBar, pc <- pcBar\n" +
                 "====\n";
@@ -575,7 +539,6 @@ class TLAPlusFormatterTest extends SanyTester {
                 "N ==\n" +
                 "     INSTANCE Spec2 WITH vroot <- vrootBar,\n" +
                 "                         pc <- pcBar\n" +
-                "\n" +
                 "====\n";
 
         assertSpecEquals(expected, spec, spec2);
@@ -586,19 +549,15 @@ class TLAPlusFormatterTest extends SanyTester {
         var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Naturals, Sequences\n" +
                 "CONSTANT a\n" +
-                "\n" +
                 " RecordCombine(S, T) ==\n" +
-                "   {a : s \\in S, t \\in T}" +
+                "   {a : s \\in S, t \\in T}\n" +
                 "====\n";
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "EXTENDS Naturals, Sequences\n" +
-                "\n" +
                 "CONSTANT\n" +
                 "         a\n" +
                 "RecordCombine(S, T) ==\n" +
                 "                       {a: s \\in S, t \\in T}\n" +
-                "\n" +
                 "====\n";
         assertSpecEquals(expected, spec);
     }
@@ -608,12 +567,10 @@ class TLAPlusFormatterTest extends SanyTester {
         var spec = "----- MODULE Spec -----\n" +
                 "EXTENDS Integers\n" +
                 "a / b     == IF b /= 0 THEN <<a, b>> ELSE CHOOSE x \\in {} : TRUE\n" +
-                "a \\odot b == (a[1]*b[1]) / (a[2]*b[2])\n\n" +
+                "a \\odot b == (a[1]*b[1]) / (a[2]*b[2])\n" +
                 "====\n";
         var expected = "----- MODULE Spec -----\n" +
-                "\n" +
                 "EXTENDS Integers\n" +
-                "\n" +
                 "a / b ==\n" +
                 "         IF\n" +
                 "              b /= 0\n" +
@@ -621,10 +578,8 @@ class TLAPlusFormatterTest extends SanyTester {
                 "              <<a, b>>\n" +
                 "         ELSE\n" +
                 "              CHOOSE x \\in {}: TRUE\n" +
-                "\n" +
                 "a \\odot b ==\n" +
                 "             (a[1] * b[1]) / (a[2] * b[2])\n" +
-                "\n" +
                 "====\n";
         assertSpecEquals(expected, spec);
     }
@@ -642,9 +597,8 @@ class TLAPlusFormatterTest extends SanyTester {
                 "THEOREM x \\in Nat \\land x > 10\n" +
                 "====\n";
 
-        var expected = "----- MODULE Spec -----\n\n" +
+        var expected = "----- MODULE Spec -----\n" +
                 "EXTENDS TLAPS, Naturals\n" +
-                "\n" +
                 "CONSTANT\n" +
                 "         x\n" +
                 "THEOREM\n" +

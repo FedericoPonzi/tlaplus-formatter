@@ -13,6 +13,6 @@ public class EndModule extends TreeNode {
 
     @Override
     public void format(FormattedSpec f) {
-        f.append(this.zero()[0]).nl();
+        f.append(this.zero()[0]);
     }
 }
