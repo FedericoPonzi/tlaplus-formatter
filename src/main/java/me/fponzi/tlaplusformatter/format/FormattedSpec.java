@@ -64,26 +64,6 @@ public class FormattedSpec {
         return this;
     }
 
-    public FormattedSpec increaseLevel(TreeNode node) {
-        if(node.shouldAddNewLine()) {
-            increaseLevel();
-        }
-        return this;
-    }
-    /**
-     * If we increased level because of this node,
-     * this can be used to pop the level.
-     * @param node
-     * @return
-     */
-    public FormattedSpec decreaseLevel(TreeNode node) {
-        if(node.shouldAddNewLine()) {
-            decreaseLevel();
-        }
-        return this;
-    }
-
-
     public FormattedSpec space() {
         out.append(" ");
         return this;
@@ -102,9 +82,8 @@ public class FormattedSpec {
         return this;
     }
 
-    protected FormattedSpec setIndent(int val) {
+    private void setIndent(int val) {
         this.indent = " ".repeat(val);
-        return this;
     }
     public FormattedSpec increaseIndent(int val) {
         this.indent = " ".repeat(this.indent.length() + val);

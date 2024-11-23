@@ -9,7 +9,7 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public abstract class SanyTester {
+public abstract class LexiconTest {
     // creates a temp folder
     // stores input and expected there
     // run the formatter do asserts

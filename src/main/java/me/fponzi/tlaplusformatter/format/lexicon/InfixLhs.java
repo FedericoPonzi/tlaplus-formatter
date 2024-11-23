@@ -7,11 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
+// TODO: This is untested
 // Example: R ** T in
 // R ** T == LET SR == Support(x)....
 public class InfixLhs extends TreeNode {
     public static final String IMAGE = "N_InfixLHS";
-    // TODO:
     public static final int KIND = 372;
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 

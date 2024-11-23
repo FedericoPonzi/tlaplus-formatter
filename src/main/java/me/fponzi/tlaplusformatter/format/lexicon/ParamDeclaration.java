@@ -7,13 +7,13 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-public class Constants extends TreeNode {
+public class ParamDeclaration extends TreeNode {
     public static final String IMAGE = "N_ParamDeclaration";
     public static final int KIND = 392;
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public Constants(tla2sany.st.TreeNode node) {
+    public ParamDeclaration(tla2sany.st.TreeNode node) {
         super(node);
     }
 
