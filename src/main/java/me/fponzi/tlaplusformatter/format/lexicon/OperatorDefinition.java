@@ -6,8 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.util.List;
-import java.util.Objects;
 
 // S == 1 or S(x) == x + 1
 // or a \odot b == c
@@ -25,13 +23,7 @@ public class OperatorDefinition extends TreeNode {
     @Override
     public void format(FormattedSpec f) {
         var o = this.one();
-        for (int i = 0; i < o[0].zero().length; i++) {
-            var ch = this.one()[0].zero()[i];
-            ch.format(f);
-            if (i + 1 < o[0].zero().length && !(List.of(",", "(", ")").contains(o[0].zero()[i + 1].getImage())) && !Objects.equals("(", ch.getImage())) {
-                f.space();
-            } else if (ch.getImage().equals(",")) f.space();
-        }
+        o[0].format(f);
         f.space().append(this.one()[1]); // ==
         f.increaseLevel().nl();
         this.one()[2].format(f);

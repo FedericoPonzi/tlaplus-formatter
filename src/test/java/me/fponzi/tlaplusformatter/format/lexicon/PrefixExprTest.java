@@ -1,9 +1,28 @@
 package me.fponzi.tlaplusformatter.format.lexicon;
 
-import me.fponzi.tlaplusformatter.SanyTester;
+import me.fponzi.tlaplusformatter.LexiconTest;
 import org.junit.jupiter.api.Test;
 
-class PrefixExprTest extends SanyTester {
+class PrefixExprTest extends LexiconTest {
+    @Test
+    public void testPrefixEpr2() {
+        var spec = "----- MODULE Spec -----\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "CONSTANT Proc, pc\n" +
+                "AgrrLtl ==\n" +
+                "  [](~(\\E i \\in Proc, j \\in Proc :  pc[i] = \"COMMIT\" /\\ pc[j] = \"ABORT\"))\n" +
+                "====\n";
+        var expected = "----- MODULE Spec -----\n" +
+                "EXTENDS Naturals, Sequences\n" +
+                "CONSTANT\n" +
+                "         Proc,\n" +
+                "         pc\n" +
+                "AgrrLtl ==\n" +
+                "           [](~(\\E i \\in Proc, j \\in Proc: pc[i] = \"COMMIT\" /\\ pc[j] = \"ABORT\"))\n" +
+                "====\n";
+        assertSpecEquals(expected, spec);
+    }
+
 
     @Test
     public void testPrefixExpr() {
