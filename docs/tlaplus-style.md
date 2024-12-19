@@ -22,13 +22,14 @@ Prefer block indent over visual indent:
 
 ```latex
 \* Block indent
-MySet == {
-   1,
-   2,
-   3 }
+MySet == 
+  { 1,
+    2,
+    3 }
 
 \* Visual indent
-MySet2 == { 1,
+MySet2 == 
+          { 1,
             2,
             3 }
 ```
@@ -61,6 +62,17 @@ When using line comments, put a single space after the opening sigil.
 
 Comments should be vertically aligned to the formula they refer to.
 
+Comment should always precede the formula they refer to.
+Don't:
+```tla
+VARIABLE Important \* This variable is important
+```
+Do:
+```tla
+\* This variable is important
+VARIABLE Important 
+```
+
 ## Small items
 
 ### *small* items
@@ -92,18 +104,31 @@ not more complex sub-expressions). For more discussion on suitable heuristics,
 see [this issue](https://github.com/rust-lang-nursery/fmt-rfcs/issues/47).
 
 
-## Alignments
+## Module-Level Constructs
+### Extends, Constants, Variables
 If there is one module, it should be included in the same line
 ```
 EXTENDS TLC
+CONSTANT A
+VARIABLE A
 ```
 If there is more than one module, they should be on separated lines.
 ```
 EXTENDS TLC, 
         ModuleA, 
         ModuleB
+
+CONSTANTS A,
+          B,
+          C
+
+VARIABLES A,
+          B,
+          C
 ```
-Similarly, definitions should start on the same line.
+
+## Operators
+Short definitions should start on the same line.
 ```
 Hours == 12
 
@@ -125,6 +150,10 @@ MySet == [
   endColumn |-> 18,
   module |-> "MCCRDT" ]
 ```
+
+## Other style advice
+* Definitions, constant and variable names should be in CamelCase.
+* 
 
 ----
 
