@@ -74,14 +74,6 @@ public class SANYWrapper {
     }
 
     private static void ThrowOnError(SpecObj specObj) {
-        var initErrors = specObj.getInitErrors();
-        if (initErrors.isFailure()) {
-            throw new SanyAbortException(initErrors.toString());
-        }
-        var contextErrors = specObj.getGlobalContextErrors();
-        if (contextErrors.isFailure()) {
-            throw new SanyAbortException(contextErrors.toString());
-        }
         var parseErrors = specObj.getParseErrors();
         if (parseErrors.isFailure()) {
             throw new SanySyntaxException(parseErrors.toString());
@@ -103,9 +95,9 @@ public class SANYWrapper {
             super(parentDirPath);
         }
         @Override
-        public File resolve(String name, boolean isModule) {
+        public TLAFile resolve(String name, boolean isModule) {
             // First try with the default resolver.
-            File sourceFile = super.resolve(name,  isModule);
+            TLAFile sourceFile = super.resolve(name,  isModule);
             if(sourceFile != null && sourceFile.exists()){
                 return sourceFile;
             }
@@ -119,7 +111,7 @@ public class SANYWrapper {
                         File tempFile = File.createTempFile("TLAPS", ".tla");
                         tempFile.deleteOnExit();
                         Files.copy(tlapsStream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        return tempFile;
+                        return (TLAFile) tempFile;
                     } catch (IOException e) {
                         // If there's an error, fall back to the default behavior
                         e.printStackTrace();
