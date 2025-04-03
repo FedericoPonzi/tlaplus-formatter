@@ -1,6 +1,9 @@
 package me.fponzi.tlaplusformatter;
 
-import me.fponzi.tlaplusformatter.exceptions.*;
+import me.fponzi.tlaplusformatter.exceptions.SanyException;
+import me.fponzi.tlaplusformatter.exceptions.SanyFrontendException;
+import me.fponzi.tlaplusformatter.exceptions.SanySemanticException;
+import me.fponzi.tlaplusformatter.exceptions.SanySyntaxException;
 import me.fponzi.tlaplusformatter.format.FactoryRegistry;
 import me.fponzi.tlaplusformatter.format.TreeNode;
 import org.apache.commons.io.output.WriterOutputStream;
@@ -10,11 +13,13 @@ import tla2sany.modanalyzer.ParseUnit;
 import tla2sany.modanalyzer.SpecObj;
 import util.SimpleFilenameToStream;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.StringWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -74,14 +79,6 @@ public class SANYWrapper {
     }
 
     private static void ThrowOnError(SpecObj specObj) {
-        var initErrors = specObj.getInitErrors();
-        if (initErrors.isFailure()) {
-            throw new SanyAbortException(initErrors.toString());
-        }
-        var contextErrors = specObj.getGlobalContextErrors();
-        if (contextErrors.isFailure()) {
-            throw new SanyAbortException(contextErrors.toString());
-        }
         var parseErrors = specObj.getParseErrors();
         if (parseErrors.isFailure()) {
             throw new SanySyntaxException(parseErrors.toString());
@@ -103,30 +100,12 @@ public class SANYWrapper {
             super(parentDirPath);
         }
         @Override
-        public File resolve(String name, boolean isModule) {
+        public TLAFile resolve(String name, boolean isModule) {
             // First try with the default resolver.
-            File sourceFile = super.resolve(name,  isModule);
+            TLAFile sourceFile = super.resolve(name,  isModule);
             if(sourceFile != null && sourceFile.exists()){
                 return sourceFile;
             }
-
-            // If that failed, let's try to search it in the local resources:
-            if (isModule) {
-                // Try to load TLAPS.tla from the bundled resources
-                InputStream tlapsStream = getClass().getResourceAsStream("/tlaps-lib/" +  name);
-                if (tlapsStream != null) {
-                    try {
-                        File tempFile = File.createTempFile("TLAPS", ".tla");
-                        tempFile.deleteOnExit();
-                        Files.copy(tlapsStream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        return tempFile;
-                    } catch (IOException e) {
-                        // If there's an error, fall back to the default behavior
-                        e.printStackTrace();
-                    }
-                }
-            }
-            // At least we tried :)
             return null;
         }
     }
