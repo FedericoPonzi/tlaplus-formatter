@@ -1,6 +1,9 @@
 package me.fponzi.tlaplusformatter;
 
-import me.fponzi.tlaplusformatter.exceptions.*;
+import me.fponzi.tlaplusformatter.exceptions.SanyException;
+import me.fponzi.tlaplusformatter.exceptions.SanyFrontendException;
+import me.fponzi.tlaplusformatter.exceptions.SanySemanticException;
+import me.fponzi.tlaplusformatter.exceptions.SanySyntaxException;
 import me.fponzi.tlaplusformatter.format.FactoryRegistry;
 import me.fponzi.tlaplusformatter.format.TreeNode;
 import org.apache.commons.io.output.WriterOutputStream;
@@ -10,11 +13,13 @@ import tla2sany.modanalyzer.ParseUnit;
 import tla2sany.modanalyzer.SpecObj;
 import util.SimpleFilenameToStream;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.StringWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -101,24 +106,6 @@ public class SANYWrapper {
             if(sourceFile != null && sourceFile.exists()){
                 return sourceFile;
             }
-
-            // If that failed, let's try to search it in the local resources:
-            if (isModule) {
-                // Try to load TLAPS.tla from the bundled resources
-                InputStream tlapsStream = getClass().getResourceAsStream("/tlaps-lib/" +  name);
-                if (tlapsStream != null) {
-                    try {
-                        File tempFile = File.createTempFile("TLAPS", ".tla");
-                        tempFile.deleteOnExit();
-                        Files.copy(tlapsStream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        return (TLAFile) tempFile;
-                    } catch (IOException e) {
-                        // If there's an error, fall back to the default behavior
-                        e.printStackTrace();
-                    }
-                }
-            }
-            // At least we tried :)
             return null;
         }
     }
