@@ -59,6 +59,11 @@ public class TLAPlusFormatter {
 
     private void format() throws IOException {
         String[] extraSections = getPreAndPostModuleSectionsFromSpecFile(spec.toPath());
+        
+        // Pass original source to docBuilder for spacing preservation
+        String originalSource = Files.readString(spec.toPath());
+        docBuilder.setOriginalSource(originalSource);
+        
         Doc moduleDoc = docBuilder.build(root);
         System.out.println("rendering output");
         this.output = extraSections[0] +

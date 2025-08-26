@@ -21,6 +21,7 @@ public class TlaDocBuilder {
     
     private final ConstructRegistry registry;
     private final ConstructContext context;
+    private String originalSource;
     
     public TlaDocBuilder(FormatConfig config) {
         this.registry = new ConstructRegistry();
@@ -170,5 +171,46 @@ public class TlaDocBuilder {
         }
         
         return info.toString();
+    }
+    
+    /**
+     * Set the original source content for spacing preservation.
+     */
+    public void setOriginalSource(String source) {
+        this.originalSource = source;
+    }
+    
+    /**
+     * Get preserved spacing after a node based on original source.
+     * Returns appropriate Doc for extra newlines between this node and the next.
+     */
+    public Doc getSpacingAfter(TreeNode node) {
+        if (originalSource == null || node == null || node.getLocation() == null) {
+            return Doc.empty();
+        }
+        
+        String[] lines = originalSource.split("\\R");
+        int nodeEndLine = node.getLocation().endLine() - 1; // Convert to 0-based index
+        
+        // Count consecutive empty lines after this node (starting from the line after the node ends)
+        int emptyLines = 0;
+        for (int i = nodeEndLine + 1; i < lines.length; i++) {
+            if (lines[i].trim().isEmpty()) {
+                emptyLines++;
+            } else {
+                break;
+            }
+        }
+        
+        // Return appropriate spacing (preserve extra newlines)
+        if (emptyLines > 0) {
+            Doc result = Doc.empty();
+            for (int i = 0; i < emptyLines; i++) {
+                result = result.appendLine(Doc.empty());
+            }
+            return result;
+        }
+        
+        return Doc.empty();
     }
 }

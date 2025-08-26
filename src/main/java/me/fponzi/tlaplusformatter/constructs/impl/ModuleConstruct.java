@@ -35,13 +35,23 @@ public class ModuleConstruct {
             }
             
             List<Doc> parts = new ArrayList<>();
+            TreeNode[] children = node.zero();
             
             // Process all module parts
-            for (TreeNode child : node.zero()) {
+            for (int i = 0; i < children.length; i++) {
+                TreeNode child = children[i];
                 if (context.isValidNode(child)) {
                     Doc childDoc = context.buildChild(child);
                     if (!childDoc.equals(Doc.empty())) {
                         parts.add(childDoc);
+                        
+                        // Add preserved spacing after this node (except for the last one)
+                        if (i < children.length - 1) {
+                            Doc spacing = context.getSpacingAfter(child);
+                            if (!spacing.equals(Doc.empty())) {
+                                parts.add(spacing);
+                            }
+                        }
                     }
                 }
             }
@@ -138,12 +148,22 @@ public class ModuleConstruct {
             }
             
             List<Doc> parts = new ArrayList<>();
+            TreeNode[] children = node.zero();
             
-            for (TreeNode child : node.zero()) {
+            for (int i = 0; i < children.length; i++) {
+                TreeNode child = children[i];
                 if (context.isValidNode(child)) {
                     Doc childDoc = context.buildChild(child);
                     if (!childDoc.equals(Doc.empty())) {
                         parts.add(childDoc);
+                        
+                        // Add preserved spacing after this node (except for the last one)
+                        if (i < children.length - 1) {
+                            Doc spacing = context.getSpacingAfter(child);
+                            if (!spacing.equals(Doc.empty())) {
+                                parts.add(spacing);
+                            }
+                        }
                     }
                 }
             }

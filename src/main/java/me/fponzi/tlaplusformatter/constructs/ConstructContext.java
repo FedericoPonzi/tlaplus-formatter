@@ -77,6 +77,16 @@ public class ConstructContext {
     }
     
     /**
+     * Get preserved spacing after a node based on original source.
+     * 
+     * @param node The tree node to get spacing after
+     * @return Doc object for extra spacing/newlines
+     */
+    public Doc getSpacingAfter(TreeNode node) {
+        return docBuilder.getSpacingAfter(node);
+    }
+    
+    /**
      * Helper class for common node analysis operations.
      */
     private static class NodeAnalyzer {
