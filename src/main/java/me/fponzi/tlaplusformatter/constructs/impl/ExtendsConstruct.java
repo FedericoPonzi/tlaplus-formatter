@@ -86,7 +86,6 @@ public class ExtendsConstruct implements TlaConstruct {
         
         /**
          * Custom formatting for EXTENDS that groups modules intelligently.
-         * Uses the same logic as the original TlaDocuments.extendsDeclaration.
          */
         private Doc formatExtendsWithGrouping(List<String> modules) {
             if (modules.isEmpty()) {

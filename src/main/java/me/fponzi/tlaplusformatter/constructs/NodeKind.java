@@ -8,8 +8,6 @@ import java.util.stream.Stream;
 
 /**
  * Enum representing SANY node kinds with metadata.
- * This provides a more maintainable way to manage node kind constants
- * compared to scattered magic numbers throughout the codebase.
  */
 public enum NodeKind {
     
@@ -21,6 +19,7 @@ public enum NodeKind {
     
     // Declarations
     EXTENDS(365, "Extends declaration", 350), // Multiple IDs for extends
+    CONSTANTS(44, "Constants declaration"),
     VARIABLE_DECLARATION(426, "Variable declaration"),
     OPERATOR_DEFINITION(389, "Operator definition"),
     THEOREM(421, "Theorem declaration"),

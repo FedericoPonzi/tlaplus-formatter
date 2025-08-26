@@ -19,6 +19,8 @@ dependencies {
     implementation ("commons-io:commons-io:2.16.1")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.mockito:mockito-core:5.7.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.7.0")
     implementation("commons-cli:commons-cli:1.8.0")
 
     // Logging

@@ -40,6 +40,7 @@ public class TlaDocBuilder {
         
         // Declarations
         registry.register(new ExtendsConstruct());
+        registry.register(new ConstantsConstruct());
         registry.register(new VariableConstruct());
         registry.register(new OperatorConstruct());
         

@@ -20,7 +20,6 @@ public class TLAPlusFormatter {
 
     private final TreeNode root;
     private final File spec;
-    private final FormatConfig config;
     private final TlaDocBuilder docBuilder;
     private String output;
 
@@ -29,7 +28,6 @@ public class TLAPlusFormatter {
     }
     
     public TLAPlusFormatter(File specPath, FormatConfig config) throws IOException, SanyFrontendException {
-        this.config = config;
         this.docBuilder = new TlaDocBuilder(config);
         this.root = SANYWrapper.load(specPath);
         this.spec = specPath;
