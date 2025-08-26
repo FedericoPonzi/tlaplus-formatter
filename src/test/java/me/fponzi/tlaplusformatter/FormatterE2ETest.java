@@ -197,7 +197,7 @@ class FormatterE2ETest {
         
         // Basic content verification - operator should be present
         assertTrue(output.contains("VeryLongOperatorName"), "Should contain operator name");
-        assertFalse(output.contains("VeryLongOperatorName ==  "), "Long operator should not have everything on one line");
+        assertFalse(output.contains("VeryLongOperatorName == state = \"this is a long"), "Long operator should not have everything on one line");
         
         // Test idempotency - this is the key test
         testFormattingIdempotency("LONG_OPERATOR", output);
@@ -400,8 +400,4 @@ class FormatterE2ETest {
         assertEquals(output1, output2, "Formatter should be idempotent for EXTENDS");
     }
 
-
-    void testPrettier4j() {
-
-    }
 }
