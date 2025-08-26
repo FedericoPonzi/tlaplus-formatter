@@ -1,11 +1,11 @@
 package me.fponzi.tlaplusformatter.constructs.impl;
 
 import com.opencastsoftware.prettier4j.Doc;
-import me.fponzi.tlaplusformatter.constructs.*;
+import me.fponzi.tlaplusformatter.constructs.ConstructContext;
+import me.fponzi.tlaplusformatter.constructs.NodeKind;
+import me.fponzi.tlaplusformatter.constructs.TlaConstruct;
 import tla2sany.st.TreeNode;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -33,8 +33,8 @@ public class ModuleConstruct {
             if (node.zero() == null || node.zero().length == 0) {
                 return Doc.empty();
             }
-            
-            List<Doc> parts = new ArrayList<>();
+
+            Doc p = null;
             TreeNode[] children = node.zero();
             
             // Process all module parts
@@ -42,33 +42,24 @@ public class ModuleConstruct {
                 TreeNode child = children[i];
                 if (context.isValidNode(child)) {
                     Doc childDoc = context.buildChild(child);
-                    if (!childDoc.equals(Doc.empty())) {
-                        parts.add(childDoc);
-                        
-                        // Add preserved spacing after this node (except for the last one)
-                        if (i < children.length - 1) {
-                            Doc spacing = context.getSpacingAfter(child);
-                            if (!spacing.equals(Doc.empty())) {
-                                parts.add(spacing);
-                            }
-                        }
+                    if(childDoc.equals(Doc.empty())){
+                        System.out.println("weird");
+                        continue;
+                    }
+                    p = p == null ? childDoc : p.appendLine(childDoc);
+
+                    if (i == children.length-1) {
+                        continue;
+                    }
+                    // Add preserved spacing after this node (except for the last one)
+                    Doc spacing = context.getSpacingAfter(child, children[i+1]);
+                    if (spacing != null) {
+                        p = p.appendLine(spacing);
                     }
                 }
             }
             
-            return createLines(parts);
-        }
-        
-        private Doc createLines(List<Doc> parts) {
-            if (parts.isEmpty()) {
-                return Doc.empty();
-            }
-            
-            Doc result = parts.get(0);
-            for (int i = 1; i < parts.size(); i++) {
-                result = result.appendLine(parts.get(i));
-            }
-            return result;
+            return p;
         }
     }
     
@@ -128,7 +119,7 @@ public class ModuleConstruct {
     /**
      * Handles BODY (module body content).
      */
-    public static class BodyConstruct implements TlaConstruct {
+    public static class BodyConstruct extends ModuleMainConstruct {
         
         @Override
         public String getName() {
@@ -138,49 +129,6 @@ public class ModuleConstruct {
         @Override
         public Set<Integer> getSupportedNodeKinds() {
             return NodeKind.BODY.getAllIds();
-        }
-        
-        @Override
-        public Doc buildDoc(TreeNode node, ConstructContext context) {
-            // Body contains the module contents between header and footer
-            if (node.zero() == null || node.zero().length == 0) {
-                return Doc.empty();
-            }
-            
-            List<Doc> parts = new ArrayList<>();
-            TreeNode[] children = node.zero();
-            
-            for (int i = 0; i < children.length; i++) {
-                TreeNode child = children[i];
-                if (context.isValidNode(child)) {
-                    Doc childDoc = context.buildChild(child);
-                    if (!childDoc.equals(Doc.empty())) {
-                        parts.add(childDoc);
-                        
-                        // Add preserved spacing after this node (except for the last one)
-                        if (i < children.length - 1) {
-                            Doc spacing = context.getSpacingAfter(child);
-                            if (!spacing.equals(Doc.empty())) {
-                                parts.add(spacing);
-                            }
-                        }
-                    }
-                }
-            }
-            
-            return createLines(parts);
-        }
-        
-        private Doc createLines(List<Doc> parts) {
-            if (parts.isEmpty()) {
-                return Doc.empty();
-            }
-            
-            Doc result = parts.get(0);
-            for (int i = 1; i < parts.size(); i++) {
-                result = result.appendLine(parts.get(i));
-            }
-            return result;
         }
     }
 }

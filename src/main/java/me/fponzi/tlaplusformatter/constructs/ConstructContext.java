@@ -82,8 +82,8 @@ public class ConstructContext {
      * @param node The tree node to get spacing after
      * @return Doc object for extra spacing/newlines
      */
-    public Doc getSpacingAfter(TreeNode node) {
-        return docBuilder.getSpacingAfter(node);
+    public Doc getSpacingAfter(TreeNode node, TreeNode next) {
+        return docBuilder.getSpacingAfter(node, next);
     }
     
     /**

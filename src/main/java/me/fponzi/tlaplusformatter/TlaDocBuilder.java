@@ -98,9 +98,9 @@ public class TlaDocBuilder {
             for (TreeNode child : node.zero()) {
                 if (isValidNode(child)) {
                     Doc childDoc = build(child);
-                    if (!childDoc.equals(Doc.empty())) {
+                    //if (!childDoc.equals(Doc.empty())) {
                         children.add(childDoc);
-                    }
+                    //}
                 }
             }
         }
@@ -109,9 +109,9 @@ public class TlaDocBuilder {
             for (TreeNode child : node.one()) {
                 if (isValidNode(child)) {
                     Doc childDoc = build(child);
-                    if (!childDoc.equals(Doc.empty())) {
+                    //if (!childDoc.equals(Doc.empty())) {
                         children.add(childDoc);
-                    }
+                    //}
                 }
             }
         }
@@ -184,33 +184,28 @@ public class TlaDocBuilder {
      * Get preserved spacing after a node based on original source.
      * Returns appropriate Doc for extra newlines between this node and the next.
      */
-    public Doc getSpacingAfter(TreeNode node) {
+    public Doc getSpacingAfter(TreeNode node, TreeNode next) {
         if (originalSource == null || node == null || node.getLocation() == null) {
             return Doc.empty();
         }
         
-        String[] lines = originalSource.split("\\R");
-        int nodeEndLine = node.getLocation().endLine() - 1; // Convert to 0-based index
-        
+        int nodeEndLine = node.getLocation().endLine(); // Convert to 0-based index
+        int nextStartLine = next.getLocation().beginLine();
+        if (nodeEndLine == Integer.MAX_VALUE || nextStartLine == Integer.MAX_VALUE) {
+            return null;
+        }
         // Count consecutive empty lines after this node (starting from the line after the node ends)
-        int emptyLines = 0;
-        for (int i = nodeEndLine + 1; i < lines.length; i++) {
-            if (lines[i].trim().isEmpty()) {
-                emptyLines++;
-            } else {
-                break;
-            }
-        }
-        
+        int emptyLines = nextStartLine - nodeEndLine;
+        System.out.println("node:" + node.getHumanReadableImage() + "  begin: "+ nextStartLine + " next: " + next.getHumanReadableImage() + " - line:" + next.getLocation().beginLine() + " Empty lines: "+ emptyLines);
         // Return appropriate spacing (preserve extra newlines)
-        if (emptyLines > 0) {
-            Doc result = Doc.empty();
-            for (int i = 0; i < emptyLines; i++) {
-                result = result.appendLine(Doc.empty());
-            }
-            return result;
+        if (emptyLines == 1) {
+            return null;
         }
-        
-        return Doc.empty();
+        Doc result = Doc.empty();
+        for (int i = 1; i < emptyLines - 1; i++) {
+            result = result.appendLine(Doc.empty());
+        }
+        System.out.println(emptyLines);
+        return result;
     }
 }
