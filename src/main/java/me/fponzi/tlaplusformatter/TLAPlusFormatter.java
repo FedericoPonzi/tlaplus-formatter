@@ -1,7 +1,6 @@
 package me.fponzi.tlaplusformatter;
 
 import com.opencastsoftware.prettier4j.Doc;
-import com.opencastsoftware.prettier4j.RenderOptions;
 import me.fponzi.tlaplusformatter.exceptions.SanyFrontendException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +21,15 @@ public class TLAPlusFormatter {
     private final File spec;
     private final TlaDocBuilder docBuilder;
     private String output;
+    private final FormatConfig config;
 
     public TLAPlusFormatter(File specPath) throws IOException, SanyFrontendException {
         this(specPath, new FormatConfig());
     }
-    
+
     public TLAPlusFormatter(File specPath, FormatConfig config) throws IOException, SanyFrontendException {
         this.docBuilder = new TlaDocBuilder(config);
+        this.config = config;
         this.root = SANYWrapper.load(specPath);
         this.spec = specPath;
 
@@ -52,23 +53,23 @@ public class TLAPlusFormatter {
     public TLAPlusFormatter(String spec) throws IOException, SanyFrontendException {
         this(storeToTmp(spec), new FormatConfig());
     }
-    
+
     public TLAPlusFormatter(String spec, FormatConfig config) throws IOException, SanyFrontendException {
         this(storeToTmp(spec), config);
     }
 
     private void format() throws IOException {
         String[] extraSections = getPreAndPostModuleSectionsFromSpecFile(spec.toPath());
-        
+
         // Pass original source to docBuilder for spacing preservation
         String originalSource = Files.readString(spec.toPath());
         docBuilder.setOriginalSource(originalSource);
-        
+
         Doc moduleDoc = docBuilder.build(root);
         System.out.println("rendering output");
         this.output = extraSections[0] +
-                          moduleDoc.render(RenderOptions.defaults()) +
-                          extraSections[1];
+                moduleDoc.render(this.config.getLineWidth()) +
+                extraSections[1];
     }
 
     static String getModuleName(String spec) {
@@ -104,7 +105,7 @@ public class TLAPlusFormatter {
         for (int i = endLine; i < lines.length; i++) {
             postModuleSection.append(System.lineSeparator()).append(lines[i]);
         }
-        if(spec.endsWith("\n")) {
+        if (spec.endsWith("\n")) {
             postModuleSection.append(System.lineSeparator());
         }
 

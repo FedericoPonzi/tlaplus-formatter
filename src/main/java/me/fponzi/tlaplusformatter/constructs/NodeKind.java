@@ -32,7 +32,7 @@ public enum NodeKind {
     ASSUME(999, "Assume statement"), // Placeholder ID
     LEMMA(998, "Lemma declaration"), // Placeholder ID
     PROOF(997, "Proof block"), // Placeholder ID
-    IF_THEN_ELSE(996, "IF-THEN-ELSE expression"), // Placeholder ID
+    IF_THEN_ELSE(369, "IF-THEN-ELSE expression"), // N_IfThenElse
     FUNCTION_DEF(995, "Function definition"), // Placeholder ID
     SET_ENUM(994, "Set enumeration"), // Placeholder ID
     RECORD(993, "Record expression"), // Placeholder ID
