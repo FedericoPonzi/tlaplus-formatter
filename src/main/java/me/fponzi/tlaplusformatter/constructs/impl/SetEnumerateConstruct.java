@@ -55,8 +55,8 @@ public class SetEnumerateConstruct implements TlaConstruct {
 
         return Doc.group(
                 Doc.text("{")
-                        .appendSpace(content)
+                        .appendSpace(content.indent("{ ".length()))
                         .appendLineOrSpace(Doc.text("}"))
-        ).indent(context.getConfig().getIndentSize());
+        );
     }
 }

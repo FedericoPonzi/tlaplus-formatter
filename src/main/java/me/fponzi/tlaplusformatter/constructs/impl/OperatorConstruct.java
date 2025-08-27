@@ -38,7 +38,7 @@ public class OperatorConstruct implements TlaConstruct {
                 Doc.text(operatorName)
                         .appendSpace(Doc.text("=="))
                         .appendLineOrSpace(expression)
-        ).indent(context.getConfig().getIndentSize());
+        ).indent(indentSize);
     }
 
     private String extractOperatorName(TreeNode nameNode) {

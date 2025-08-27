@@ -12,6 +12,7 @@ import java.util.List;
 /**
  * Construct implementation for record constructors.
  * Handles formatting of record expressions like [field1 |-> value1, field2 |-> value2].
+ * See FieldValConstruct for "field1 |-> value1".
  */
 public class RcdConstructorConstruct implements TlaConstruct {
 
@@ -47,7 +48,7 @@ public class RcdConstructorConstruct implements TlaConstruct {
         }
         return Doc.group(
                 Doc.text("[")
-                        .appendSpace(Doc.group(content.indent(2)))
+                        .appendSpace(content.indent("[ ".length()))
                         .appendLineOrSpace(Doc.text("]")));
     }
 }

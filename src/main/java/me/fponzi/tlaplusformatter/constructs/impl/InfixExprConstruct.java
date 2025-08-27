@@ -44,7 +44,7 @@ public class InfixExprConstruct implements TlaConstruct {
         return Doc.group(
                 leftOperand
                         .appendSpace(operator)
-                        .appendLineOrSpace(rightOperand.indent(indentSize))
+                        .appendLineOrSpace(rightOperand)
         );
     }
 }

@@ -52,8 +52,8 @@ public class TupleConstruct implements TlaConstruct {
 
         return Doc.group(
                 Doc.text("<<")
-                        .appendSpace(content)
-                        .appendLineOrSpace(Doc.text(">>").indent(2))
-        ).indent(indentSize);
+                        .appendSpace(content.indent("<< ".length()))
+                        .appendLineOrSpace(Doc.text(">>"))
+        );
     }
 }

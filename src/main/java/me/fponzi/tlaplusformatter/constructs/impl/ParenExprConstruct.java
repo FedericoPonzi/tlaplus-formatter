@@ -32,7 +32,7 @@ public class ParenExprConstruct implements TlaConstruct {
         assert (node.zero() != null && node.zero().length >= 3);
         Doc innerExpr = context.buildChild(node.zero()[1]);
         return Doc.group(Doc.text("(")
-                .appendSpace(innerExpr.indent(2))
+                .appendSpace(innerExpr.indent("( ".length()))
                 .appendLineOrSpace(Doc.text(")")));
     }
 }
