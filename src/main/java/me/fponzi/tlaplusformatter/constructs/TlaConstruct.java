@@ -3,8 +3,6 @@ package me.fponzi.tlaplusformatter.constructs;
 import com.opencastsoftware.prettier4j.Doc;
 import tla2sany.st.TreeNode;
 
-import java.util.Set;
-
 /**
  * Interface for all TLA+ language constructs that can be formatted.
  * This provides a plugin-like system for handling different TLA+ syntax elements.
@@ -17,9 +15,9 @@ public interface TlaConstruct {
     String getName();
 
     /**
-     * @return Set of SANY node kinds that this construct can handle
+     * @return SANY node kind that this construct can handle
      */
-    Set<Integer> getSupportedNodeKinds();
+    int getSupportedNodeKind();
 
     /**
      * Check if this construct can handle the given node.
@@ -29,7 +27,7 @@ public interface TlaConstruct {
      * @return true if this construct can handle the node
      */
     default boolean canHandle(TreeNode node) {
-        return node != null && getSupportedNodeKinds().contains(node.getKind());
+        return node != null && getSupportedNodeKind() == node.getKind();
     }
 
     /**

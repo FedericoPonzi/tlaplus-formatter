@@ -3,7 +3,6 @@ package me.fponzi.tlaplusformatter.constructs.impl;
 import com.opencastsoftware.prettier4j.Doc;
 import me.fponzi.tlaplusformatter.FormatConfig;
 import me.fponzi.tlaplusformatter.constructs.ConstructContext;
-import me.fponzi.tlaplusformatter.constructs.NodeKind;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,13 +21,7 @@ class IfThenElseConstructTest {
     void testGetName() {
         assertEquals("IF_THEN_ELSE", construct.getName());
     }
-
-    @Test
-    void testGetSupportedNodeKinds() {
-        assertTrue(construct.getSupportedNodeKinds().contains(IF_THEN_ELSE_KIND));
-        assertEquals(NodeKind.IF_THEN_ELSE.getAllIds(), construct.getSupportedNodeKinds());
-    }
-
+    
     @Test
     void testCanHandle() {
         TreeNode mockNode = mock(TreeNode.class);

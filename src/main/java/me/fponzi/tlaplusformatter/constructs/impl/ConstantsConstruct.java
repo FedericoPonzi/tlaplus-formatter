@@ -8,7 +8,6 @@ import tla2sany.st.TreeNode;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Construct implementation for CONSTANTS declarations.
@@ -23,8 +22,8 @@ public class ConstantsConstruct implements TlaConstruct {
     }
 
     @Override
-    public Set<Integer> getSupportedNodeKinds() {
-        return NodeKind.CONSTANTS.getAllIds();
+    public int getSupportedNodeKind() {
+        return NodeKind.CONS_DECL.getId();
     }
 
     @Override

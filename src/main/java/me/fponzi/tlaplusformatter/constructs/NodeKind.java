@@ -1,138 +1,168 @@
 package me.fponzi.tlaplusformatter.constructs;
 
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 /**
  * Enum representing SANY node kinds with metadata.
  */
 public enum NodeKind {
-    
+
+    NULL_ID(327, "Null ID"),
+
     // Module structure
     MODULE(382, "Module declaration"),
     BEGIN_MODULE(333, "Module header"),
-    END_MODULE(363, "Module footer"),
-    BODY(336, "Module body", 334), // Multiple IDs for body
-    
+    END_MODULE(345, "Module footer"),
+    BODY(334, "Module body"),
+    MODULE_DEFINITION(383, "Module definition"),
+
     // Declarations
-    EXTENDS(365, "Extends declaration", 350), // Multiple IDs for extends
-    CONSTANTS(392, "Constants declaration"),
+    EXTENDS(350, "Extends declaration"),
+    ACT_DECL(328, "Action declaration"),
+    ASSUME_DECL(330, "Assume declaration"),
+    CONS_DECL(392, "Constants declaration"),
+    CONSTANTS(342, "Constants keyword"),
     VARIABLE_DECLARATION(426, "Variable declaration"),
     OPERATOR_DEFINITION(389, "Operator definition"),
-    THEOREM(421, "Theorem declaration"),
-    
-    // Basic elements
-    IDENTIFIER(375, "Identifier"),
-    NUMBER(387, "Number literal"),
-    
-    // Future extensibility - these can be added as constructs are implemented
-    ASSUME(999, "Assume statement"), // Placeholder ID
-    LEMMA(998, "Lemma declaration"), // Placeholder ID
-    PROOF(997, "Proof block"), // Placeholder ID
-    IF_THEN_ELSE(369, "IF-THEN-ELSE expression"), // N_IfThenElse
-    FUNCTION_DEF(995, "Function definition"), // Placeholder ID
-    SET_ENUM(994, "Set enumeration"), // Placeholder ID
-    RECORD(993, "Record expression"), // Placeholder ID
-    TUPLE(992, "Tuple expression"); // Placeholder ID
-    
-    private final int[] ids;
+    THEOREM(422, "Theorem declaration"),
+    PARAM_DECL(391, "Parameter declaration"),
+    PARAM_DECLARATION(392, "Parameter declaration"),
+    IDENT_DECL(363, "Identifier declaration"),
+    INFIX_DECL(370, "Infix declaration"),
+    POSTFIX_DECL(394, "Postfix declaration"),
+    PREFIX_DECL(398, "Prefix declaration"),
+    TEMP_DECL(421, "Temporal declaration"),
+    FUNCTION_DEFINITION(356, "Function definition"),
+    FUNCTION_PARAM(357, "Function parameter"),
+
+    // Expressions
+    ACTION_EXPR(329, "Action expression"),
+    ASSUME_PROVE(331, "Assume prove"),
+    ASSUMPTION(332, "Assumption"),
+    CASE(336, "Case expression"),
+    CASE_ARM(337, "Case arm"),
+    CONJ_ITEM(340, "Conjunction item"),
+    CONJ_LIST(341, "Conjunction list"),
+    DISJ_ITEM(343, "Disjunction item"),
+    DISJ_LIST(344, "Disjunction list"),
+    EXCEPT(346, "Except expression"),
+    EXCEPT_COMPONENT(347, "Except component"),
+    EXCEPT_SPEC(348, "Except specification"),
+    TIMES(349, "Times expression"),
+    FAIRNESS_EXPR(351, "Fairness expression"),
+    FCN_APPL(352, "Function application"),
+    FCN_CONST(353, "Function constant"),
+    FIELD_SET(354, "Field set"),
+    FIELD_VAL(355, "Field value"),
+    GENERAL_ID(358, "General identifier"),
+    GEN_INFIX_OP(359, "Generic infix operator"),
+    GEN_NON_EXP_PREFIX_OP(360, "Generic non-expression prefix operator"),
+    GEN_POSTFIX_OP(361, "Generic postfix operator"),
+    GEN_PREFIX_OP(362, "Generic prefix operator"),
+    REAL(364, "Real number"),
+    IDENTIFIER_TUPLE(365, "Identifier tuple"),
+    IDENT_LHS(366, "Identifier left-hand side"),
+    ID_PREFIX(367, "Identifier prefix"),
+    ID_PREFIX_ELEMENT(368, "Identifier prefix element"),
+    IF_THEN_ELSE(369, "IF-THEN-ELSE expression"),
+    INFIX_EXPR(371, "Infix expression"),
+    INFIX_LHS(372, "Infix left-hand side"),
+    INFIX_OP(373, "Infix operator"),
+    INNER_PROOF(374, "Inner proof"),
+    INSTANCE(375, "Instance"),
+    NON_LOCAL_INSTANCE(376, "Non-local instance"),
+    INTEGER(377, "Integer"),
+    LET_DEFINITIONS(379, "Let definitions"),
+    LET_IN(380, "Let in"),
+    MAYBE_BOUND(381, "Maybe bound"),
+    NON_EXP_PREFIX_OP(384, "Non-expression prefix operator"),
+    NUMBER(385, "Number literal"),
+    NUMBERED_ASSUME_PROVE(386, "Numbered assume prove"),
+    OP_APPLICATION(387, "Operator application"),
+    OP_ARGS(388, "Operator arguments"),
+    OTHER_ARM(390, "Other arm"),
+    PAREN_EXPR(393, "Parenthesized expression"),
+    POSTFIX_EXPR(395, "Postfix expression"),
+    POSTFIX_LHS(396, "Postfix left-hand side"),
+    POSTFIX_OP(397, "Postfix operator"),
+    PREFIX_EXPR(399, "Prefix expression"),
+    PREFIX_LHS(400, "Prefix left-hand side"),
+    PREFIX_OP(401, "Prefix operator"),
+    PROOF(402, "Proof block"),
+    PROOF_STEP(406, "Proof step"),
+    QED_STEP(407, "QED step"),
+    QUANT_BOUND(408, "Quantifier bound"),
+    RCD_CONSTRUCTOR(409, "Record constructor"),
+    RECORD_COMPONENT(410, "Record component"),
+    SET_ENUMERATE(411, "Set enumeration"),
+    SET_OF_ALL(413, "Set of all"),
+    SET_OF_FCNS(414, "Set of functions"),
+    SET_OF_RCDS(415, "Set of records"),
+    STRING(418, "String"),
+    SUBSET_OF(419, "Subset of"),
+    SUBSTITUTION(420, "Substitution"),
+    TUPLE(423, "Tuple expression"),
+    UNBOUND_OR_BOUND_CHOOSE(424, "Unbound or bound choose"),
+    UNBOUND_QUANT(425, "Unbound quantifier"),
+    BOUND_QUANT(335, "Bound quantifier"),
+
+    // Tokens
+    T_IN(427, "IN token"),
+    T_EQUAL(428, "EQUAL token"),
+
+    // Additional node kinds
+    NEW_SYMB(429, "New symbol"),
+    LAMBDA(430, "Lambda expression"),
+    RECURSIVE(431, "Recursive definition"),
+    LABEL(432, "Label"),
+    STRUCT_OP(433, "Structure operator"),
+    NUMERABLE_STEP(434, "Numerable step"),
+    TERMINAL_PROOF(435, "Terminal proof"),
+    USE_OR_HIDE(436, "Use or hide"),
+    NON_EXPR_BODY(437, "Non-expression body"),
+    DEF_STEP(438, "Definition step"),
+    HAVE_STEP(439, "Have step"),
+    TAKE_STEP(440, "Take step"),
+    WITNESS_STEP(441, "Witness step"),
+    PICK_STEP(442, "Pick step"),
+    CASE_STEP(443, "Case step"),
+    ASSERT_STEP(444, "Assert step");
+
+    private final int id;
     private final String description;
-    
+
     /**
      * Constructor for node kinds with a primary ID and optional alternate IDs.
-     * 
-     * @param primaryId The main SANY node kind ID
+     *
+     * @param primaryId   The main SANY node kind ID
      * @param description Human-readable description
-     * @param alternateIds Additional IDs that represent the same construct
      */
-    NodeKind(int primaryId, String description, int... alternateIds) {
-        this.ids = Stream.concat(
-            Stream.of(primaryId), 
-            Arrays.stream(alternateIds).boxed()
-        ).mapToInt(Integer::intValue).toArray();
+    NodeKind(int primaryId, String description) {
+        this.id = primaryId;
         this.description = description;
     }
-    
-    /**
-     * Check if this NodeKind matches the given SANY node kind ID.
-     * 
-     * @param nodeKind The SANY node kind ID to check
-     * @return true if this NodeKind handles the given ID
-     */
-    public boolean matches(int nodeKind) {
-        return Arrays.stream(ids).anyMatch(id -> id == nodeKind);
-    }
-    
+
     /**
      * Get all node kind IDs handled by this NodeKind.
-     * 
+     *
      * @return Set of all node kind IDs
      */
-    public Set<Integer> getAllIds() {
-        return Arrays.stream(ids).boxed().collect(Collectors.toSet());
+    public int getId() {
+        return id;
     }
-    
-    /**
-     * Get the primary (first) node kind ID.
-     * 
-     * @return The primary node kind ID
-     */
-    public int getPrimaryId() {
-        return ids[0];
-    }
-    
+
     /**
      * Get the human-readable description.
-     * 
+     *
      * @return Description of this node kind
      */
     public String getDescription() {
         return description;
     }
-    
-    /**
-     * Find the NodeKind that matches the given SANY node kind ID.
-     * 
-     * @param nodeKind The SANY node kind ID
-     * @return Optional containing the matching NodeKind, or empty if none found
-     */
-    public static Optional<NodeKind> fromNodeKind(int nodeKind) {
-        return Arrays.stream(values())
-                .filter(kind -> kind.matches(nodeKind))
-                .findFirst();
-    }
-    
-    /**
-     * Get all node kind IDs for the given NodeKind values.
-     * 
-     * @param nodeKinds The NodeKind values
-     * @return Set of all node kind IDs
-     */
-    public static Set<Integer> getAllIds(NodeKind... nodeKinds) {
-        return Arrays.stream(nodeKinds)
-                .flatMap(nk -> nk.getAllIds().stream())
-                .collect(Collectors.toSet());
-    }
-    
-    /**
-     * Check if any of the given NodeKind values matches the node kind ID.
-     * 
-     * @param nodeKind The SANY node kind ID to check
-     * @param candidates The NodeKind values to check against
-     * @return true if any candidate matches
-     */
-    public static boolean anyMatches(int nodeKind, NodeKind... candidates) {
-        return Arrays.stream(candidates).anyMatch(nk -> nk.matches(nodeKind));
-    }
-    
+
     @Override
     public String toString() {
-        return String.format("%s(%s): %s", 
-            name(), 
-            Arrays.stream(ids).mapToObj(String::valueOf).collect(Collectors.joining(", ")),
-            description);
+        return String.format("%s(%s): %s",
+                name(),
+                id,
+                description);
     }
 }

@@ -6,8 +6,6 @@ import me.fponzi.tlaplusformatter.constructs.NodeKind;
 import me.fponzi.tlaplusformatter.constructs.TlaConstruct;
 import tla2sany.st.TreeNode;
 
-import java.util.Set;
-
 /**
  * Construct implementation for operator definitions.
  * Handles formatting of "Op == expr" constructs.
@@ -20,8 +18,8 @@ public class OperatorConstruct implements TlaConstruct {
     }
 
     @Override
-    public Set<Integer> getSupportedNodeKinds() {
-        return NodeKind.OPERATOR_DEFINITION.getAllIds();
+    public int getSupportedNodeKind() {
+        return NodeKind.OPERATOR_DEFINITION.getId();
     }
 
     @Override

@@ -5,7 +5,6 @@ import me.fponzi.tlaplusformatter.constructs.*;
 import tla2sany.st.TreeNode;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Construct implementation for EXTENDS declarations.
@@ -19,8 +18,8 @@ public class ExtendsConstruct implements TlaConstruct {
     }
 
     @Override
-    public Set<Integer> getSupportedNodeKinds() {
-        return NodeKind.EXTENDS.getAllIds();
+    public int getSupportedNodeKind() {
+        return NodeKind.EXTENDS.getId();
     }
 
     @Override

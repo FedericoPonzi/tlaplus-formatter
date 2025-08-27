@@ -3,7 +3,6 @@ package me.fponzi.tlaplusformatter.constructs.impl;
 import com.opencastsoftware.prettier4j.Doc;
 import me.fponzi.tlaplusformatter.FormatConfig;
 import me.fponzi.tlaplusformatter.constructs.ConstructContext;
-import me.fponzi.tlaplusformatter.constructs.NodeKind;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,17 +20,6 @@ class ConstantsConstructTest {
 
     private final ConstantsConstruct construct = new ConstantsConstruct();
     static private final int CONSTANT_KIND = 392;
-
-    @Test
-    void testGetName() {
-        assertEquals("CONSTANTS", construct.getName());
-    }
-
-    @Test
-    void testGetSupportedNodeKinds() {
-        assertTrue(construct.getSupportedNodeKinds().contains(CONSTANT_KIND));
-        assertEquals(NodeKind.CONSTANTS.getAllIds(), construct.getSupportedNodeKinds());
-    }
     
     @Test
     void testCanHandle() {

@@ -5,26 +5,25 @@ import me.fponzi.tlaplusformatter.constructs.*;
 import tla2sany.st.TreeNode;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Construct implementation for VARIABLE/VARIABLES declarations.
  */
 public class VariableConstruct implements TlaConstruct {
-    
+
     @Override
     public String getName() {
         return "VARIABLES";
     }
-    
+
     @Override
-    public Set<Integer> getSupportedNodeKinds() {
-        return NodeKind.VARIABLE_DECLARATION.getAllIds();
+    public int getSupportedNodeKind() {
+        return NodeKind.VARIABLE_DECLARATION.getId();
     }
-    
+
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context) {
-        List<String> variables = context.extractStringList(node);;
+        List<String> variables = context.extractStringList(node);
         return new VariableFormatter(context.getConfig()).format(variables);
     }
 
@@ -32,22 +31,22 @@ public class VariableConstruct implements TlaConstruct {
      * Dedicated formatter for VARIABLE declarations.
      */
     private static class VariableFormatter extends BaseConstructFormatter<String> {
-        
+
         public VariableFormatter(me.fponzi.tlaplusformatter.FormatConfig config) {
             super(config);
         }
-        
+
         public Doc format(List<String> variables) {
             if (variables.isEmpty()) {
                 return Doc.empty();
             }
-            
+
             String prefix = variables.size() == 1 ? "VARIABLE " : "VARIABLES ";
             ListFormatStrategy strategy = determineStrategy("VARIABLES", variables.size());
-            
+
             return formatList(variables, prefix, stringFormatter(), strategy);
         }
-        
+
         @Override
         protected ListFormatStrategy determineStrategy(String constructName, int itemCount) {
             // For VARIABLES, prefer single line for short lists
@@ -55,7 +54,7 @@ public class VariableConstruct implements TlaConstruct {
                 return ListFormatStrategy.SINGLE_LINE;
             } else {
                 return config.getConstructSetting(
-                    constructName, "breakStrategy", ListFormatStrategy.SMART_BREAK);
+                        constructName, "breakStrategy", ListFormatStrategy.SMART_BREAK);
             }
         }
     }

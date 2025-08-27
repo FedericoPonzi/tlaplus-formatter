@@ -48,9 +48,9 @@ public class TlaDocBuilder {
         registry.register(new OperatorConstruct());
 
         // Basic elements
-        registry.register(new BasicConstructs.IdentifierConstruct());
-        registry.register(new BasicConstructs.NumberConstruct());
-        registry.register(new BasicConstructs.TheoremConstruct());
+        registry.register(new IdentifierConstruct());
+        registry.register(new NumberConstruct());
+        registry.register(new TheoremConstruct());
 
         // Expressions
         registry.register(new IfThenElseConstruct());
@@ -93,7 +93,7 @@ public class TlaDocBuilder {
         }
 
         if (image != null && !image.isEmpty() && !image.startsWith("N_")) {
-            return Doc.text(image);
+            return Doc.text(node.getHumanReadableImage());
         }
 
         // If no meaningful image, try to build from children
@@ -156,22 +156,6 @@ public class TlaDocBuilder {
      */
     public ConstructRegistry getRegistry() {
         return registry;
-    }
-
-    /**
-     * Get information about registered constructs.
-     */
-    public String getRegistryInfo() {
-        StringBuilder info = new StringBuilder();
-        info.append("Registered constructs (").append(registry.size()).append("):\n");
-
-        for (TlaConstruct construct : registry.getAllConstructs()) {
-            info.append("  ").append(construct.getName())
-                    .append(" - handles node kinds: ").append(construct.getSupportedNodeKinds())
-                    .append(" (priority: ").append(")\n");
-        }
-
-        return info.toString();
     }
 
     /**

@@ -6,8 +6,6 @@ import me.fponzi.tlaplusformatter.constructs.NodeKind;
 import me.fponzi.tlaplusformatter.constructs.TlaConstruct;
 import tla2sany.st.TreeNode;
 
-import java.util.Set;
-
 /**
  * Construct implementation for IF-THEN-ELSE expressions.
  */
@@ -19,8 +17,8 @@ public class IfThenElseConstruct implements TlaConstruct {
     }
 
     @Override
-    public Set<Integer> getSupportedNodeKinds() {
-        return NodeKind.IF_THEN_ELSE.getAllIds();
+    public int getSupportedNodeKind() {
+        return NodeKind.IF_THEN_ELSE.getId();
     }
 
     @Override
