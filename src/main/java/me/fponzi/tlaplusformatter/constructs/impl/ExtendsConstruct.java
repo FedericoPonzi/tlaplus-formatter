@@ -12,37 +12,32 @@ import java.util.Set;
  * Handles formatting of module import lists with smart line breaking.
  */
 public class ExtendsConstruct implements TlaConstruct {
-    
+
     @Override
     public String getName() {
         return "EXTENDS";
     }
-    
+
     @Override
     public Set<Integer> getSupportedNodeKinds() {
         return NodeKind.EXTENDS.getAllIds();
     }
-    
+
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context) {
         List<String> modules = context.extractStringList(node);
         return new ExtendsFormatter(context.getConfig()).format(modules);
     }
-    
-    @Override
-    public int getPriority() {
-        return 10; // Higher priority for EXTENDS handling
-    }
-    
+
     /**
      * Dedicated formatter for EXTENDS declarations.
      */
     private static class ExtendsFormatter extends BaseConstructFormatter<String> {
-        
+
         public ExtendsFormatter(me.fponzi.tlaplusformatter.FormatConfig config) {
             super(config);
         }
-        
+
         /**
          * Main formatting method for EXTENDS declarations.
          */
@@ -50,11 +45,11 @@ public class ExtendsConstruct implements TlaConstruct {
             if (modules.isEmpty()) {
                 return Doc.empty();
             }
-            
+
             // Use custom grouping for EXTENDS to match expected behavior
             return formatExtendsWithGrouping(modules);
         }
-        
+
         @Override
         protected ListFormatStrategy determineStrategy(String constructName, int itemCount) {
             // For EXTENDS, use smart breaks for longer lists
@@ -62,14 +57,14 @@ public class ExtendsConstruct implements TlaConstruct {
                 return ListFormatStrategy.SINGLE_LINE;
             } else {
                 return config.getConstructSetting(
-                    constructName, "breakStrategy", ListFormatStrategy.SMART_BREAK);
+                        constructName, "breakStrategy", ListFormatStrategy.SMART_BREAK);
             }
         }
-        
+
         private String getName() {
             return "EXTENDS";
         }
-        
+
         /**
          * Custom formatting for EXTENDS that groups modules intelligently.
          */
@@ -77,11 +72,11 @@ public class ExtendsConstruct implements TlaConstruct {
             if (modules.isEmpty()) {
                 return Doc.empty();
             }
-            
+
             if (modules.size() == 1) {
                 return Doc.text("EXTENDS ").append(Doc.text(modules.get(0)));
             }
-            
+
             // For short lists, keep simple formatting
             if (modules.size() <= 3) {
                 Doc moduleList = Doc.text(modules.get(0));
@@ -90,7 +85,7 @@ public class ExtendsConstruct implements TlaConstruct {
                 }
                 return Doc.text("EXTENDS ").append(moduleList);
             }
-            
+
             // For longer lists, use prettier4j line breaking  
             Doc moduleList = Doc.text(modules.get(0));
             for (int i = 1; i < modules.size(); i++) {
@@ -98,11 +93,11 @@ public class ExtendsConstruct implements TlaConstruct {
                         .append(Doc.text(","))
                         .appendLineOrSpace(Doc.text(modules.get(i)));
             }
-            
+
             // Use group to enable line breaking with proper indentation
             return Doc.group(
-                Doc.text("EXTENDS ")
-                    .append(moduleList.indent("EXTENDS ".length()))
+                    Doc.text("EXTENDS ")
+                            .append(moduleList.indent("EXTENDS ".length()))
             );
         }
     }

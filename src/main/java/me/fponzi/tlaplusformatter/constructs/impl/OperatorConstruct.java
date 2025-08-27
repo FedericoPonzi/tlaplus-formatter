@@ -66,7 +66,7 @@ public class OperatorConstruct implements TlaConstruct {
             return Doc.group(
                     Doc.text(operatorName)
                             .append(Doc.text(" =="))
-                            .appendLine(expression)
+                            .appendLineOrSpace(expression)
             ).indent(config.getIndentSize());
         }
     }

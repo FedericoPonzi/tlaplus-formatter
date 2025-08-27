@@ -10,44 +10,34 @@ import java.util.Set;
  * This provides a plugin-like system for handling different TLA+ syntax elements.
  */
 public interface TlaConstruct {
-    
+
     /**
      * @return The name of this construct (e.g., "EXTENDS", "VARIABLES", "OPERATOR")
      */
     String getName();
-    
+
     /**
      * @return Set of SANY node kinds that this construct can handle
      */
     Set<Integer> getSupportedNodeKinds();
-    
+
     /**
      * Check if this construct can handle the given node.
      * Default implementation checks if the node kind is in getSupportedNodeKinds().
-     * 
+     *
      * @param node The tree node to check
      * @return true if this construct can handle the node
      */
     default boolean canHandle(TreeNode node) {
         return node != null && getSupportedNodeKinds().contains(node.getKind());
     }
-    
+
     /**
      * Build a Doc object for formatting this construct.
-     * 
-     * @param node The SANY tree node representing this construct
+     *
+     * @param node    The SANY tree node representing this construct
      * @param context Context object providing access to configuration and utilities
      * @return A Doc object for pretty printing
      */
     Doc buildDoc(TreeNode node, ConstructContext context);
-    
-    /**
-     * Priority for handling nodes when multiple constructs might match.
-     * Higher numbers indicate higher priority.
-     * 
-     * @return Priority value (default: 0)
-     */
-    default int getPriority() {
-        return 0;
-    }
 }

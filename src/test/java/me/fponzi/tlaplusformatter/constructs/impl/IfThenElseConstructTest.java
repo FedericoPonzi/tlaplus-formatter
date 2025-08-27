@@ -30,11 +30,6 @@ class IfThenElseConstructTest {
     }
 
     @Test
-    void testGetPriority() {
-        assertEquals(10, construct.getPriority());
-    }
-
-    @Test
     void testCanHandle() {
         TreeNode mockNode = mock(TreeNode.class);
         when(mockNode.getKind()).thenReturn(IF_THEN_ELSE_KIND);

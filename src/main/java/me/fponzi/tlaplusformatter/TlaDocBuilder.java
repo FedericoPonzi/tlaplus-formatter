@@ -168,7 +168,7 @@ public class TlaDocBuilder {
         for (TlaConstruct construct : registry.getAllConstructs()) {
             info.append("  ").append(construct.getName())
                     .append(" - handles node kinds: ").append(construct.getSupportedNodeKinds())
-                    .append(" (priority: ").append(construct.getPriority()).append(")\n");
+                    .append(" (priority: ").append(")\n");
         }
 
         return info.toString();

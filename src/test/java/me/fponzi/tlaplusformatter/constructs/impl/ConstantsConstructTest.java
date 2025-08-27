@@ -32,12 +32,7 @@ class ConstantsConstructTest {
         assertTrue(construct.getSupportedNodeKinds().contains(CONSTANT_KIND));
         assertEquals(NodeKind.CONSTANTS.getAllIds(), construct.getSupportedNodeKinds());
     }
-
-    @Test
-    void testGetPriority() {
-        assertEquals(10, construct.getPriority());
-    }
-
+    
     @Test
     void testCanHandle() {
         TreeNode mockNode = mock(TreeNode.class);

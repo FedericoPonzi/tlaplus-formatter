@@ -21,12 +21,12 @@ public class ConstantsConstruct implements TlaConstruct {
     public String getName() {
         return "CONSTANTS";
     }
-    
+
     @Override
     public Set<Integer> getSupportedNodeKinds() {
         return NodeKind.CONSTANTS.getAllIds();
     }
-    
+
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context) {
         LOG.debug("ConstantsConstruct::buildDoc called with note: {} context: {}", node, context);
@@ -34,17 +34,12 @@ public class ConstantsConstruct implements TlaConstruct {
         LOG.debug("Extracted constants: {}", constants);
         return new ConstantsFormatter(context.getConfig()).format(constants);
     }
-    
-    @Override
-    public int getPriority() {
-        return 10; // Higher priority for CONSTANTS handling
-    }
-    
+
     /**
      * Dedicated formatter for CONSTANTS declarations.
      */
     private static class ConstantsFormatter extends BaseConstructFormatter<String> {
-        
+
         public ConstantsFormatter(me.fponzi.tlaplusformatter.FormatConfig config) {
             super(config);
         }
@@ -65,7 +60,7 @@ public class ConstantsConstruct implements TlaConstruct {
                 return ListFormatStrategy.SINGLE_LINE;
             } else {
                 return config.getConstructSetting(
-                    constructName, "breakStrategy", ListFormatStrategy.SMART_BREAK);
+                        constructName, "breakStrategy", ListFormatStrategy.SMART_BREAK);
             }
         }
     }

@@ -24,11 +24,6 @@ public class IfThenElseConstruct implements TlaConstruct {
     }
 
     @Override
-    public int getPriority() {
-        return 10; // High priority for IF-THEN-ELSE handling
-    }
-
-    @Override
     public Doc buildDoc(TreeNode node, ConstructContext context) {
         assert (node.zero() != null);
         assert (node.zero().length >= 6);
