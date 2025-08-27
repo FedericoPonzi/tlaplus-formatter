@@ -56,20 +56,6 @@ public class ExtendsConstruct implements TlaConstruct {
         }
         
         @Override
-        protected Doc formatSingle(String module) {
-            return Doc.text("EXTENDS ").append(Doc.text(module));
-        }
-        
-        @Override
-        protected Doc formatMultiple(List<String> modules) {
-            // Use the strategy from configuration
-            ListFormatStrategy strategy = config.getConstructSetting(
-                "EXTENDS", "breakStrategy", ListFormatStrategy.SMART_BREAK);
-            
-            return formatList(modules, "EXTENDS ", stringFormatter(), strategy);
-        }
-        
-        @Override
         protected ListFormatStrategy determineStrategy(String constructName, int itemCount) {
             // For EXTENDS, use smart breaks for longer lists
             if (itemCount <= 3) {

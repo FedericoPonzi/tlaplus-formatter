@@ -19,7 +19,7 @@ public enum NodeKind {
     
     // Declarations
     EXTENDS(365, "Extends declaration", 350), // Multiple IDs for extends
-    CONSTANTS(44, "Constants declaration"),
+    CONSTANTS(392, "Constants declaration"),
     VARIABLE_DECLARATION(426, "Variable declaration"),
     OPERATOR_DEFINITION(389, "Operator definition"),
     THEOREM(421, "Theorem declaration"),

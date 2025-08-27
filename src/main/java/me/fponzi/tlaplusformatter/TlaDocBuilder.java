@@ -98,9 +98,7 @@ public class TlaDocBuilder {
             for (TreeNode child : node.zero()) {
                 if (isValidNode(child)) {
                     Doc childDoc = build(child);
-                    //if (!childDoc.equals(Doc.empty())) {
-                        children.add(childDoc);
-                    //}
+                    children.add(childDoc);
                 }
             }
         }
@@ -109,9 +107,7 @@ public class TlaDocBuilder {
             for (TreeNode child : node.one()) {
                 if (isValidNode(child)) {
                     Doc childDoc = build(child);
-                    //if (!childDoc.equals(Doc.empty())) {
-                        children.add(childDoc);
-                    //}
+                    children.add(childDoc);
                 }
             }
         }

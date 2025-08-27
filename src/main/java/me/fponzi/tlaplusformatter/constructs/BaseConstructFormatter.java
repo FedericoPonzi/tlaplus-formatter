@@ -19,23 +19,7 @@ public abstract class BaseConstructFormatter<T> {
     public BaseConstructFormatter(FormatConfig config) {
         this.config = config;
     }
-    
-    /**
-     * Format a single item.
-     * 
-     * @param item The item to format
-     * @return Doc object for the item
-     */
-    protected abstract Doc formatSingle(T item);
-    
-    /**
-     * Format multiple items using the specified strategy.
-     * 
-     * @param items List of items to format
-     * @return Doc object for all items
-     */
-    protected abstract Doc formatMultiple(List<T> items);
-    
+
     /**
      * Format a list of items with a prefix using the specified strategy.
      * 

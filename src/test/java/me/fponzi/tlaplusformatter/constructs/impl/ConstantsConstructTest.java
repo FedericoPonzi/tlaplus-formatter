@@ -13,75 +13,77 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ConstantsConstructTest {
-    
+
     private final ConstantsConstruct construct = new ConstantsConstruct();
-    
+    static private final int CONSTANT_KIND = 392;
+
     @Test
     void testGetName() {
         assertEquals("CONSTANTS", construct.getName());
     }
-    
+
     @Test
     void testGetSupportedNodeKinds() {
-        assertTrue(construct.getSupportedNodeKinds().contains(44));
+        assertTrue(construct.getSupportedNodeKinds().contains(CONSTANT_KIND));
         assertEquals(NodeKind.CONSTANTS.getAllIds(), construct.getSupportedNodeKinds());
     }
-    
+
     @Test
     void testGetPriority() {
         assertEquals(10, construct.getPriority());
     }
-    
+
     @Test
     void testCanHandle() {
         TreeNode mockNode = mock(TreeNode.class);
-        when(mockNode.getKind()).thenReturn(44); // CONSTANTS node kind
-        
+        when(mockNode.getKind()).thenReturn(CONSTANT_KIND); // CONSTANTS node kind
+
         assertTrue(construct.canHandle(mockNode));
-        
+
         when(mockNode.getKind()).thenReturn(999); // Unknown node kind
         assertFalse(construct.canHandle(mockNode));
     }
-    
+
     @Test
     void testBuildDocSingleConstant() {
         // Setup mocks
         TreeNode mockNode = mock(TreeNode.class);
         ConstructContext mockContext = mock(ConstructContext.class);
         FormatConfig mockConfig = mock(FormatConfig.class);
-        
+
         // Mock the context to return a single constant
-        when(mockContext.extractStringList(mockNode)).thenReturn(Arrays.asList("N"));
+        when(mockContext.extractStringList(mockNode)).thenReturn(List.of("N"));
         when(mockContext.getConfig()).thenReturn(mockConfig);
-        
+
         // Execute
         Doc result = construct.buildDoc(mockNode, mockContext);
-        
+
         // Verify
         assertNotNull(result);
         String rendered = result.render();
-        assertTrue(rendered.contains("CONSTANTS N"), "Should format single constant correctly");
+        assertTrue(rendered.contains("CONSTANT N"), "Should format single constant correctly");
     }
-    
+
     @Test
     void testBuildDocMultipleConstants() {
         // Setup mocks
         TreeNode mockNode = mock(TreeNode.class);
         ConstructContext mockContext = mock(ConstructContext.class);
         FormatConfig mockConfig = mock(FormatConfig.class);
-        
+
         // Mock the context to return multiple constants
         List<String> constants = Arrays.asList("N", "MaxValue", "DefaultState");
         when(mockContext.extractStringList(mockNode)).thenReturn(constants);
         when(mockContext.getConfig()).thenReturn(mockConfig);
-        
+
         // Execute
         Doc result = construct.buildDoc(mockNode, mockContext);
-        
+
         // Verify
         assertNotNull(result);
         String rendered = result.render();
@@ -90,21 +92,21 @@ class ConstantsConstructTest {
         assertTrue(rendered.contains("MaxValue"), "Should contain second constant");
         assertTrue(rendered.contains("DefaultState"), "Should contain third constant");
     }
-    
+
     @Test
     void testBuildDocEmptyConstants() {
         // Setup mocks
         TreeNode mockNode = mock(TreeNode.class);
         ConstructContext mockContext = mock(ConstructContext.class);
         FormatConfig mockConfig = mock(FormatConfig.class);
-        
+
         // Mock the context to return no constants
-        when(mockContext.extractStringList(mockNode)).thenReturn(Arrays.asList());
+        when(mockContext.extractStringList(mockNode)).thenReturn(List.of());
         when(mockContext.getConfig()).thenReturn(mockConfig);
-        
+
         // Execute
         Doc result = construct.buildDoc(mockNode, mockContext);
-        
+
         // Verify
         assertNotNull(result);
         assertEquals("", result.render(), "Empty constants should produce empty output");

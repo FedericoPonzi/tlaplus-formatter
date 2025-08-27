@@ -2,8 +2,11 @@ package me.fponzi.tlaplusformatter.constructs.impl;
 
 import com.opencastsoftware.prettier4j.Doc;
 import me.fponzi.tlaplusformatter.constructs.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tla2sany.st.TreeNode;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Set;
 
@@ -12,7 +15,8 @@ import java.util.Set;
  * Handles formatting of "CONSTANTS x, y, z" constructs.
  */
 public class ConstantsConstruct implements TlaConstruct {
-    
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     @Override
     public String getName() {
         return "CONSTANTS";
@@ -25,14 +29,9 @@ public class ConstantsConstruct implements TlaConstruct {
     
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context) {
-        // For CONSTANTS nodes with no children, just return the keyword
-        // The actual constants appear to be handled separately by SANY
-        if (node.getImage() != null && node.getImage().equals("CONSTANTS")) {
-            return Doc.text("CONSTANTS");
-        }
-        
-        // Fallback to normal processing
+        LOG.debug("ConstantsConstruct::buildDoc called with note: {} context: {}", node, context);
         List<String> constants = context.extractStringList(node);
+        LOG.debug("Extracted constants: {}", constants);
         return new ConstantsFormatter(context.getConfig()).format(constants);
     }
     
@@ -49,37 +48,20 @@ public class ConstantsConstruct implements TlaConstruct {
         public ConstantsFormatter(me.fponzi.tlaplusformatter.FormatConfig config) {
             super(config);
         }
-        
-        /**
-         * Main formatting method for CONSTANTS declarations.
-         */
+
         public Doc format(List<String> constants) {
             if (constants.isEmpty()) {
                 return Doc.empty();
             }
-            
-            if (constants.size() == 1) {
-                return formatSingle(constants.get(0));
-            }
-            
-            return formatMultiple(constants);
-        }
-        
-        @Override
-        protected Doc formatSingle(String constant) {
-            return Doc.text("CONSTANTS ").append(Doc.text(constant));
-        }
-        
-        @Override
-        protected Doc formatMultiple(List<String> constants) {
+            String prefix = constants.size() == 1 ? "CONSTANT " : "CONSTANTS ";
             ListFormatStrategy strategy = determineStrategy("CONSTANTS", constants.size());
-            return formatList(constants, "CONSTANTS ", stringFormatter(), strategy);
+            return formatList(constants, prefix, stringFormatter(), strategy);
         }
-        
+
         @Override
         protected ListFormatStrategy determineStrategy(String constructName, int itemCount) {
             // For CONSTANTS, use smart breaks for longer lists
-            if (itemCount <= 4) {
+            if (itemCount <= 3) {
                 return ListFormatStrategy.SINGLE_LINE;
             } else {
                 return config.getConstructSetting(
