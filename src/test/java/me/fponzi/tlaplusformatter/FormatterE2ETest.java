@@ -283,13 +283,6 @@ class FormatterE2ETest {
     }
 
     @Test
-    void testConfigurationDefaults() {
-        FormatConfig config = new FormatConfig();
-        assertEquals(80, config.getLineWidth());
-        assertEquals(4, config.getIndentSize());
-    }
-
-    @Test
     void testConfigurationValidation() {
         assertThrows(IllegalArgumentException.class, () -> new FormatConfig(-1, 4));
         assertThrows(IllegalArgumentException.class, () -> new FormatConfig(80, -1));

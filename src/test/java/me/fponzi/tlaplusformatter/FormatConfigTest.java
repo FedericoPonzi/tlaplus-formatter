@@ -12,17 +12,17 @@ class FormatConfigTest {
     @Test
     void testDefaultConstructor() {
         FormatConfig config = new FormatConfig();
-        
+
         assertEquals(FormatConfig.DEFAULT_LINE_WIDTH, config.getLineWidth());
         assertEquals(FormatConfig.DEFAULT_INDENT_SIZE, config.getIndentSize());
         assertEquals(80, config.getLineWidth());
-        assertEquals(4, config.getIndentSize());
+        assertEquals(2, config.getIndentSize());
     }
 
     @Test
     void testParameterizedConstructor() {
         FormatConfig config = new FormatConfig(120, 2);
-        
+
         assertEquals(120, config.getLineWidth());
         assertEquals(2, config.getIndentSize());
     }
@@ -44,7 +44,7 @@ class FormatConfigTest {
     void testValidEdgeCases() {
         // Minimum valid values
         assertDoesNotThrow(() -> new FormatConfig(1, 0));
-        
+
         FormatConfig config = new FormatConfig(1, 0);
         assertEquals(1, config.getLineWidth());
         assertEquals(0, config.getIndentSize());
@@ -63,7 +63,7 @@ class FormatConfigTest {
         FormatConfig config2 = new FormatConfig(80, 4);
         FormatConfig config3 = new FormatConfig(100, 4);
         FormatConfig config4 = new FormatConfig(80, 2);
-        
+
         assertEquals(config1, config2);
         assertNotEquals(config1, config3);
         assertNotEquals(config1, config4);
@@ -79,7 +79,7 @@ class FormatConfigTest {
     @Test
     void testEqualsWithNull() {
         FormatConfig config = new FormatConfig(80, 4);
-        assertNotEquals(config, null);
+        assertNotEquals(null, config);
     }
 
     @Test
@@ -94,7 +94,7 @@ class FormatConfigTest {
         FormatConfig config1 = new FormatConfig(80, 4);
         FormatConfig config2 = new FormatConfig(80, 4);
         FormatConfig config3 = new FormatConfig(100, 4);
-        
+
         assertEquals(config1.hashCode(), config2.hashCode());
         assertNotEquals(config1.hashCode(), config3.hashCode());
     }
@@ -103,7 +103,7 @@ class FormatConfigTest {
     void testToString() {
         FormatConfig config = new FormatConfig(80, 4);
         String str = config.toString();
-        
+
         assertTrue(str.contains("FormatConfig"));
         assertTrue(str.contains("lineWidth=80"));
         assertTrue(str.contains("indentSize=4"));
@@ -113,14 +113,8 @@ class FormatConfigTest {
     void testToStringWithDifferentValues() {
         FormatConfig config = new FormatConfig(120, 2);
         String str = config.toString();
-        
+
         assertTrue(str.contains("lineWidth=120"));
         assertTrue(str.contains("indentSize=2"));
-    }
-
-    @Test
-    void testConstants() {
-        assertEquals(80, FormatConfig.DEFAULT_LINE_WIDTH);
-        assertEquals(4, FormatConfig.DEFAULT_INDENT_SIZE);
     }
 }
