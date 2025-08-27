@@ -20,7 +20,7 @@ class ConstantsConstructTest {
 
     private final ConstantsConstruct construct = new ConstantsConstruct();
     static private final int CONSTANT_KIND = 392;
-    
+
     @Test
     void testCanHandle() {
         TreeNode mockNode = mock(TreeNode.class);
@@ -44,7 +44,7 @@ class ConstantsConstructTest {
         when(mockContext.getConfig()).thenReturn(mockConfig);
 
         // Execute
-        Doc result = construct.buildDoc(mockNode, mockContext);
+        Doc result = construct.buildDoc(mockNode, mockContext, 4);
 
         // Verify
         assertNotNull(result);
@@ -65,7 +65,7 @@ class ConstantsConstructTest {
         when(mockContext.getConfig()).thenReturn(mockConfig);
 
         // Execute
-        Doc result = construct.buildDoc(mockNode, mockContext);
+        Doc result = construct.buildDoc(mockNode, mockContext, 4);
 
         // Verify
         assertNotNull(result);
@@ -88,7 +88,7 @@ class ConstantsConstructTest {
         when(mockContext.getConfig()).thenReturn(mockConfig);
 
         // Execute
-        Doc result = construct.buildDoc(mockNode, mockContext);
+        Doc result = construct.buildDoc(mockNode, mockContext, 4);
 
         // Verify
         assertNotNull(result);

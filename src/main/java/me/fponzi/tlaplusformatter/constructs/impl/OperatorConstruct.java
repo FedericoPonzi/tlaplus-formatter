@@ -23,11 +23,8 @@ public class OperatorConstruct implements TlaConstruct {
     }
 
     @Override
-    public Doc buildDoc(TreeNode node, ConstructContext context) {
-        if (node.one() == null || node.one().length < 3) {
-            // Fall back to generic handling if structure is unexpected
-            return Doc.text(node.getImage() != null ? node.getImage() : "");
-        }
+    public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
+        assert (node.one() != null && node.one().length >= 3);
 
         // node.one()[0] is the operator name/signature
         // node.one()[1] is the "==" 
@@ -37,8 +34,11 @@ public class OperatorConstruct implements TlaConstruct {
 
         String operatorName = extractOperatorName(nameNode);
         Doc expression = context.buildChild(exprNode);
-
-        return new OperatorFormatter(context.getConfig()).format(operatorName, expression);
+        return Doc.group(
+                Doc.text(operatorName)
+                        .appendSpace(Doc.text("=="))
+                        .appendLineOrSpace(expression)
+        ).indent(context.getConfig().getIndentSize());
     }
 
     private String extractOperatorName(TreeNode nameNode) {
@@ -46,26 +46,5 @@ public class OperatorConstruct implements TlaConstruct {
             return nameNode.zero()[0].getImage();
         }
         return nameNode.getImage();
-    }
-
-    /**
-     * Dedicated formatter for operator definitions.
-     */
-    private static class OperatorFormatter {
-
-        private final me.fponzi.tlaplusformatter.FormatConfig config;
-
-        public OperatorFormatter(me.fponzi.tlaplusformatter.FormatConfig config) {
-            this.config = config;
-        }
-
-        public Doc format(String operatorName, Doc expression) {
-            System.out.println(config.getIndentSize());
-            return Doc.group(
-                    Doc.text(operatorName)
-                            .append(Doc.text(" =="))
-                            .appendLineOrSpace(expression)
-            ).indent(config.getIndentSize());
-        }
     }
 }

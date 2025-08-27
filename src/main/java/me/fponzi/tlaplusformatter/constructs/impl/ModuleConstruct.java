@@ -27,7 +27,7 @@ public class ModuleConstruct {
         }
 
         @Override
-        public Doc buildDoc(TreeNode node, ConstructContext context) {
+        public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
             if (node.zero() == null || node.zero().length == 0) {
                 return Doc.empty();
             }
@@ -76,7 +76,7 @@ public class ModuleConstruct {
         }
 
         @Override
-        public Doc buildDoc(TreeNode node, ConstructContext context) {
+        public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
             if (node.zero() == null || node.zero().length < 2) {
                 return Doc.text("---- MODULE Unknown ----");
             }
@@ -108,7 +108,7 @@ public class ModuleConstruct {
         }
 
         @Override
-        public Doc buildDoc(TreeNode node, ConstructContext context) {
+        public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
             return Doc.text(node.getHumanReadableImage());
         }
     }

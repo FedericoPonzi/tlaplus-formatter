@@ -22,7 +22,7 @@ public class VariableConstruct implements TlaConstruct {
     }
 
     @Override
-    public Doc buildDoc(TreeNode node, ConstructContext context) {
+    public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         List<String> variables = context.extractStringList(node);
         return new VariableFormatter(context.getConfig()).format(variables);
     }

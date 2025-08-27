@@ -24,7 +24,7 @@ public class TheoremConstruct implements TlaConstruct {
     }
 
     @Override
-    public Doc buildDoc(TreeNode node, ConstructContext context) {
+    public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         if (node.one() != null && node.one().length > 0) {
             Doc expression = context.buildChild(node.one()[0]);
             return Doc.group(

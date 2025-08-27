@@ -22,7 +22,7 @@ public class IfThenElseConstruct implements TlaConstruct {
     }
 
     @Override
-    public Doc buildDoc(TreeNode node, ConstructContext context) {
+    public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         assert (node.zero() != null);
         assert (node.zero().length >= 6);
         // Expected structure:

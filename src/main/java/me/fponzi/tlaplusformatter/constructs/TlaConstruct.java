@@ -33,9 +33,20 @@ public interface TlaConstruct {
     /**
      * Build a Doc object for formatting this construct.
      *
-     * @param node    The SANY tree node representing this construct
-     * @param context Context object providing access to configuration and utilities
+     * @param node       The SANY tree node representing this construct
+     * @param context    Context object providing access to configuration and utilities
+     * @param indentSize
      * @return A Doc object for pretty printing
      */
-    Doc buildDoc(TreeNode node, ConstructContext context);
+    Doc buildDoc(TreeNode node, ConstructContext context, int indentSize);
+
+    /**
+     * Default indent size, pulled from the formatter configuration.
+     *
+     * @param context Construct context providing access to config
+     * @return indent size from config
+     */
+    default int indentSize(ConstructContext context) {
+        return context.getConfig().getIndentSize();
+    }
 }

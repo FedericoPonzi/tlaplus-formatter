@@ -21,7 +21,7 @@ class IfThenElseConstructTest {
     void testGetName() {
         assertEquals("IF_THEN_ELSE", construct.getName());
     }
-    
+
     @Test
     void testCanHandle() {
         TreeNode mockNode = mock(TreeNode.class);
@@ -60,7 +60,7 @@ class IfThenElseConstructTest {
         when(mockConfig.getIndentSize()).thenReturn(4);
 
         // Execute
-        Doc result = construct.buildDoc(mockNode, mockContext);
+        Doc result = construct.buildDoc(mockNode, mockContext, 4);
 
         // Verify
         assertNotNull(result);

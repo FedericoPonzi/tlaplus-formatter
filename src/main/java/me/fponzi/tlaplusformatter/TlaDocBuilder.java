@@ -54,6 +54,13 @@ public class TlaDocBuilder {
 
         // Expressions
         registry.register(new IfThenElseConstruct());
+        registry.register(new ParenExprConstruct());
+        registry.register(new InfixExprConstruct());
+        registry.register(new GenInfixOpConstruct());
+        registry.register(new RcdConstructorConstruct());
+        registry.register(new FieldValConstruct());
+        registry.register(new TupleConstruct());
+        registry.register(new SetEnumerateConstruct());
     }
 
     /**
@@ -68,7 +75,9 @@ public class TlaDocBuilder {
         TlaConstruct construct = registry.findHandler(node);
         if (construct != null) {
             try {
-                return construct.buildDoc(node, context);
+                //LOG.debug("Calling {}: '{}'", construct.getName(), node.getHumanReadableImage());
+                var indentSize = context.getConfig().getIndentSize();
+                return construct.buildDoc(node, context, indentSize);
             } catch (Exception e) {
                 LOG.warn("Error building doc for construct {} on node kind {}: {}",
                         construct.getName(), node.getKind(), e.getMessage());
@@ -189,7 +198,6 @@ public class TlaDocBuilder {
         for (int i = 1; i < emptyLines - 1; i++) {
             result = result.appendLine(Doc.empty());
         }
-        System.out.println(emptyLines);
         return result;
     }
 }

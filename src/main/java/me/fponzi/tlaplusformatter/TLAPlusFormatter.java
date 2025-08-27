@@ -66,7 +66,6 @@ public class TLAPlusFormatter {
         docBuilder.setOriginalSource(originalSource);
 
         Doc moduleDoc = docBuilder.build(root);
-        System.out.println("rendering output");
         this.output = extraSections[0] +
                 moduleDoc.render(this.config.getLineWidth()) +
                 extraSections[1];

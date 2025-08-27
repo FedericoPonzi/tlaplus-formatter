@@ -27,10 +27,8 @@ public class ConstantsConstruct implements TlaConstruct {
     }
 
     @Override
-    public Doc buildDoc(TreeNode node, ConstructContext context) {
-        LOG.debug("ConstantsConstruct::buildDoc called with note: {} context: {}", node, context);
+    public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         List<String> constants = context.extractStringList(node);
-        LOG.debug("Extracted constants: {}", constants);
         return new ConstantsFormatter(context.getConfig()).format(constants);
     }
 

@@ -23,7 +23,7 @@ public class ExtendsConstruct implements TlaConstruct {
     }
 
     @Override
-    public Doc buildDoc(TreeNode node, ConstructContext context) {
+    public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         List<String> modules = context.extractStringList(node);
         return new ExtendsFormatter(context.getConfig()).format(modules);
     }

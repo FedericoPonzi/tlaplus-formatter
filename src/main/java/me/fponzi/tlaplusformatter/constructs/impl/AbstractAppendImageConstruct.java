@@ -11,7 +11,7 @@ public abstract class AbstractAppendImageConstruct implements TlaConstruct {
     public abstract String getName();
 
     @Override
-    public final Doc buildDoc(TreeNode node, ConstructContext context) {
+    public final Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         return Doc.text(node.getHumanReadableImage());
     }
 }
