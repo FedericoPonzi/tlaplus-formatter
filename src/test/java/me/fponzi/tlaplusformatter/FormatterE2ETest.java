@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static me.fponzi.tlaplusformatter.Utils.testFormattingIdempotency;
+import static me.fponzi.tlaplusformatter.Utils.idempotency;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -81,7 +81,7 @@ class FormatterE2ETest {
                 "VARIABLES x, y, z\n" +
                 "====\n";
 
-        testFormattingIdempotency("MULTIVARS", spec);
+        idempotency(spec);
 
         TLAPlusFormatter formatter = new TLAPlusFormatter(spec);
         String output = formatter.getOutput();
@@ -99,7 +99,7 @@ class FormatterE2ETest {
                 "Inc == x + 1\n" +
                 "====\n";
 
-        testFormattingIdempotency("OPERATOR", spec);
+        idempotency(spec);
 
         // Also verify the formatting puts simple operators on one line
         TLAPlusFormatter formatter = new TLAPlusFormatter(spec);
@@ -115,7 +115,7 @@ class FormatterE2ETest {
                 "NextState == state' = IF state = \"ready\" THEN \"running\" ELSE \"done\"\n" +
                 "====\n";
 
-        testFormattingIdempotency("COMPLEX_EXPR", spec);
+        idempotency(spec);
 
         TLAPlusFormatter formatter = new TLAPlusFormatter(spec, new FormatConfig(80, 4));
         String output = formatter.getOutput();
@@ -160,8 +160,8 @@ class FormatterE2ETest {
         assertTrue(wideOutput.split("\n").length >= 2, "Wide output should have at least 2 lines");
 
         // Test idempotency for both widths
-        testFormattingIdempotency("WIDTH_NARROW", narrowOutput);
-        testFormattingIdempotency("WIDTH_WIDE", wideOutput);
+        idempotency(narrowOutput);
+        idempotency(wideOutput);
     }
 
     // todo:
@@ -182,7 +182,7 @@ class FormatterE2ETest {
         assertTrue(output.contains("VeryLongOperatorName"), "Should contain operator name");
         //assertFalse(output.contains("VeryLongOperatorName == state = \"this is a long"), "Long operator should not have everything on one line:" + output);
 
-        testFormattingIdempotency("LONG_OPERATOR", output);
+        idempotency(output);
     }
 
     @Test
@@ -222,8 +222,8 @@ class FormatterE2ETest {
         assertTrue(longOperatorLines >= shortOperatorLines, "Long operator should use more lines");
 
         // Test idempotency for both
-        testFormattingIdempotency("SHORT_OPERATOR", shortOutput);
-        testFormattingIdempotency("LONG_OPERATOR_NARROW", longOutput);
+        idempotency(shortOutput);
+        idempotency(longOutput);
     }
 
     @Test
@@ -364,7 +364,7 @@ class FormatterE2ETest {
                 .count();
         assertTrue(emptyLineCount >= 3, "Should have at least 3 empty lines preserved, got " + emptyLineCount);
 
-        testFormattingIdempotency("NEWLINE_PRESERVATION", output);
+        idempotency(output);
     }
 
     @Test
@@ -393,7 +393,7 @@ class FormatterE2ETest {
                 .count();
         assertTrue(emptyLineCount >= 4, "Should preserve multiple empty lines, got " + emptyLineCount);
 
-        testFormattingIdempotency("MULTIPLE_NEWLINES", output);
+        idempotency(output);
     }
 
     @Test
@@ -451,7 +451,7 @@ class FormatterE2ETest {
         }
 
         assertTrue(extendsRelatedLines > 1, "Long EXTENDS should break across multiple lines");
-        testFormattingIdempotency("testModuleWithExtendsBreak", spec);
+        idempotency(spec);
 
     }
 
@@ -465,7 +465,7 @@ class FormatterE2ETest {
                 "Nested == x' = IF x < 5 THEN IF y > 3 THEN x + y ELSE x - y ELSE 0\n" +
                 "====\n";
 
-        testFormattingIdempotency("IF_THEN_ELSE", spec);
+        idempotency(spec);
 
         TLAPlusFormatter formatter = new TLAPlusFormatter(spec, new FormatConfig(60, 4));
         String output = formatter.getOutput();

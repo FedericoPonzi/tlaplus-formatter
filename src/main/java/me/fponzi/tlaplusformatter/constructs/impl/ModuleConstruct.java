@@ -77,18 +77,13 @@ public class ModuleConstruct {
 
         @Override
         public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
-            if (node.zero() == null || node.zero().length < 2) {
-                return Doc.text("---- MODULE Unknown ----");
-            }
-
-            String moduleName = node.zero()[1].getImage();
-            return createModuleHeader(moduleName);
-        }
-
-        private Doc createModuleHeader(String moduleName) {
-            return Doc.text("---- MODULE ")
-                    .append(Doc.text(moduleName))
-                    .append(Doc.text(" ----"));
+            var z = node.zero();
+            assert (z != null && z.length > 2);
+            // todo: we could add a flag to rewrite this to ---- MODULE m ----
+            String prefixDashes = z[0].getImage();
+            String moduleName = z[1].getImage();
+            String suffixDashes = z[2].getImage();
+            return Doc.text(prefixDashes).appendSpace(Doc.text(moduleName)).appendSpace(Doc.text(suffixDashes));
         }
     }
 

@@ -61,6 +61,7 @@ public class TlaDocBuilder {
         registry.register(new FieldValConstruct());
         registry.register(new TupleConstruct());
         registry.register(new SetEnumerateConstruct());
+        registry.register(new TimesConstruct());
     }
 
     /**
