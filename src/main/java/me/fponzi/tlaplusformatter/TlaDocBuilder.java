@@ -70,6 +70,8 @@ public class TlaDocBuilder {
         registry.register(new ConjItemConstruct());
         registry.register(new ConjListConstruct());
         registry.register(new AssumptionConstruct());
+        registry.register(new PostfixExprConstruct());
+        registry.register(new GenPostfixOpConstruct());
 
         // Expressions
         registry.register(new IfThenElseConstruct());
