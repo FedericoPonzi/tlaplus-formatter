@@ -46,7 +46,7 @@ public class IfThenElseConstruct implements TlaConstruct {
         return Doc.group(
                 Doc.group(Doc.text("IF").appendLineOrSpace(condition))
                         .appendLineOrSpace(Doc.group(Doc.text("THEN").appendLineOrSpace(thenExpr)).indent(indentSize))
-                        .appendLineOrSpace(Doc.group(Doc.text("ELSE").appendLineOrSpace(elseExpr)).indent(indentSize)).indent(indentSize)
+                        .appendLineOrSpace(Doc.group(Doc.text("ELSE").appendLineOrSpace(elseExpr)).indent(indentSize))
         );
     }
 }

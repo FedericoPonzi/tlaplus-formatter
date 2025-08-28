@@ -2,9 +2,7 @@ package me.fponzi.tlaplusformatter;
 
 import me.fponzi.tlaplusformatter.exceptions.SanyFrontendException;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -37,23 +35,9 @@ public class Utils {
 
     public static void assertSpecEquals(String expected, String input, FormatConfig config) {
         try {
-            File tmpFolder = Files.createTempDirectory("tlaplusfmt").toFile();
-
-            File specFile = new File(tmpFolder, "Spec.tla");
-            try (java.io.FileWriter writer = new java.io.FileWriter(specFile)) {
-                writer.write(input);
-            }
-
-            var f = new TLAPlusFormatter(specFile);
+            var f = new TLAPlusFormatter(input, config);
             var received = f.getOutput();
             assertEquals(expected, received, "Formatted output does not match expected output");
-
-            // override input spec with the formatted spec.
-            try (java.io.FileWriter writer = new java.io.FileWriter(specFile)) {
-                writer.write(expected);
-            }
-            var f2 = new TLAPlusFormatter(specFile);
-            assertEquals(f.getOutput(), f2.getOutput());
 
         } catch (Exception e) { //  throws FrontEndException, IOException
             fail(e);

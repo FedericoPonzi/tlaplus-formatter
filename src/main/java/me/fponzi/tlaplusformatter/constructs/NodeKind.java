@@ -102,7 +102,7 @@ public enum NodeKind {
     TUPLE(423, "Tuple expression"),
     UNBOUND_OR_BOUND_CHOOSE(424, "Unbound or bound choose"),
     UNBOUND_QUANT(425, "Unbound quantifier"),
-    BOUND_QUANT(335, "Bound quantifier"),
+    BOUNDED_QUANT(335, "Bounded quantifier"),
 
     // Tokens
     T_IN(427, "IN token"),

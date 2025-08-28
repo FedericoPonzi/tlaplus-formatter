@@ -51,6 +51,25 @@ public class TlaDocBuilder {
         registry.register(new IdentifierConstruct());
         registry.register(new NumberConstruct());
         registry.register(new TheoremConstruct());
+        registry.register(new FcnApplConstruct());
+        registry.register(new QuantBoundConstruct());
+        registry.register(new FcnConstConstruct());
+        registry.register(new OpArgsConstruct());
+        registry.register(new OpApplicationConstruct());
+        registry.register(new BoundedQuantConstruct());
+        registry.register(new IdentLHSConstruct());
+        registry.register(new IdentDeclConstruct());
+        registry.register(new SetOfFcnsConstruct());
+        registry.register(new PrefixExprConstruct());
+        registry.register(new GenInfixOp());
+        registry.register(new RecursiveConstruct());
+        registry.register(new LetInConstruct());
+        registry.register(new LetDefinitionsConstruct());
+        registry.register(new DisjListConstruct());
+        registry.register(new DisjItemConstruct());
+        registry.register(new ConjItemConstruct());
+        registry.register(new ConjListConstruct());
+        registry.register(new AssumptionConstruct());
 
         // Expressions
         registry.register(new IfThenElseConstruct());
@@ -62,6 +81,7 @@ public class TlaDocBuilder {
         registry.register(new TupleConstruct());
         registry.register(new SetEnumerateConstruct());
         registry.register(new TimesConstruct());
+
     }
 
     /**
@@ -81,7 +101,7 @@ public class TlaDocBuilder {
                 return construct.buildDoc(node, context, indentSize);
             } catch (Exception e) {
                 LOG.warn("Error building doc for construct {} on node kind {}: {}",
-                        construct.getName(), node.getKind(), e.getMessage());
+                        construct.getName(), node.getKind(), e.getMessage(), e);
                 // Fall back to generic handling
             }
         }

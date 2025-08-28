@@ -20,7 +20,8 @@ public abstract class LexiconTest {
             assertNotNull(resource, "Resource file not found");
             File input = new File(resource.toURI());
             String inputSpec = Files.readString(Path.of(resource.toURI()));
-            //idempotency("testSpecFile: " + name, inputSpec);
+            var f = new TLAPlusFormatter(input);
+            System.out.println(f.getOutput());
             /*
             URL outputFile = getClass().getClassLoader().getResource("outputs/" + name + ".tla");
             assertNotNull(resource, "Resource file not found");

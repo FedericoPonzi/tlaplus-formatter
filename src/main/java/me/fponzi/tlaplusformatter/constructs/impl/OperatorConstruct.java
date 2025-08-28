@@ -9,6 +9,10 @@ import tla2sany.st.TreeNode;
 /**
  * Construct implementation for operator definitions.
  * Handles formatting of "Op == expr" constructs.
+ * S == 1 or S(x) == x + 1
+ * or a \odot b == c
+ * node.one()[0].zero()[0] is (usually) the identifier.
+ * node.one()[1] has the == sign.
  */
 public class OperatorConstruct implements TlaConstruct {
 
@@ -26,25 +30,17 @@ public class OperatorConstruct implements TlaConstruct {
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         assert (node.one() != null && node.one().length >= 3);
 
-        // node.one()[0] is the operator name/signature
+        // node.one()[0] is the operator name/signature of type N_IdentLHS.
         // node.one()[1] is the "==" 
         // node.one()[2] is the expression
-        TreeNode nameNode = node.one()[0];
-        TreeNode exprNode = node.one()[2];
-
-        String operatorName = extractOperatorName(nameNode);
-        Doc expression = context.buildChild(exprNode);
+        var name = context.buildChild(node.one()[0]);
+        var exprNode = context.buildChild(node.one()[2]);
+        // todo: it's missing args.
         return Doc.group(
-                Doc.text(operatorName)
-                        .appendSpace(Doc.text("=="))
-                        .appendLineOrSpace(expression)
-        ).indent(indentSize);
-    }
-
-    private String extractOperatorName(TreeNode nameNode) {
-        if (nameNode.zero() != null && nameNode.zero().length > 0) {
-            return nameNode.zero()[0].getImage();
-        }
-        return nameNode.getImage();
+                name.appendSpace(
+                                Doc.text("==")
+                                        .appendLineOrSpace(exprNode))
+                        .indent(indentSize)
+        );
     }
 }

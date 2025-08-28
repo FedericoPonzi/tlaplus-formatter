@@ -1,4 +1,4 @@
----- MODULE F_1_D_4_GB_TRUE_C_FALSE -----
+---- MODULE RecordsWithNestedRecordsAndSequences -----
 EXTENDS TLC, Sequences
 
 CONSTANTS n1, n2, n3

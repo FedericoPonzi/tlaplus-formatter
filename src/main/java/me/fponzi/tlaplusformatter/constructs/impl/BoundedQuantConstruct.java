@@ -9,53 +9,57 @@ import tla2sany.st.TreeNode;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Construct implementation for set enumerations.
- * Handles formatting of set expressions like {element1, element2, element3}.
- */
-public class SetEnumerateConstruct implements TlaConstruct {
-
+// \E coef \in [1..N -> -1..1] or \A QuantBound : ConjList.
+public class BoundedQuantConstruct implements TlaConstruct {
     @Override
     public String getName() {
-        return "SET_ENUMERATE";
+        return "BOUNDED_QUANT";
     }
 
     @Override
     public int getSupportedNodeKind() {
-        return NodeKind.SET_ENUMERATE.getId();
+        // N_BoundedQuant
+        return NodeKind.BOUNDED_QUANT.getId();
     }
 
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
-        assert (node.zero() != null && node.zero().length >= 2);
+        var z = node.zero();
+        var exists = context.buildChild(z[0]);
         List<Doc> elementDocs = new ArrayList<>();
-
-        // Process children to build set elements
-        // Skip first and last elements - they are { and } braces
-        for (int i = 1; i < node.zero().length - 1; i++) {
-            TreeNode child = node.zero()[i];
+        for (int i = 1; i < z.length - 2; i++) {
+            TreeNode child = z[i];
             assert (child != null);
             if (child.getHumanReadableImage().equals(",")) {
                 continue;
             }
             Doc elementDoc = context.buildChild(child);
             elementDocs.add(elementDoc);
-
-        }
-
-        if (elementDocs.isEmpty()) {
-            return Doc.text("{}");
         }
 
         Doc content = elementDocs.get(0);
         for (int i = 1; i < elementDocs.size(); i++) {
             content = content.append(Doc.text(",")).appendLineOrSpace(elementDocs.get(i));
         }
-
+        /*
+                var z = this.zero();
+        f.append(z[0]).space(); // \E
+        for (int i = 1; i < z.length - 2; i++) {
+            z[i].format(f); // QuantBound
+            if (i % 2 == 0) { // ,
+                f.space();
+            }
+        }
+        f.append(z[z.length - 2]); // :
+        f.increaseLevel();
+        f.space();
+        z[z.length - 1].format(f); // prop
+        f.decreaseLevel();
+         */
         return Doc.group(
-                Doc.text("{")
-                        .appendSpace(content.indent("{ ".length()))
-                        .appendLineOrSpace(Doc.text("}"))
+                exists.appendSpace(content)
+                        .append(Doc.text(":"))
+                        .appendLineOrSpace(context.buildChild(z[z.length - 1])).indent(indentSize)
         );
     }
 }

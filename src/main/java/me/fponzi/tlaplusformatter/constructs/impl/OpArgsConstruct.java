@@ -10,41 +10,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Construct implementation for set enumerations.
- * Handles formatting of set expressions like {element1, element2, element3}.
+ * N_OpArgs' hri: '([i\in1..N|->coef[i]*seq[i]])'
+ * Chcek: N_OpApplication
  */
-public class SetEnumerateConstruct implements TlaConstruct {
-
+public class OpArgsConstruct implements TlaConstruct {
     @Override
     public String getName() {
-        return "SET_ENUMERATE";
+        return "OpArgs";
     }
 
     @Override
     public int getSupportedNodeKind() {
-        return NodeKind.SET_ENUMERATE.getId();
+        return NodeKind.OP_ARGS.getId();
     }
 
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
-        assert (node.zero() != null && node.zero().length >= 2);
+        var z = node.zero();
+        assert (z != null);
+        var docs = new ArrayList<Doc>();
+        var open = context.buildChild(z[0]);
+        var close = context.buildChild(z[z.length - 1]);
         List<Doc> elementDocs = new ArrayList<>();
-
-        // Process children to build set elements
-        // Skip first and last elements - they are { and } braces
-        for (int i = 1; i < node.zero().length - 1; i++) {
-            TreeNode child = node.zero()[i];
+        for (int i = 1; i < z.length - 1; i++) {
+            TreeNode child = z[i];
             assert (child != null);
             if (child.getHumanReadableImage().equals(",")) {
                 continue;
             }
             Doc elementDoc = context.buildChild(child);
             elementDocs.add(elementDoc);
-
-        }
-
-        if (elementDocs.isEmpty()) {
-            return Doc.text("{}");
         }
 
         Doc content = elementDocs.get(0);
@@ -53,9 +48,8 @@ public class SetEnumerateConstruct implements TlaConstruct {
         }
 
         return Doc.group(
-                Doc.text("{")
-                        .appendSpace(content.indent("{ ".length()))
-                        .appendLineOrSpace(Doc.text("}"))
-        );
+                open
+                        .appendLineOrEmpty(content.indent(indentSize))
+                        .appendLineOrEmpty(close));
     }
 }

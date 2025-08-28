@@ -10,41 +10,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Construct implementation for set enumerations.
- * Handles formatting of set expressions like {element1, element2, element3}.
+ * Example: 'N_FcnAppl' hri: 'coef[i]'
+ * Example: towers[from] or CR[n - 1, v]
  */
-public class SetEnumerateConstruct implements TlaConstruct {
-
+public class FcnApplConstruct implements TlaConstruct {
     @Override
     public String getName() {
-        return "SET_ENUMERATE";
+        return "FcnAppl";
     }
 
     @Override
     public int getSupportedNodeKind() {
-        return NodeKind.SET_ENUMERATE.getId();
+        return NodeKind.FCN_APPL.getId();
     }
 
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
-        assert (node.zero() != null && node.zero().length >= 2);
-        List<Doc> elementDocs = new ArrayList<>();
+        var z = node.zero();
+        var o = node.one();
 
-        // Process children to build set elements
-        // Skip first and last elements - they are { and } braces
-        for (int i = 1; i < node.zero().length - 1; i++) {
-            TreeNode child = node.zero()[i];
+        var generalId = context.buildChild(z[0]);
+
+        List<Doc> elementDocs = new ArrayList<>();
+        for (int i = 1; i < o.length - 1; i++) {
+            TreeNode child = o[i];
             assert (child != null);
             if (child.getHumanReadableImage().equals(",")) {
                 continue;
             }
             Doc elementDoc = context.buildChild(child);
             elementDocs.add(elementDoc);
-
-        }
-
-        if (elementDocs.isEmpty()) {
-            return Doc.text("{}");
         }
 
         Doc content = elementDocs.get(0);
@@ -52,10 +47,11 @@ public class SetEnumerateConstruct implements TlaConstruct {
             content = content.append(Doc.text(",")).appendLineOrSpace(elementDocs.get(i));
         }
 
+
         return Doc.group(
-                Doc.text("{")
-                        .appendSpace(content.indent("{ ".length()))
-                        .appendLineOrSpace(Doc.text("}"))
+                generalId.append(Doc.text("["))
+                        .appendLineOrEmpty(content.indent(indentSize))
+                        .appendLineOrEmpty(Doc.text("]"))
         );
     }
 }

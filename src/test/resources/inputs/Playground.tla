@@ -1,18 +1,10 @@
 ---------------------- MODULE Playground ----------------------
-EXTENDS Naturals, TLC
-CONSTANTS a,b, counter, n1, n2
-Foo ==
-    [ action |->
-        { << << 1,
-                    [ counter |->
-                        ( n1 :> ( n1 :> 0 @@ n2 :> 0 ) @@
-                            n2 :>
-                                ( n1 :> 0 @@
-                                        n2 :>
-                                            0
-                                        )
-                            )
-                        ]
-                    >>,
+EXTENDS Naturals, TLC, Integers
+CONSTANTS N
+SeqSum(x) == TRUE
+Weighs(seq, wt) ==
+  \E coef \in [1..N -> -1..1] :
+      SeqSum([i \in 1..N |-> coef[i] * seq[i]]) = wt
+
 
 ==============================================================

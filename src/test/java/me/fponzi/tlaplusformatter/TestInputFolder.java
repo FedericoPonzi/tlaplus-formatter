@@ -22,4 +22,9 @@ public class TestInputFolder extends LexiconTest {
     void testIFET() {
         testSpecFiles("IfThenElseTest");
     }
+
+    @Test
+    void testStones() {
+        testSpecFiles("Stones");
+    }
 }

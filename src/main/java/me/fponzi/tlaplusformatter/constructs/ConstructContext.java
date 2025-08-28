@@ -132,7 +132,6 @@ public class ConstructContext {
                             continue;
                         }
                         result.add(image);
-                        LOG.debug("Adding image: {}, human readable:{}", image, child.getHumanReadableImage());
                     }
                 }
             }
