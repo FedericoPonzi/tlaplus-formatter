@@ -2,11 +2,24 @@ package me.fponzi.tlaplusformatter;
 
 import me.fponzi.tlaplusformatter.exceptions.SanyFrontendException;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class Utils {
+
+    public static void assertUnchanged(String spec) {
+        try {
+            var f = (new TLAPlusFormatter(spec)).getOutput();
+            assertEquals(spec, f);
+            idempotency(spec);
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
 
     /**
      * Helper method to test formatting with idempotency check
@@ -20,5 +33,43 @@ public class Utils {
         String output2 = formatter2.getOutput();
         // Verify idempotency
         assertEquals(output1, output2, "Formatter should be idempotent");
+    }
+
+    public static void assertSpecEquals(String expected, String input, FormatConfig config) {
+        try {
+            File tmpFolder = Files.createTempDirectory("tlaplusfmt").toFile();
+
+            File specFile = new File(tmpFolder, "Spec.tla");
+            try (java.io.FileWriter writer = new java.io.FileWriter(specFile)) {
+                writer.write(input);
+            }
+
+            var f = new TLAPlusFormatter(specFile);
+            var received = f.getOutput();
+            assertEquals(expected, received, "Formatted output does not match expected output");
+
+            // override input spec with the formatted spec.
+            try (java.io.FileWriter writer = new java.io.FileWriter(specFile)) {
+                writer.write(expected);
+            }
+            var f2 = new TLAPlusFormatter(specFile);
+            assertEquals(f.getOutput(), f2.getOutput());
+
+        } catch (Exception e) { //  throws FrontEndException, IOException
+            fail(e);
+        }
+        try {
+            idempotency(input);
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+
+    public static void assertSpecEquals(String expected, String input) {
+        assertSpecEquals(expected, input, new FormatConfig());
+    }
+
+    public static void assertSpecEquals(String expected, String input, int lineWidth) {
+        assertSpecEquals(expected, input, new FormatConfig(lineWidth, FormatConfig.DEFAULT_INDENT_SIZE));
     }
 }
