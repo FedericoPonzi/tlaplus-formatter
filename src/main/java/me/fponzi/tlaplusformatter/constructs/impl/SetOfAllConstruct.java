@@ -10,28 +10,35 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LetInConstruct implements TlaConstruct {
+/**
+ * Example: `{Partitions(<<x>>\oseq,wt-x):x\inS}`
+ * Example: RecordCombine(S, T) ==\n" +
+ * "   {rc(s, t):s \\in S, t \\in T}
+ */
+public class SetOfAllConstruct implements TlaConstruct {
     @Override
     public String getName() {
-        return "N_LetIn";
+        return "N_SetOfAll";
     }
 
     @Override
     public int getSupportedNodeKind() {
-        return NodeKind.LET_IN.getId();
+        return NodeKind.SET_OF_ALL.getId();
     }
 
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         var z = node.zero();
-        assert (z != null && z.length >= 4);
         List<Doc> zDoc = Arrays.stream(z).map(context::buildChild).collect(Collectors.toList());
-
-        return Doc.group(
-                zDoc.get(0)
-                        .appendSpace(zDoc.get(1))
-                        .appendLineOrSpace(zDoc.get(2).indent(indentSize))
-                        .appendSpace(zDoc.get(3))
-        );
+        var ret = context.buildChild(z[0]);
+        for (int i = 1; i < z.length; i++) {
+            var b = context.buildChild(z[i]);
+            if (z[i].getImage().equals(",") || z[i].getImage().equals(":")) {
+                ret = ret.appendSpace(b);
+            } else {
+                ret = ret.appendLineOrSpace(b);
+            }
+        }
+        return Doc.group(ret);
     }
 }

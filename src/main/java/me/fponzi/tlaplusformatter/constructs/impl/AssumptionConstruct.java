@@ -21,9 +21,10 @@ public class AssumptionConstruct implements TlaConstruct {
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         var o = node.one();
         assert (o != null && o.length == 2);
+        var assume = o[0].getImage();
         return Doc.group(
-                Doc.text(o[0].getImage())
-                        .appendSpace(context.buildChild(o[1]))
+                Doc.text(assume)
+                        .appendSpace(context.buildChild(o[1]).indent(assume.length() + 1))
         );
     }
 }

@@ -72,6 +72,8 @@ public class TlaDocBuilder {
         registry.register(new AssumptionConstruct());
         registry.register(new PostfixExprConstruct());
         registry.register(new GenPostfixOpConstruct());
+        registry.register(new SubsetOfConstruct());
+        registry.register(new SetOfAllConstruct());
 
         // Expressions
         registry.register(new IfThenElseConstruct());

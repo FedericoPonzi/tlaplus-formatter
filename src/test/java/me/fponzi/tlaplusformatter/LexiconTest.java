@@ -20,14 +20,13 @@ public abstract class LexiconTest {
             assertNotNull(resource, "Resource file not found");
             File input = new File(resource.toURI());
             String inputSpec = Files.readString(Path.of(resource.toURI()));
-            var f = new TLAPlusFormatter(input);
-            System.out.println(f.getOutput());
+            var f = new TLAPlusFormatter(input, new FormatConfig(80, 2));
+            var actual = f.getOutput();
+            //System.out.println(f.getOutput());
             /*
             URL outputFile = getClass().getClassLoader().getResource("outputs/" + name + ".tla");
             assertNotNull(resource, "Resource file not found");
             String expected = Files.readString(Path.of(outputFile.toURI()));
-            var f = new TLAPlusFormatter(expected);
-            var actual = f.getOutput();
             assertNotNull(actual, "Formatted output is null");
             assertNotNull(expected, "Expected output is null");
             assertEquals(expected, actual, "Formatted output does not match expected output(" + outputFile.toURI() + ").");

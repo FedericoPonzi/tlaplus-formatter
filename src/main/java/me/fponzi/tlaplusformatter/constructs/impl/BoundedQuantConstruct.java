@@ -41,21 +41,6 @@ public class BoundedQuantConstruct implements TlaConstruct {
         for (int i = 1; i < elementDocs.size(); i++) {
             content = content.append(Doc.text(",")).appendLineOrSpace(elementDocs.get(i));
         }
-        /*
-                var z = this.zero();
-        f.append(z[0]).space(); // \E
-        for (int i = 1; i < z.length - 2; i++) {
-            z[i].format(f); // QuantBound
-            if (i % 2 == 0) { // ,
-                f.space();
-            }
-        }
-        f.append(z[z.length - 2]); // :
-        f.increaseLevel();
-        f.space();
-        z[z.length - 1].format(f); // prop
-        f.decreaseLevel();
-         */
         return Doc.group(
                 exists.appendSpace(content)
                         .append(Doc.text(":"))

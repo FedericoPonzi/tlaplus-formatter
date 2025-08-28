@@ -1,4 +1,4 @@
----- MODULE RecordsWithNestedRecordsAndSequences ----
+---- MODULE RecordsWithNestedRecordsAndSequences -----
 EXTENDS TLC, Sequences
 
 CONSTANTS n1, n2, n3
