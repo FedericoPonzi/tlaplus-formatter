@@ -43,10 +43,8 @@ public class IfThenElseConstruct implements TlaConstruct {
      * Utility method for creating IF-THEN-ELSE expressions.
      */
     public static Doc create(Doc condition, Doc thenExpr, Doc elseExpr, int indentSize) {
-        return Doc.group(
-                Doc.group(Doc.text("IF").appendLineOrSpace(condition))
-                        .appendLineOrSpace(Doc.group(Doc.text("THEN").appendLineOrSpace(thenExpr)).indent(indentSize))
-                        .appendLineOrSpace(Doc.group(Doc.text("ELSE").appendLineOrSpace(elseExpr)).indent(indentSize))
-        );
+        return Doc.group(Doc.text("IF").appendLineOrSpace(condition).indent(indentSize))
+                .appendLineOrSpace(Doc.group(Doc.text("THEN").appendLineOrSpace(thenExpr).indent(indentSize)))
+                .appendLineOrSpace(Doc.group(Doc.text("ELSE").appendLineOrSpace(elseExpr).indent(indentSize)));
     }
 }
