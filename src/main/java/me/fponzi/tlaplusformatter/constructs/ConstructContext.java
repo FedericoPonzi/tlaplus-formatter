@@ -42,7 +42,18 @@ public class ConstructContext {
      * @return Doc object for the child node
      */
     public Doc buildChild(TreeNode child) {
-        return docBuilder.build(child);
+        var childDoc = docBuilder.build(child);
+
+        if (child.getPreComments().length > 0) {
+            Doc comments = Doc.group(Doc.text(child.getPreComments()[0]));
+            for (int z = 1; z < child.getPreComments().length; z++) {
+                comments = comments.appendLine(Doc.group(Doc.text(child.getPreComments()[z]))).indent(0);
+            }
+            // TODO: if the comment is an inline comment and it's at the end of the line,
+            //  we should leave it there
+            return comments.appendLine(childDoc);
+        }
+        return childDoc;
     }
 
     /**

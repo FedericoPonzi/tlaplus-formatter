@@ -28,9 +28,10 @@ public class IdentLHSConstruct implements TlaConstruct {
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         var z = node.zero();
         assert (z != null && z.length > 0);
+        var name = context.buildChild(z[0]);
         if (z.length == 1) {
             // simple case
-            return Doc.text(z[0].getImage());
+            return name;
         }
 
         List<Doc> elementDocs = new ArrayList<>();
@@ -50,7 +51,7 @@ public class IdentLHSConstruct implements TlaConstruct {
         }
 
         return Doc.group(
-                Doc.text(z[0].getImage())
+                name
                         .append(Doc.text("("))
                         .append(content)
                         .append(Doc.text(")")));
