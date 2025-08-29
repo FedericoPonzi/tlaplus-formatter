@@ -16,16 +16,18 @@ repositories {
 
 dependencies {
     implementation("org.lamport:tla2tools:1.8.0-SNAPSHOT")
-    implementation ("commons-io:commons-io:2.16.1")
+    implementation("commons-io:commons-io:2.16.1")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.mockito:mockito-core:5.7.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.7.0")
     implementation("commons-cli:commons-cli:1.8.0")
 
     // Logging
     implementation("org.slf4j:slf4j-api:2.0.7")
     implementation("ch.qos.logback:logback-classic:1.5.6")
 
-    implementation ("org.reflections:reflections:0.10.2")
+    implementation("com.opencastsoftware:prettier4j:0.3.1")
 }
 
 sourceSets {

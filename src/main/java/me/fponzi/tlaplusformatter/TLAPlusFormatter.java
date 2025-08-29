@@ -1,45 +1,43 @@
 package me.fponzi.tlaplusformatter;
 
+import com.opencastsoftware.prettier4j.Doc;
 import me.fponzi.tlaplusformatter.exceptions.SanyFrontendException;
-import me.fponzi.tlaplusformatter.format.FactoryRegistry;
-import me.fponzi.tlaplusformatter.format.FormattedSpec;
-import me.fponzi.tlaplusformatter.format.TreeNode;
-import me.fponzi.tlaplusformatter.format.lexicon.TlaModule;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tla2sany.st.TreeNode;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TLAPlusFormatter {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public FormattedSpec f;
-    TreeNode root;
-    File spec;
+    private final TreeNode root;
+    private final File spec;
+    private final TlaDocBuilder docBuilder;
+    private String output;
+    private final FormatConfig config;
 
     public TLAPlusFormatter(File specPath) throws IOException, SanyFrontendException {
-        // Use Reflections library to find all classes that extend TreeNode
-        Reflections reflections = new Reflections("me.fponzi.tlaplusformatter.format.lexicon");
-        Set<Class<? extends TreeNode>> classes = reflections.getSubTypesOf(TreeNode.class);
-        for (Class<? extends TreeNode> clazz : classes) {
-            FactoryRegistry.register(clazz);
-        }
-        root = SANYWrapper.load(specPath);
+        this(specPath, new FormatConfig());
+    }
+
+    public TLAPlusFormatter(File specPath, FormatConfig config) throws IOException, SanyFrontendException {
+        this.docBuilder = new TlaDocBuilder(config);
+        this.config = config;
+        this.root = SANYWrapper.load(specPath);
         this.spec = specPath;
 
         format();
     }
 
     public String getOutput() {
-        return f.getOut().toString();
+        return output;
     }
 
     /**
@@ -53,16 +51,24 @@ public class TLAPlusFormatter {
      * @throws IOException
      */
     public TLAPlusFormatter(String spec) throws IOException, SanyFrontendException {
-        this(storeToTmp(spec));
+        this(storeToTmp(spec), new FormatConfig());
+    }
+
+    public TLAPlusFormatter(String spec, FormatConfig config) throws IOException, SanyFrontendException {
+        this(storeToTmp(spec), config);
     }
 
     private void format() throws IOException {
-        f = new FormattedSpec();
-        var extraSections = getPreAndPostModuleSectionsFromSpecFile(spec.toPath());
-        assert root.getKind() == TlaModule.KIND;
-        f.append(extraSections[0]);
-        root.format(f);
-        f.append(extraSections[1]);
+        String[] extraSections = getPreAndPostModuleSectionsFromSpecFile(spec.toPath());
+
+        // Pass original source to docBuilder for spacing preservation
+        String originalSource = Files.readString(spec.toPath());
+        docBuilder.setOriginalSource(originalSource);
+
+        Doc moduleDoc = docBuilder.build(root);
+        this.output = extraSections[0] +
+                moduleDoc.render(this.config.getLineWidth()) +
+                extraSections[1];
     }
 
     static String getModuleName(String spec) {
@@ -98,7 +104,7 @@ public class TLAPlusFormatter {
         for (int i = endLine; i < lines.length; i++) {
             postModuleSection.append(System.lineSeparator()).append(lines[i]);
         }
-        if(spec.endsWith("\n")) {
+        if (spec.endsWith("\n")) {
             postModuleSection.append(System.lineSeparator());
         }
 

@@ -41,8 +41,7 @@ class MainTest {
 
         // Assert the content is formatted as expected
         String expectedOutput = "---- MODULE TestModule ----\n" +
-                "VARIABLE\n" +
-                "         x\n" +
+                "VARIABLE x\n" +
                 "====================";
         assertEquals(expectedOutput, outputContent, "Output content should match expected formatted content");
 

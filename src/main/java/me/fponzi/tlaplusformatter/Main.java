@@ -15,16 +15,18 @@ public class Main {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final String VERBOSITY_OPTION = "v";
     private static final String DEFAULT_VERBOSITY_OPTION = "INFO";
-    private static void printHelp() {
+    private static void printHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         String header = "A TLA+ formatter. Use it to reformat your specs.";
         String footer = "Please contribute feedback or get the latest release from https://github.com/FedericoPonzi/tlaplus-formatter";
-        formatter.printHelp("java -jar tlaplus-formatter.jar <FILE>", header, new Options(), footer, true);
+        formatter.printHelp("java -jar tlaplus-formatter.jar [OPTIONS] <FILE> [OUTFILE]", header, options, footer, true);
     }
 
     public static int mainWrapper(String[] args) {
         Options options = new Options();
         options.addOption(VERBOSITY_OPTION, "verbosity", true, "Set the verbosity level (ERROR, WARN, *INFO, DEBUG)");
+        options.addOption("w", "width", true, "Set the target line width for formatting (default: 80)");
+        options.addOption("i", "indent", true, "Set the number of spaces for indentation (default: 4)");
 
         CommandLine cmd;
         try {
@@ -42,7 +44,31 @@ public class Main {
                     setLogLevel(verbosity);
                 } catch (IllegalArgumentException e) {
                     logger.error("Invalid log level: {}", verbosity);
-                    printHelp();
+                    printHelp(options);
+                    return 1;
+                }
+            }
+            
+            // Parse formatting options
+            int lineWidth = FormatConfig.DEFAULT_LINE_WIDTH;
+            int indentSize = FormatConfig.DEFAULT_INDENT_SIZE;
+            
+            if (cmd.hasOption("w")) {
+                try {
+                    lineWidth = Integer.parseInt(cmd.getOptionValue("w"));
+                } catch (NumberFormatException e) {
+                    logger.error("Invalid line width: {}", cmd.getOptionValue("w"));
+                    printHelp(options);
+                    return 1;
+                }
+            }
+            
+            if (cmd.hasOption("i")) {
+                try {
+                    indentSize = Integer.parseInt(cmd.getOptionValue("i"));
+                } catch (NumberFormatException e) {
+                    logger.error("Invalid indent size: {}", cmd.getOptionValue("i"));
+                    printHelp(options);
                     return 1;
                 }
             }
@@ -52,7 +78,7 @@ public class Main {
 
             if (remainingArgs.length == 0 || remainingArgs.length > 2) {
                 logger.error("Please provide one or two file paths (input and optionally output) as arguments.");
-                printHelp();
+                printHelp(options);
                 return 1;
             }
 
@@ -63,7 +89,8 @@ public class Main {
                 return 1;
             }
 
-            TLAPlusFormatter formatter = new TLAPlusFormatter(inputFile);
+            FormatConfig config = new FormatConfig(lineWidth, indentSize);
+            TLAPlusFormatter formatter = new TLAPlusFormatter(inputFile, config);
             String formattedOutput = formatter.getOutput();
 
             if (remainingArgs.length == 2) {
@@ -78,7 +105,7 @@ public class Main {
 
         } catch (ParseException e) {
             logger.error("Error parsing command line arguments: {}", e.getMessage());
-            printHelp();
+            printHelp(options);
             return 1;
         } catch (IOException | SanyFrontendException e) {
             logger.error("An error occurred while processing the file: {}", e.getMessage());

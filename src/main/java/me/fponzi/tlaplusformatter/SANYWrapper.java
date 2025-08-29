@@ -4,8 +4,7 @@ import me.fponzi.tlaplusformatter.exceptions.SanyException;
 import me.fponzi.tlaplusformatter.exceptions.SanyFrontendException;
 import me.fponzi.tlaplusformatter.exceptions.SanySemanticException;
 import me.fponzi.tlaplusformatter.exceptions.SanySyntaxException;
-import me.fponzi.tlaplusformatter.format.FactoryRegistry;
-import me.fponzi.tlaplusformatter.format.TreeNode;
+import tla2sany.st.TreeNode;
 import org.apache.commons.io.output.WriterOutputStream;
 import tla2sany.drivers.FrontEndException;
 import tla2sany.drivers.SANY;
@@ -50,7 +49,7 @@ public class SANYWrapper {
         var specObj = new SpecObj(file.getAbsolutePath(), filenameResolver);
         loadSpecObject(specObj, file, errBuf);
         Hashtable<String, ParseUnit> parseUnitContext = specObj.parseUnitContext;
-        return FactoryRegistry.createInstance(parseUnitContext.get(specObj.getRootModule().getName().toString()).getParseTree());
+        return parseUnitContext.get(specObj.getRootModule().getName().toString()).getParseTree();
     }
 
     public static void loadSpecObject(SpecObj specObj, File file, StringWriter errBuf) throws IOException, SanyFrontendException {
