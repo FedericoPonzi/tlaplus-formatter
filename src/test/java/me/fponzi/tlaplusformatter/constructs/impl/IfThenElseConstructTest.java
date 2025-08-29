@@ -7,7 +7,7 @@ import static me.fponzi.tlaplusformatter.Utils.assertUnchanged;
 
 class IfThenElseConstructTest {
     @Test
-    void tesstIFECompcat() {
+    void testCompact() {
         var s = "----- MODULE Times -----\n" +
                 "CONSTANTS A, B\n" +
                 "AVeryLongName == IF TRUE THEN A ELSE B\n" +
@@ -16,7 +16,7 @@ class IfThenElseConstructTest {
     }
 
     @Test
-    void testIFEWrapped() {
+    void testWrapped() {
 
         var t = "ALongLineName == IF TRUE THEN AVeryLongConstName ELSE BVeryLongConstName";
         var s = "----- MODULE Times -----\n" +

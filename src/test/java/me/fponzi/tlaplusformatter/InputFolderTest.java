@@ -2,7 +2,7 @@ package me.fponzi.tlaplusformatter;
 
 import org.junit.jupiter.api.Test;
 
-public class TestInputFolder extends LexiconTest {
+public class InputFolderTest extends LexiconTest {
     @Test
     void testPlayground() {
         testSpecFiles("Playground");
@@ -26,5 +26,10 @@ public class TestInputFolder extends LexiconTest {
     @Test
     void testStones() {
         testSpecFiles("Stones");
+    }
+
+    @Test
+    void testTowerOfHanoi() {
+        testSpecFiles("TowerOfHanoi");
     }
 }

@@ -22,8 +22,8 @@ public abstract class LexiconTest {
             String inputSpec = Files.readString(Path.of(resource.toURI()));
             var f = new TLAPlusFormatter(input, new FormatConfig(80, 2));
             var actual = f.getOutput();
-            //System.out.println(f.getOutput());
-            /*
+            /*System.out.println(f.getOutput());
+
             URL outputFile = getClass().getClassLoader().getResource("outputs/" + name + ".tla");
             assertNotNull(resource, "Resource file not found");
             String expected = Files.readString(Path.of(outputFile.toURI()));
