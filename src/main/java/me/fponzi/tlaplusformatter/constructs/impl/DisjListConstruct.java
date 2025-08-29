@@ -32,6 +32,6 @@ public class DisjListConstruct implements TlaConstruct {
         for (Doc disL : zDoc) {
             ret = ret.appendLine(disL);
         }
-        return Doc.group(ret.align());
+        return Doc.group(ret);
     }
 }

@@ -36,6 +36,7 @@ public class OperatorConstruct implements TlaConstruct {
         var name = context.buildChild(node.one()[0]);
         var exprNode = context.buildChild(node.one()[2]);
         // todo: it's missing args.
+        
         return Doc.group(
                 name.appendSpace(
                                 Doc.text("==")
