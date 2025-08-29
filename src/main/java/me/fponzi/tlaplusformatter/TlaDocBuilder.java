@@ -57,6 +57,7 @@ public class TlaDocBuilder {
         registry.register(new OpArgsConstruct());
         registry.register(new OpApplicationConstruct());
         registry.register(new BoundedQuantConstruct());
+        registry.register(new MaybeBoundConstruct());
         registry.register(new IdentLHSConstruct());
         registry.register(new IdentDeclConstruct());
         registry.register(new SetOfFcnsConstruct());

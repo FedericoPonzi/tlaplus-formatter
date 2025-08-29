@@ -13,6 +13,7 @@ import java.lang.invoke.MethodHandles;
 /**
  * Construct implementation for infix expressions.
  * Handles formatting of expressions with infix operators (e.g., a + b, x :> y).
+ * Example: S \in Z
  */
 public class InfixExprConstruct implements TlaConstruct {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -44,7 +45,7 @@ public class InfixExprConstruct implements TlaConstruct {
         return Doc.group(
                 leftOperand
                         .appendSpace(operator)
-                        .appendLineOrSpace(rightOperand)
+                        .appendLineOrSpace(rightOperand).indent(indentSize)
         );
     }
 }
