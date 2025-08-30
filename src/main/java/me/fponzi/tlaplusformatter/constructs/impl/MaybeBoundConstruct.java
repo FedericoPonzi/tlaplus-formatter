@@ -32,7 +32,10 @@ public class MaybeBoundConstruct implements TlaConstruct {
         }
         assert (z.length >= 2); // \in, set
 
-        return Doc.group(context.buildChild(z[0]).appendLineOrSpace(context.buildChild(z[1])))
-                .indent(indentSize);
+        return Doc.group(
+                context
+                        .buildChild(z[0])
+                        .appendSpace(context.buildChild(z[1]).indent(indentSize))
+        );
     }
 }

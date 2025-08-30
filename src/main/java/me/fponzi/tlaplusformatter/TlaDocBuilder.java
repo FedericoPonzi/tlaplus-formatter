@@ -76,6 +76,10 @@ public class TlaDocBuilder {
         registry.register(new GenPostfixOpConstruct());
         registry.register(new SubsetOfConstruct());
         registry.register(new SetOfAllConstruct());
+        registry.register(new ExceptComponentConstruct());
+        registry.register(new ExceptConstruct());
+        registry.register(new ExceptSpecConstruct());
+        registry.register(new UnboundedOrBoundedChooseConstruct());
 
         // Expressions
         registry.register(new IfThenElseConstruct());

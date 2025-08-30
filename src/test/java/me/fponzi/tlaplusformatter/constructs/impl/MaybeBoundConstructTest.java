@@ -10,7 +10,7 @@ class MaybeBoundConstructTest {
     void testCompact() {
         var s = "----- MODULE MaybeBound -----\n" +
                 "CONSTANT S\n" +
-                "Test == CHOOSE e \\in S : TRUE\n" +
+                "Test == CHOOSE e \\in S: TRUE\n" +
                 "====";
         assertUnchanged(s);
     }
@@ -25,8 +25,8 @@ class MaybeBoundConstructTest {
         var expected = "----- MODULE MaybeBound -----\n" +
                 "CONSTANT AVeryLongConstantNameThatForcesWrapping\n" +
                 "AVeryLongTestName ==\n" +
-                "  CHOOSE AVeryLongConstantName \\in\n" +
-                "    AVeryLongConstantNameThatForcesWrapping : TRUE\n" +
+                "  CHOOSE AVeryLongConstantName \\in AVeryLongConstantNameThatForcesWrapping:\n" +
+                "    TRUE\n" +
                 "====";
 
         assertSpecEquals(expected, s, t.length() / 2);
