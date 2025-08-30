@@ -21,9 +21,11 @@ public class DisjItemConstruct implements TlaConstruct {
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         var z = node.zero();
         assert (z != null && z.length == 2);
+        var symbol = context.buildChild(z[0]);
+        var symbolLength = z[0].getImage().length() + 1;
+        var expr = context.buildChild(z[1]);
         return Doc.group(
-                Doc.text(z[0].getImage())
-                        .appendSpace(context.buildChild(z[1]).indent(z[0].getImage().length() + 1))
+                symbol.appendSpace(expr.indent(symbolLength))
         );
     }
 }

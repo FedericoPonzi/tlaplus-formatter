@@ -6,6 +6,9 @@ import me.fponzi.tlaplusformatter.constructs.NodeKind;
 import me.fponzi.tlaplusformatter.constructs.TlaConstruct;
 import tla2sany.st.TreeNode;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 /**
  * Construct implementations for module structure elements.
  */
@@ -79,11 +82,12 @@ public class ModuleConstruct {
         public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
             var z = node.zero();
             assert (z != null && z.length > 2);
+            var zDocs = Arrays.stream(z).map(context::buildChild).collect(Collectors.toList());
             // todo: we could add a flag to rewrite this to ---- MODULE m ----
-            String prefixDashes = z[0].getImage();
-            String moduleName = z[1].getImage();
-            String suffixDashes = z[2].getImage();
-            return Doc.text(prefixDashes).appendSpace(Doc.text(moduleName)).appendSpace(Doc.text(suffixDashes));
+            var prefixDashes = zDocs.get(0);
+            var moduleName = zDocs.get(1);
+            var suffixDashes = zDocs.get(2);
+            return prefixDashes.appendSpace(moduleName).appendSpace(suffixDashes);
         }
     }
 

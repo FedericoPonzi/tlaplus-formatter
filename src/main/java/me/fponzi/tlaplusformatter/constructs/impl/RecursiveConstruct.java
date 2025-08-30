@@ -20,14 +20,14 @@ public class RecursiveConstruct implements TlaConstruct {
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         var z = node.zero();
-        var recursiveKey = Doc.text(z[0].getImage());
+        var recursiveKey = context.buildChild(z[0]);
         // TODO: not sure if the for loop is needed.
         for (int i = 1; i < z.length; i++) {
             TreeNode child = z[i];
             assert (child != null);
             recursiveKey = recursiveKey.appendSpace(context.buildChild(child));
         }
-        
+
         return Doc.group(
                 recursiveKey
         );

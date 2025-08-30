@@ -28,7 +28,6 @@ public class QuantBoundConstruct implements TlaConstruct {
         var z = node.zero();
         var i = 0;
         List<Doc> elementDocs = new ArrayList<>();
-
         while (!z[i].getImage().equals("\\in")) {
             if (!z[i].getImage().equals(",")) {
                 elementDocs.add(context.buildChild(z[i]));
