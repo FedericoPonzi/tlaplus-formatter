@@ -20,7 +20,7 @@ public class AssumptionConstruct implements TlaConstruct {
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         var o = node.one();
-        assert (o != null && o.length == 2);
+        assert (o != null && o.length >= 2);
         var assume = context.buildChild(o[0]);
         return Doc.group(
                 assume
