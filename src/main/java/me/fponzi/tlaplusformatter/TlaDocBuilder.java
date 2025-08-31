@@ -87,6 +87,10 @@ public class TlaDocBuilder {
         registry.register(new CaseConstruct());
         registry.register(new FunctionDefinitionConstruct());
         registry.register(new SetOfRcdsConstruct());
+        registry.register(new OtherArmConstruct());
+        registry.register(new IdentifierTuple());
+        registry.register(new FairnessExprConstruct());
+        registry.register(new LambdaConstruct());
 
         // Expressions
         registry.register(new IfThenElseConstruct());

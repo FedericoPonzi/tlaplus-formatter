@@ -6,34 +6,33 @@ import me.fponzi.tlaplusformatter.constructs.NodeKind;
 import me.fponzi.tlaplusformatter.constructs.TlaConstruct;
 import tla2sany.st.TreeNode;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 /**
- * Handles EXCEPT components.
- * For example, in the expression: [f EXCEPT ![k] = e]
- * This construct handles the part: [k]
- * Example: [r0 EXCEPT !.b = @ \cup {2}]
- * the `.b` part.
+ * Example: WF_vars(A) or SF_vars(A)
  */
-public class ExceptComponentConstruct implements TlaConstruct {
+public class FairnessExprConstruct implements TlaConstruct {
     @Override
     public String getName() {
-        return "N_ExceptComponent";
+        return "N_FairnessExpr";
     }
 
     @Override
     public int getSupportedNodeKind() {
-        return NodeKind.EXCEPT_COMPONENT.getId();
+        return NodeKind.FAIRNESS_EXPR.getId();
     }
 
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         var z = node.zero();
         assert (z != null);
-        assert (z.length >= 2);
-        var d = context.buildChild(z[0]);
-        for (int i = 1; i < z.length; i++) {
-            assert (z[i] != null);
-            d = d.append(context.buildChild(z[i]));
+        assert (z.length == 5); // WF_vars or SF_vars, (, var(s
+        var zDocs = Arrays.stream(z).map(context::buildChild).collect(Collectors.toList());
+        var collect = zDocs.get(0);
+        for (int i = 1; i < zDocs.size(); i++) {
+            collect = collect.append(zDocs.get(i));
         }
-        return d;
+        return collect;
     }
 }

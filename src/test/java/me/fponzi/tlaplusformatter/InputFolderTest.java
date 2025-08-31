@@ -32,9 +32,14 @@ public class InputFolderTest extends LexiconTest {
     void testTowerOfHanoi() {
         testSpecFiles("TowerOfHanoi");
     }
-    
+
     @Test
     void testSlush() {
         testSpecFiles("Slush");
+    }
+
+    @Test
+    void testAllConstructs() {
+        testSpecFiles("AllConstructs");
     }
 }
