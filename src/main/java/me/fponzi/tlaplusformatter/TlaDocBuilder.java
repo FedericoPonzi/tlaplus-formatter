@@ -80,6 +80,13 @@ public class TlaDocBuilder {
         registry.register(new ExceptConstruct());
         registry.register(new ExceptSpecConstruct());
         registry.register(new UnboundedOrBoundedChooseConstruct());
+        registry.register(new RecordComponentConstruct());
+        registry.register(new FieldSetConstruct());
+        registry.register(new ActionExpr());
+        registry.register(new CaseArmConstruct());
+        registry.register(new CaseConstruct());
+        registry.register(new FunctionDefinitionConstruct());
+        registry.register(new SetOfRcdsConstruct());
 
         // Expressions
         registry.register(new IfThenElseConstruct());
