@@ -22,7 +22,7 @@ public abstract class LexiconTest {
             String inputSpec = Files.readString(Path.of(resource.toURI()));
             var f = new TLAPlusFormatter(input, new FormatConfig(80, 2));
             var actual = f.getOutput();
-            System.out.println(f.getOutput());
+            //System.out.println(f.getOutput());
             // commented until issues are fixed:
             compareOutputSpec(name, actual, f.root);
         } catch (Exception e) {
@@ -80,6 +80,7 @@ public abstract class LexiconTest {
         if (root1.getKind() != root2.getKind()) {
             System.out.println("Node kinds do not match: " + root1.getKind() + " vs " + root2.getKind());
             System.out.println("Node image: " + root1.getImage() + " vs " + root2.getImage());
+            System.out.println("Node Location" + root1.getLocation() + " vs " + root2.getLocation());
         }
         assertEquals(root1.getKind(), root2.getKind(), "Node kinds do not match");
         //assertEquals(root1.getImage(), root2.getImage());

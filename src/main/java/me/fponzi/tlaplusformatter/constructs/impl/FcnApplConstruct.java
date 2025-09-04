@@ -50,7 +50,7 @@ public class FcnApplConstruct implements TlaConstruct {
 
         return Doc.group(
                 generalId.append(Doc.text("["))
-                        .appendLineOrEmpty(content.indent(indentSize))
+                        .appendLineOrEmpty(content).indent(indentSize)
                         .appendLineOrEmpty(Doc.text("]"))
         );
     }

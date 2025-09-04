@@ -339,8 +339,8 @@ QuerySampleSet(self) ==
        LET otherNodes == Node \ { HostOf[self] }
          otherQueryProcesses ==
            {pid \in SlushQueryProcess: HostOf[pid] \in otherNodes}
-         IN {pidSet \in
-            SUBSET otherQueryProcesses: Cardinality(pidSet) = SampleSetSize
+         IN {pidSet \in SUBSET otherQueryProcesses: Cardinality(pidSet) =
+                SampleSetSize
             }:
        /\ sampleSet' = [sampleSet EXCEPT ![self] = possibleSampleSet]
        /\ message' =
@@ -361,17 +361,18 @@ TallyQueryReplies(self) ==
   /\ /\ \A pid \in sampleSet[self]:
           /\ \E msg \in PendingQueryReplyMessage(self): /\ msg.src = pid
   /\ LET redTally ==
-       Cardinality({msg \in
-         PendingQueryReplyMessage(self): /\ msg.src \in sampleSet[self]
-           /\ msg.color = Red
-         }
-       )
+       Cardinality({msg \in PendingQueryReplyMessage(self): /\ msg.src \in
+                                                                 sampleSet[self]
+                                                            /\ msg.color = Red
+         })
      IN LET blueTally ==
-          Cardinality({msg \in
-            PendingQueryReplyMessage(self): /\ msg.src \in sampleSet[self]
-              /\ msg.color = Blue
-            }
-          )
+          Cardinality({msg \in PendingQueryReplyMessage(self): /\ msg.src \in
+                                                                    sampleSet[
+                                                                      self
+                                                                    ]
+                                                               /\ msg.color =
+                                                                    Blue
+            })
         IN IF redTally >= PickFlipThreshold
            THEN /\ pick' = [pick EXCEPT ![HostOf[self]] = Red]
            ELSE /\ IF blueTally >= PickFlipThreshold
@@ -431,4 +432,5 @@ Spec == Init /\ [] [Next]_vars
 Termination == <> ( \A self \in ProcSet: pc[self] = "Done" )
 
 
+\* END TRANSLATION
 =============================================================================

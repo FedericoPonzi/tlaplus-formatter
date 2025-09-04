@@ -17,9 +17,9 @@ ASSUME /\ Cardinality(Node) = Cardinality(SlushLoopProcess)
 
 ASSUME HostMappingType == /\ Cardinality(Node) = Cardinality(HostMapping)
                           /\ \A mapping \in HostMapping:
-                                /\ Cardinality(mapping) = 3
-                                /\ \E e \in mapping: e \in Node
-                                /\ \E e \in mapping: e \in SlushLoopProcess
-                                /\ \E e \in mapping: e \in SlushQueryProcess
+                               /\ Cardinality(mapping) = 3
+                               /\ \E e \in mapping: e \in Node
+                               /\ \E e \in mapping: e \in SlushLoopProcess
+                               /\ \E e \in mapping: e \in SlushQueryProcess
 
 ==============================================================

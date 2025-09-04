@@ -31,13 +31,13 @@ public class OpArgsConstruct implements TlaConstruct {
             if (z[i].getImage().equals(",") || z[i].getImage().equals(":")) {
                 expr = expr.append(doc);
             } else {
-                expr = expr.appendLineOrSpace(doc);
+                expr = expr.appendSpace(doc);
             }
         }
         var lbracket = context.buildChild(z[0]); // (
         var rbracket = context.buildChild(z[z.length - 1]); // )
         return lbracket
-                .append(Doc.group(expr).indent(indentSize))
-                .appendLineOrEmpty(rbracket);
+                .append(expr.indent(indentSize))
+                .append(rbracket);
     }
 }
