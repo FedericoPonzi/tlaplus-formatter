@@ -6,21 +6,35 @@ plugins {
 group = "me.fponzi"
 version = "1.0-SNAPSHOT"
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
 repositories {
+    mavenLocal()
     mavenCentral()
     // Add the repository for the snapshot dependency
     maven {
         url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+    }
+    maven {
+        url = uri("https://jitpack.io")
     }
 }
 
 dependencies {
     implementation("org.lamport:tla2tools:1.8.0-SNAPSHOT")
     implementation("commons-io:commons-io:2.16.1")
+    testImplementation("com.github.FedericoPonzi:tlaplus-smith:main-SNAPSHOT") {
+        isChanging = true
+    }
+
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.mockito:mockito-core:5.7.0")
     testImplementation("org.mockito:mockito-junit-jupiter:5.7.0")
+    testImplementation("net.jqwik:jqwik:1.8.0")
     implementation("commons-cli:commons-cli:1.8.0")
 
     // Logging
