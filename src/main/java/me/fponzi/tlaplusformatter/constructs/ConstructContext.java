@@ -46,8 +46,11 @@ public class ConstructContext {
     public Doc buildChild(TreeNode child) {
         var childDoc = docBuilder.build(child);
         var comments = Arrays.stream(child.getPreComments())
-                .map(Doc::text)
+                .map((v) -> Doc.text(v.trim()))
                 .collect(Collectors.toList());
+        if (!comments.isEmpty()) {
+            System.out.println();
+        }
         comments.add(childDoc);
         return Doc.intersperse(Doc.line(), comments);
     }
