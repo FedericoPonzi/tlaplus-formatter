@@ -29,7 +29,7 @@ public abstract class BaseConstructFormatter<T> {
      * @param strategy      Formatting strategy to use
      * @return Doc object for the entire construct
      */
-    protected Doc formatList(List<T> items, String prefix,
+    protected Doc formatList(List<T> items, Doc prefix,
                              Function<T, Doc> itemFormatter,
                              ListFormatStrategy strategy) {
 
@@ -38,7 +38,7 @@ public abstract class BaseConstructFormatter<T> {
         }
 
         if (items.size() == 1) {
-            return Doc.text(prefix).append(itemFormatter.apply(items.get(0)));
+            return prefix.appendSpace(itemFormatter.apply(items.get(0)));
         }
 
         switch (strategy) {
@@ -56,8 +56,8 @@ public abstract class BaseConstructFormatter<T> {
     /**
      * Format items as a single line with comma separation.
      */
-    protected Doc formatAsSingleLine(List<T> items, String prefix, Function<T, Doc> itemFormatter) {
-        Doc result = Doc.text(prefix).append(itemFormatter.apply(items.get(0)));
+    protected Doc formatAsSingleLine(List<T> items, Doc prefix, Function<T, Doc> itemFormatter) {
+        Doc result = prefix.appendSpace(itemFormatter.apply(items.get(0)));
 
         for (int i = 1; i < items.size(); i++) {
             result = result.append(Doc.text(", ")).append(itemFormatter.apply(items.get(i)));
@@ -70,7 +70,7 @@ public abstract class BaseConstructFormatter<T> {
      * Format items with smart line breaking based on line width.
      * Uses prettier4j's line-or-space mechanism for optimal breaking.
      */
-    protected Doc formatWithSmartBreaks(List<T> items, String prefix, Function<T, Doc> itemFormatter) {
+    protected Doc formatWithSmartBreaks(List<T> items, Doc prefix, Function<T, Doc> itemFormatter) {
         Doc itemList = itemFormatter.apply(items.get(0));
 
         for (int i = 1; i < items.size(); i++) {
@@ -80,21 +80,21 @@ public abstract class BaseConstructFormatter<T> {
         }
 
         return
-                Doc.text(prefix.trim())
-                        .appendSpace(Doc.group(itemList).indent(prefix.length()));
+                prefix
+                        .appendSpace(Doc.group(itemList).indent(prefix.render().length()));
     }
 
     /**
      * Format items with line breaks after each item.
      * Each item goes on its own line with proper indentation.
      */
-    protected Doc formatWithLineBreaks(List<T> items, String prefix, Function<T, Doc> itemFormatter) {
-        Doc result = Doc.text(prefix).append(itemFormatter.apply(items.get(0)));
+    protected Doc formatWithLineBreaks(List<T> items, Doc prefix, Function<T, Doc> itemFormatter) {
+        Doc result = prefix.appendSpace(itemFormatter.apply(items.get(0)));
 
         for (int i = 1; i < items.size(); i++) {
             result = result
                     .append(Doc.text(","))
-                    .appendLine(itemFormatter.apply(items.get(i)).indent(prefix.length()));
+                    .appendLine(itemFormatter.apply(items.get(i)).indent(prefix.render().length()));
         }
 
         return result;

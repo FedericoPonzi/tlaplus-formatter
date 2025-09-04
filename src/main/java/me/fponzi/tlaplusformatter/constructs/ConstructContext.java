@@ -48,9 +48,6 @@ public class ConstructContext {
         var comments = Arrays.stream(child.getPreComments())
                 .map((v) -> Doc.text(v.trim()))
                 .collect(Collectors.toList());
-        if (!comments.isEmpty()) {
-            System.out.println();
-        }
         comments.add(childDoc);
         return Doc.intersperse(Doc.line(), comments);
     }

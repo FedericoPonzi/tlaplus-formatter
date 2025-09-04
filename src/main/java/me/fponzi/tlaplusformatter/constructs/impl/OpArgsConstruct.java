@@ -25,15 +25,19 @@ public class OpArgsConstruct implements TlaConstruct {
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         var z = node.zero();
         assert (z != null);
-        var ret = context.buildChild(z[0]); // (
-        for (int i = 1; i < z.length - 1; i++) {
+        var expr = context.buildChild(z[1]);
+        for (int i = 2; i < z.length - 1; i++) {
             var doc = context.buildChild(z[i]);
-            if (z[i].getImage().equals(",") || z[i].getImage().equals(":") || i == 1) {
-                ret = ret.append(doc);
+            if (z[i].getImage().equals(",") || z[i].getImage().equals(":")) {
+                expr = expr.append(doc);
             } else {
-                ret = ret.appendLineOrSpace(doc);
+                expr = expr.appendLineOrSpace(doc);
             }
         }
-        return ret.appendLineOrEmpty(context.buildChild(z[z.length - 1])); // )
+        var lbracket = context.buildChild(z[0]); // (
+        var rbracket = context.buildChild(z[z.length - 1]); // )
+        return lbracket
+                .append(Doc.group(expr).indent(indentSize))
+                .appendLineOrEmpty(rbracket);
     }
 }

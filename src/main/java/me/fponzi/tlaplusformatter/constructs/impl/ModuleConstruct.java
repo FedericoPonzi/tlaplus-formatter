@@ -108,7 +108,7 @@ public class ModuleConstruct {
 
         @Override
         public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
-            return Doc.text(node.getHumanReadableImage());
+            return context.buildChild(node.zero()[0]);
         }
     }
 

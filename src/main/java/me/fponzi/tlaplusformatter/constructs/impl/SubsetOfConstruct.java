@@ -33,7 +33,7 @@ public class SubsetOfConstruct implements TlaConstruct {
                 zDoc.get(0) // {
                         .append(zDoc.get(1)) // x or a tuple like <<r,t>>
                         .appendSpace(zDoc.get(2)) //\in
-                        .appendLineOrSpace(zDoc.get(3)) // S
+                        .appendSpace(zDoc.get(3)) // S
                         .append(zDoc.get(4)) // :
                         .appendSpace(zDoc.get(5))
                         .appendLineOrEmpty(zDoc.get(6))

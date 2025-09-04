@@ -23,7 +23,7 @@ class InfixExprConstructTest {
                 t + "\n" +
                 "====";
         var expected = "----- MODULE InfixExpr -----\n" +
-                "CONSTANTS AVeryLongConstantName, AVeryLongConstantNameThatForcesWrapping\n" +
+                "CONSTANT AVeryLongConstantName, AVeryLongConstantNameThatForcesWrapping\n" +
                 "AVeryLongTestName ==\n" +
                 "  AVeryLongConstantName \\in\n" +
                 "    AVeryLongConstantNameThatForcesWrapping\n" +

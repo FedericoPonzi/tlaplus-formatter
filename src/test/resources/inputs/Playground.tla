@@ -1,5 +1,8 @@
 ---------------------- MODULE Playground ----------------------
-EXTENDS Integers, Sequences, FiniteSets, TLC
-CONSTANTS W, N
-ASSUME W \in Nat /\ N \in 1..W
+
+(* define statement *)
+Red == "Red"
+
+Red2 == "Red2"
+
 ==============================================================

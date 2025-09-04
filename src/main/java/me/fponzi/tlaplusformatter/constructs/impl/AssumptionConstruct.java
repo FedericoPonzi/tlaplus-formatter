@@ -6,6 +6,16 @@ import me.fponzi.tlaplusformatter.constructs.NodeKind;
 import me.fponzi.tlaplusformatter.constructs.TlaConstruct;
 import tla2sany.st.TreeNode;
 
+/**
+ * Construct implementation for ASSUME/ASSUMPTION constructs.
+ * Formats "ASSUME expr" or "ASSUMPTION expr" with proper indentation.
+ * The node structure is expected to have two children:
+ * - The first child is the ASSUME keyword.
+ * - the second child is either an expression or a sequence of expressions.
+ * <p>
+ * Example: ASSUME x > 0
+ * ASSUME X == <expr> (this are 4 nodes in one())
+ */
 public class AssumptionConstruct implements TlaConstruct {
     @Override
     public String getName() {
@@ -22,9 +32,14 @@ public class AssumptionConstruct implements TlaConstruct {
         var o = node.one();
         assert (o != null && o.length >= 2);
         var assume = context.buildChild(o[0]);
-        return Doc.group(
-                assume
-                        .appendSpace(context.buildChild(o[1]).indent(o[0].getImage().length() + 1))
-        );
+        var ret = assume.appendSpace(Doc.group(context.buildChild(o[1])).indent(o[0].getImage().length() + 1));
+        if (o.length == 2) {
+            return ret;
+        }
+        // More than one expression, need to handle line breaks
+        // this is the case when ASSUME X == <expr>.
+        ret = ret.appendSpace(context.buildChild(o[2])); // ==
+        var content = Doc.group(context.buildChild(o[3])).indent(indentSize); // <expr>
+        return ret.appendSpace(content);
     }
 }

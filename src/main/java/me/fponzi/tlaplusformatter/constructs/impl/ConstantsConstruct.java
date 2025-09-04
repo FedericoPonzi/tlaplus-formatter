@@ -18,18 +18,19 @@ public class ConstantsConstruct implements TlaConstruct {
 
     @Override
     public String getName() {
-        return "CONSTANTS";
+        return "N_ParamDeclaration";
     }
 
     @Override
     public int getSupportedNodeKind() {
-        return NodeKind.CONS_DECL.getId();
+        return NodeKind.PARAM_DECLARATION.getId();
     }
 
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         List<String> constants = context.extractStringList(node);
-        return new ConstantsFormatter(context.getConfig()).format(constants);
+        Doc prefix = context.buildChild(node.zero()[0]); // "CONSTANT" or "CONSTANTS" keyword
+        return new ConstantsFormatter(context.getConfig()).format(prefix, constants);
     }
 
     /**
@@ -41,11 +42,10 @@ public class ConstantsConstruct implements TlaConstruct {
             super(config);
         }
 
-        public Doc format(List<String> constants) {
+        public Doc format(Doc prefix, List<String> constants) {
             if (constants.isEmpty()) {
                 return Doc.empty();
             }
-            String prefix = constants.size() == 1 ? "CONSTANT " : "CONSTANTS ";
             ListFormatStrategy strategy = determineStrategy("CONSTANTS", constants.size());
             return formatList(constants, prefix, stringFormatter(), strategy);
         }

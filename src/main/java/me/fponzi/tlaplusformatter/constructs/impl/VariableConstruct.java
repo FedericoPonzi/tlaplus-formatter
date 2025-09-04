@@ -23,8 +23,9 @@ public class VariableConstruct implements TlaConstruct {
 
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
-        List<String> variables = context.extractStringList(node);
-        return new VariableFormatter(context.getConfig()).format(variables);
+        List<String> constants = context.extractStringList(node);
+        Doc prefix = context.buildChild(node.zero()[0]); // "CONSTANT" or "CONSTANTS" keyword
+        return new VariableFormatter(context.getConfig()).format(prefix, constants);
     }
 
     /**
@@ -36,14 +37,11 @@ public class VariableConstruct implements TlaConstruct {
             super(config);
         }
 
-        public Doc format(List<String> variables) {
+        public Doc format(Doc prefix, List<String> variables) {
             if (variables.isEmpty()) {
                 return Doc.empty();
             }
-
-            String prefix = variables.size() == 1 ? "VARIABLE " : "VARIABLES ";
             ListFormatStrategy strategy = determineStrategy("VARIABLES", variables.size());
-
             return formatList(variables, prefix, stringFormatter(), strategy);
         }
 
