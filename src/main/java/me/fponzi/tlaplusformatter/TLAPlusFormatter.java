@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 public class TLAPlusFormatter {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private final TreeNode root;
+    final TreeNode root;
     private final File spec;
     private final TlaDocBuilder docBuilder;
     private String output;

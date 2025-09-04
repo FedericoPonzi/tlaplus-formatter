@@ -22,6 +22,17 @@ public class FcnConstConstruct implements TlaConstruct {
         return NodeKind.FCN_CONST.getId();
     }
 
+    /*
+      /\ pc =
+           [
+             self \in ProcSet
+             |->
+             CASE self \in SlushQueryProcess -> "QueryReplyLoop"
+             [] self \in SlushLoopProcess -> "RequireColorAssignment"
+             [] self = "ClientRequest" -> "ClientRequestLoop"
+           ]
+     */
+
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         var z = node.zero();
@@ -33,10 +44,9 @@ public class FcnConstConstruct implements TlaConstruct {
         // z[4] = ]
         return Doc.group(
                 Doc.text("[")
-                        .appendLineOrSpace(qBound)
-                        .appendLineOrSpace(mapSymbol)
-                        .appendLineOrSpace(mapExpr)
-                        .appendLineOrSpace(Doc.text("]"))
-        );
+                        .append(qBound)
+                        .appendSpace(mapSymbol)
+                        .appendLineOrSpace(mapExpr).indent(indentSize)
+        ).appendLineOrEmpty(Doc.text("]"));
     }
 }

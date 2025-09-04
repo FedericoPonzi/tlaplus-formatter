@@ -22,10 +22,7 @@ public class DisjItemConstruct implements TlaConstruct {
         var z = node.zero();
         assert (z != null && z.length == 2);
         var symbol = context.buildChild(z[0]);
-        var symbolLength = z[0].getImage().length() + 1;
-        var expr = context.buildChild(z[1]);
-        return Doc.group(
-                symbol.appendSpace(expr.indent(symbolLength))
-        );
+        var expr = context.buildChild(z[1]).indent("/\\ ".length());
+        return symbol.appendSpace(expr);
     }
 }

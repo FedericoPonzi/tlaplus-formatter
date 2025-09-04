@@ -79,11 +79,9 @@ public abstract class BaseConstructFormatter<T> {
                     .appendLineOrSpace(itemFormatter.apply(items.get(i)));
         }
 
-        // Use group to enable line breaking with proper indentation
-        return Doc.group(
-                Doc.text(prefix)
-                        .appendLineOrSpace(itemList.indent(prefix.length()))
-        );
+        return
+                Doc.text(prefix.trim())
+                        .appendSpace(Doc.group(itemList).indent(prefix.length()));
     }
 
     /**
@@ -107,16 +105,6 @@ public abstract class BaseConstructFormatter<T> {
      */
     protected static Function<String, Doc> stringFormatter() {
         return Doc::text;
-    }
-
-    /**
-     * Create a formatter that wraps items with a prefix/suffix.
-     */
-    protected static <T> Function<T, Doc> wrappedFormatter(String prefix, String suffix,
-                                                           Function<T, Doc> innerFormatter) {
-        return item -> Doc.text(prefix)
-                .append(innerFormatter.apply(item))
-                .append(Doc.text(suffix));
     }
 
     /**

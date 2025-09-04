@@ -28,10 +28,6 @@ public class DisjListConstruct implements TlaConstruct {
         List<Doc> zDoc = Arrays.stream(z)
                 .map(context::buildChild)
                 .collect(Collectors.toList());
-        Doc ret = zDoc.remove(0);
-        for (Doc disL : zDoc) {
-            ret = ret.appendLine(disL);
-        }
-        return Doc.group(ret);
+        return Doc.intersperse(Doc.line(), zDoc).align();
     }
 }

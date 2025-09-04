@@ -6,6 +6,9 @@ import me.fponzi.tlaplusformatter.constructs.NodeKind;
 import me.fponzi.tlaplusformatter.constructs.TlaConstruct;
 import tla2sany.st.TreeNode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CaseConstruct implements TlaConstruct {
     @Override
     public String getName() {
@@ -17,17 +20,26 @@ public class CaseConstruct implements TlaConstruct {
         return NodeKind.CASE.getId();
     }
 
+    /*
+      /\ pc =
+           [
+             self \in ProcSet
+             |->
+             CASE self \in SlushQueryProcess -> "QueryReplyLoop"
+             [] self \in SlushLoopProcess -> "RequireColorAssignment"
+             [] self = "ClientRequest" -> "ClientRequestLoop"
+           ]
+     */
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         var z = node.zero();
         assert (z != null && z.length >= 3);
-        Doc cases = context.buildChild(z[0])
-                .appendSpace(context.buildChild(z[1])); // case keyword + first case condition
-        for (int i = 2; i < z.length - 1; i += 2) {
+        List<Doc> caseDocs = new ArrayList<>();
+        for (int i = 0; i < z.length; i += 2) {
             var bracket = context.buildChild(z[i]);
             var caseArm = context.buildChild(z[i + 1]);
-            cases = cases.appendLine(bracket).appendSpace(caseArm);
+            caseDocs.add(bracket.appendSpace(caseArm));
         }
-        return cases;
+        return Doc.intersperse(Doc.line(), caseDocs).align();
     }
 }

@@ -26,7 +26,7 @@ public class LetDefinitionsConstruct implements TlaConstruct {
         assert (z != null && z.length > 0);
         var defs = context.buildChild(z[0]);
         for (int i = 1; i < z.length; i++) {
-            defs = defs.append(Doc.text(",")).appendLineOrSpace(context.buildChild(z[i]));
+            defs = defs.appendLine(context.buildChild(z[i]));
         }
         return Doc.group(defs);
     }

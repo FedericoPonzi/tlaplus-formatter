@@ -27,7 +27,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.7")
     implementation("ch.qos.logback:logback-classic:1.5.6")
 
-    implementation("com.opencastsoftware:prettier4j:0.3.1")
+    implementation("com.opencastsoftware:prettier4j:0.3.2")
 }
 
 sourceSets {

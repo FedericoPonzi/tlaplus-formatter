@@ -42,8 +42,8 @@ public class QuantBoundConstruct implements TlaConstruct {
         }
 
         return Doc.group(
-                content.appendLineOrSpace(Doc.text("\\in"))
-                        .appendLineOrSpace(set)
+                content.appendSpace(Doc.text("\\in"))
+                        .appendLineOrSpace(set.indent(indentSize))
         );
     }
 }

@@ -26,15 +26,14 @@ public class SetOfRcdsConstruct implements TlaConstruct {
         var z = node.zero();
         assert (z != null && z.length >= 3);
         var ret = context.buildChild(z[0]);
-        for (int i = 1; i < z.length; i++) {
+        for (int i = 1; i < z.length - 1; i++) {
             var doc = context.buildChild(z[i]);
-            if (z[i].getImage().equals(",")) {
-                ret = ret.appendLineOrSpace(doc);
-            } else {
+            if (z[i].getImage().equals(",") || i == 1) {
                 ret = ret.append(doc);
+            } else {
+                ret = ret.appendLineOrSpace(doc);
             }
         }
-        // closing ] is included in the last child above.
-        return Doc.group(ret).indent(indentSize);
+        return ret.indent(indentSize).appendLineOrSpace(context.buildChild(z[z.length - 1])); // ]
     }
 }

@@ -28,10 +28,10 @@ public class LetInConstruct implements TlaConstruct {
         List<Doc> zDoc = Arrays.stream(z).map(context::buildChild).collect(Collectors.toList());
 
         return Doc.group(
-                zDoc.get(0)
-                        .appendSpace(zDoc.get(1))
-                        .appendLineOrSpace(zDoc.get(2).indent(indentSize))
-                        .appendSpace(zDoc.get(3))
+                zDoc.get(0) // let
+                        .appendSpace(zDoc.get(1)) // definitions
+                        .appendLineOrSpace(zDoc.get(2)) // in
+                        .appendSpace(zDoc.get(3).indent("IN ".length())) // body
         );
     }
 }

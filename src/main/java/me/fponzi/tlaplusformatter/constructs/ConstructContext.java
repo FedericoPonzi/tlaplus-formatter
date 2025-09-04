@@ -9,7 +9,9 @@ import tla2sany.st.TreeNode;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Context object that provides access to shared services and utilities
@@ -43,17 +45,11 @@ public class ConstructContext {
      */
     public Doc buildChild(TreeNode child) {
         var childDoc = docBuilder.build(child);
-
-        if (child.getPreComments().length > 0) {
-            Doc comments = Doc.group(Doc.text(child.getPreComments()[0]));
-            for (int z = 1; z < child.getPreComments().length; z++) {
-                comments = comments.appendLine(Doc.group(Doc.text(child.getPreComments()[z]))).indent(0);
-            }
-            // TODO: if the comment is an inline comment and it's at the end of the line,
-            //  we should leave it there
-            return comments.appendLine(childDoc);
-        }
-        return childDoc;
+        var comments = Arrays.stream(child.getPreComments())
+                .map(Doc::text)
+                .collect(Collectors.toList());
+        comments.add(childDoc);
+        return Doc.intersperse(Doc.line(), comments);
     }
 
     /**

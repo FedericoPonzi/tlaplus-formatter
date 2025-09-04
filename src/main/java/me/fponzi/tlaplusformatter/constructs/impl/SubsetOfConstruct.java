@@ -29,14 +29,14 @@ public class SubsetOfConstruct implements TlaConstruct {
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         var z = node.zero();
         List<Doc> zDoc = Arrays.stream(z).map(context::buildChild).collect(Collectors.toList());
-        return Doc.group(
+        return
                 zDoc.get(0) // {
                         .append(zDoc.get(1)) // x or a tuple like <<r,t>>
-                        .appendLineOrSpace(zDoc.get(2)) //\in
-                        .appendSpace(zDoc.get(3)) // S
+                        .appendSpace(zDoc.get(2)) //\in
+                        .appendLineOrSpace(zDoc.get(3)) // S
                         .append(zDoc.get(4)) // :
-                        .appendLineOrSpace(zDoc.get(5))
-                        .appendSpace(zDoc.get(6))
-        );
+                        .appendSpace(zDoc.get(5))
+                        .appendLineOrEmpty(zDoc.get(6))
+                ;
     }
 }
