@@ -59,36 +59,30 @@ IsEmptyTower(tower) == tower = 0
 (***************************************************************************)
 (* TRUE iff the disk is located on the given tower                         *)
 (***************************************************************************)
-IsOnTower(tower,
-disk) == /\ tower & disk = disk
+IsOnTower(tower, disk) == /\ tower & disk = disk
 
 (***************************************************************************)
 (* TRUE iff disk is the smallest disk on tower                             *)
 (***************************************************************************)
-IsSmallestDisk(tower,
-disk) == /\ IsOnTower(tower, disk)
-         /\ tower & ( disk - 1 ) = 0
+IsSmallestDisk(tower, disk) == /\ IsOnTower(tower, disk)
+                               /\ tower & ( disk - 1 ) = 0
 \* All less significant bits are 0
 (***************************************************************************)
 (* TRUE iff disk can be moved off of tower                                 *)
 (***************************************************************************)
-CanMoveOff(tower,
-disk) == /\ IsOnTower(tower, disk)
-         /\ IsSmallestDisk(tower, disk)
+CanMoveOff(tower, disk) == /\ IsOnTower(tower, disk)
+                           /\ IsSmallestDisk(tower, disk)
 
 (***************************************************************************)
 (* TRUE iff disk can be moved to the tower                                 *)
 (***************************************************************************)
-CanMoveTo(tower,
-disk) == \/ tower & ( disk - 1 ) = 0
-         \/ IsEmptyTower(tower)
+CanMoveTo(tower, disk) == \/ tower & ( disk - 1 ) = 0
+                          \/ IsEmptyTower(tower)
 
 (***************************************************************************)
 (*                                                                         *)
 (***************************************************************************)
-Move(from,
-to,
-disk) ==
+Move(from, to, disk) ==
   /\ CanMoveOff(towers[from], disk)
   /\ CanMoveTo(towers[to], disk)
   /\ towers' =

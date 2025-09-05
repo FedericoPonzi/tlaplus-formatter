@@ -29,11 +29,9 @@ vars == << x, y, z, f, r, s, q >>
 (****************************************************************)
 Zero == 0
 
-Add(a,
-b) == a + b
+Add(a, b) == a + b
 
-Equal(a,
-b) == a = b
+Equal(a, b) == a = b
 
 RECURSIVE Fact(_)
 Fact(n) == IF n = 0 THEN 1 ELSE n * Fact(n - 1)
@@ -42,15 +40,11 @@ MapPlusOne(U) == LET plus1(t) == t + 1 IN {plus1(t): t \in U}
 
 IdFun(U) == [u \in U |-> u]
 
-Bump(f_,
-k) == [f_ EXCEPT ![k] = @ + 1]
+Bump(f_, k) == [f_ EXCEPT ![k] = @ + 1]
 
-Rec(a,
-b) == [ a |-> a, b |-> b ]
+Rec(a, b) == [ a |-> a, b |-> b ]
 
-Tuple3(a,
-b,
-c) == << a, b, c >>
+Tuple3(a, b, c) == << a, b, c >>
 
 Power(U) == SUBSET U
 
@@ -60,9 +54,7 @@ CaseExample(u) == CASE u \in Nat -> u + 1
                   [] u \in Int \ Nat -> - u
                   [] OTHER-> 0
 
-IfElseExample(b,
-e1,
-e2) == IF b THEN e1 ELSE e2
+IfElseExample(b, e1, e2) == IF b THEN e1 ELSE e2
 
 ChooseAnyFrom(U) == CHOOSE u \in U: TRUE
 
@@ -72,8 +64,7 @@ Dom(f_) == DOMAIN f_
 
 Range(f_) == {f_[i]: i \in DOMAIN f_}
 
-ConstFun(U,
-v) == [U -> { v }]
+ConstFun(U, v) == [U -> { v }]
 
 SeqStuff(U) ==
   LET s0 == <<>> \o << 1 >> \o << 2, 3 >>

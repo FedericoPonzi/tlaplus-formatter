@@ -47,7 +47,7 @@ public class IdentLHSConstruct implements TlaConstruct {
 
         Doc content = elementDocs.get(0);
         for (int i = 1; i < elementDocs.size(); i++) {
-            content = content.append(Doc.text(",")).appendLineOrSpace(elementDocs.get(i));
+            content = content.append(Doc.text(",")).appendSpace(elementDocs.get(i));
         }
 
         return

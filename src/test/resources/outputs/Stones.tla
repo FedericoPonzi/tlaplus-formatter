@@ -59,8 +59,7 @@ ASSUME W \in Nat /\ N \in 1 .. W
 (* definition.                                                             *)
 (***************************************************************************)
 RECURSIVE Partitions(_,_)
-Partitions(seq,
-wt) ==
+Partitions(seq, wt) ==
   IF Len(seq) = N
   THEN { seq }
   ELSE LET r == N - Len(seq)
@@ -75,8 +74,7 @@ wt) ==
 (* For convenience, we define Weighs(seq, wt) to be true if the elements   *)
 (* of the sequence seq sum to wt.                                          *)
 (***************************************************************************)
-Weighs(seq,
-wt) ==
+Weighs(seq, wt) ==
   \E coef \in [1 .. N -> - 1 .. 1]:
     SeqSum([i \in 1 .. N |-> coef[i] * seq[i]]) = wt
 
