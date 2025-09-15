@@ -81,7 +81,7 @@ public abstract class BaseConstructFormatter<T> {
 
         return
                 prefix
-                        .appendSpace(Doc.group(itemList).indent(prefix.render().length()));
+                        .appendSpace(Doc.group(itemList).indent(prefix.render().length() + 1));
     }
 
     /**

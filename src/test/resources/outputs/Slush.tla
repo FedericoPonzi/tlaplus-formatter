@@ -14,12 +14,12 @@
 EXTENDS Naturals, FiniteSets, Sequences
 
 CONSTANTS Node,
-         SlushLoopProcess,
-         SlushQueryProcess,
-         HostMapping,
-         SlushIterationCount,
-         SampleSetSize,
-         PickFlipThreshold
+          SlushLoopProcess,
+          SlushQueryProcess,
+          HostMapping,
+          SlushIterationCount,
+          SampleSetSize,
+          PickFlipThreshold
 
 ASSUME /\ Cardinality(Node) = Cardinality(SlushLoopProcess)
        /\ Cardinality(Node) = Cardinality(SlushQueryProcess)

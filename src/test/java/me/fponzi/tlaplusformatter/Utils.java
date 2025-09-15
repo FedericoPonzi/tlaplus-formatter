@@ -49,6 +49,16 @@ public class Utils {
         }
     }
 
+    /**
+     * Verify that formatting the input spec does not change it.
+     * Idempotency is also checked.
+     *
+     * @param input
+     */
+    public static void assertSpecUnchanged(String input) {
+        assertSpecEquals(input, input, new FormatConfig());
+    }
+
     public static void assertSpecEquals(String expected, String input) {
         assertSpecEquals(expected, input, new FormatConfig());
     }

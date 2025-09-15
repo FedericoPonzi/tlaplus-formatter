@@ -22,8 +22,6 @@ public abstract class LexiconTest {
             String inputSpec = Files.readString(Path.of(resource.toURI()));
             var f = new TLAPlusFormatter(input, new FormatConfig(80, 2));
             var actual = f.getOutput();
-            //System.out.println(f.getOutput());
-            // commented until issues are fixed:
             compareOutputSpec(name, actual, f.root);
         } catch (Exception e) {
             fail(e);
