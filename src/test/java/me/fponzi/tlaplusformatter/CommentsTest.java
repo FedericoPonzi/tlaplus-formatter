@@ -60,8 +60,8 @@ public class CommentsTest {
                 "EXTENDS Naturals\n" +
                 "\n" +
                 "Foo == LET (* This comment should be indented to match the LET context *)\n" +
-                "  (* Even if the original has extra indentation *)\n" +
-                "  x == 1 IN x + 1\n" +
+                "           (* Even if the original has extra indentation *)\n" +
+                "           x == 1 IN x + 1\n" +
                 "====";
         assertSpecEquals(expected, input);
     }

@@ -337,11 +337,11 @@ QuerySampleSet(self) ==
   /\ pc[self] = "QuerySampleSet"
   /\ \E possibleSampleSet \in
        LET otherNodes == Node \ { HostOf[self] }
-         otherQueryProcesses ==
-           {pid \in SlushQueryProcess: HostOf[pid] \in otherNodes}
+           otherQueryProcesses ==
+             {pid \in SlushQueryProcess: HostOf[pid] \in otherNodes}
          IN {pidSet \in SUBSET otherQueryProcesses: Cardinality(pidSet) =
-                SampleSetSize
-            }:
+                 SampleSetSize
+             }:
        /\ sampleSet' = [sampleSet EXCEPT ![self] = possibleSampleSet]
        /\ message' =
             ( message \cup
@@ -361,24 +361,27 @@ TallyQueryReplies(self) ==
   /\ /\ \A pid \in sampleSet[self]:
           /\ \E msg \in PendingQueryReplyMessage(self): /\ msg.src = pid
   /\ LET redTally ==
-       Cardinality({msg \in PendingQueryReplyMessage(self): /\ msg.src \in
-                                                                 sampleSet[self]
-                                                            /\ msg.color = Red
-         })
+           Cardinality({msg \in PendingQueryReplyMessage(self): /\ msg.src \in
+                                                                     sampleSet[
+                                                                       self
+                                                                     ]
+                                                                /\ msg.color =
+                                                                     Red
+             })
      IN LET blueTally ==
-          Cardinality({msg \in PendingQueryReplyMessage(self): /\ msg.src \in
-                                                                    sampleSet[
-                                                                      self
-                                                                    ]
-                                                               /\ msg.color =
-                                                                    Blue
-            })
-        IN IF redTally >= PickFlipThreshold
-           THEN /\ pick' = [pick EXCEPT ![HostOf[self]] = Red]
-           ELSE /\ IF blueTally >= PickFlipThreshold
-                   THEN /\ pick' = [pick EXCEPT ![HostOf[self]] = Blue]
-                   ELSE /\ TRUE
-                        /\ pick' = pick
+              Cardinality({msg \in PendingQueryReplyMessage(self): /\ msg.src \in
+                                                                        sampleSet[
+                                                                          self
+                                                                        ]
+                                                                   /\ msg.color =
+                                                                        Blue
+                })
+         IN IF redTally >= PickFlipThreshold
+             THEN /\ pick' = [pick EXCEPT ![HostOf[self]] = Red]
+             ELSE /\ IF blueTally >= PickFlipThreshold
+                     THEN /\ pick' = [pick EXCEPT ![HostOf[self]] = Blue]
+                     ELSE /\ TRUE
+                          /\ pick' = pick
   /\ message' = message \ {msg \in message: /\ msg.type = QueryReplyMessageType
                                             /\ msg.src \in sampleSet[self]
                                             /\ msg.dst = self}

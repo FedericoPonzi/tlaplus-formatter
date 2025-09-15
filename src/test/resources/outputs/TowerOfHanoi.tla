@@ -17,10 +17,8 @@ SetOfPowerOfTwo(n) == {x \in 1 .. ( 2 ^ n - 1 ): PowerOfTwo(x)}
 (***************************************************************************)
 Sum(f) ==
   LET DSum[S \in SUBSET DOMAIN f] ==
-    LET elt == CHOOSE e \in S: TRUE
-    IN IF S = {}
-       THEN 0
-       ELSE f[elt] + DSum[S \ { elt }]
+        LET elt == CHOOSE e \in S: TRUE
+        IN IF S = {} THEN 0 ELSE f[elt] + DSum[S \ { elt }]
   IN DSum[DOMAIN f]
 
 (***************************************************************************)

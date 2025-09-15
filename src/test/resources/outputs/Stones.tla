@@ -63,12 +63,12 @@ Partitions(seq, wt) ==
   IF Len(seq) = N
   THEN { seq }
   ELSE LET r == N - Len(seq)
-  max == IF Len(seq) = 0 THEN wt ELSE Head(seq)
-  S == {x \in 1 .. max: /\ ( r - 1 ) =< ( wt - x )
-                        /\ wt =< x * r}
-  IN UNION {Partitions(<< x >> \o seq, wt - x):
-       x \in S
-     }
+           max == IF Len(seq) = 0 THEN wt ELSE Head(seq)
+           S == {x \in 1 .. max: /\ ( r - 1 ) =< ( wt - x )
+                                 /\ wt =< x * r}
+    IN UNION {Partitions(<< x >> \o seq, wt - x):
+          x \in S
+        }
 
 (***************************************************************************)
 (* For convenience, we define Weighs(seq, wt) to be true if the elements   *)
@@ -84,9 +84,7 @@ Weighs(seq, wt) ==
 (* just create a model that assigns values to W and N and run TLC.         *)
 (***************************************************************************)
 ASSUME \/ \E p \in Partitions(<<>>, W):
-            IF \A wt \in 1 .. W: Weighs(p, wt)
-            THEN PrintT(p)
-            ELSE FALSE
+            IF \A wt \in 1 .. W: Weighs(p, wt) THEN PrintT(p) ELSE FALSE
        \/ PrintT("No solution")
 
 (***************************************************************************)

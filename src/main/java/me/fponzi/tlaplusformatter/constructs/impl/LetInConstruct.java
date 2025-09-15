@@ -29,9 +29,9 @@ public class LetInConstruct implements TlaConstruct {
 
         return Doc.group(
                 zDoc.get(0) // let
-                        .appendSpace(zDoc.get(1)) // definitions
+                        .appendSpace(zDoc.get(1).align()) // definitions
                         .appendLineOrSpace(zDoc.get(2)) // in
-                        .appendSpace(zDoc.get(3).indent("IN ".length())) // body
+                        .appendSpace(zDoc.get(3).indent("LET ".length())) // body
         );
     }
 }

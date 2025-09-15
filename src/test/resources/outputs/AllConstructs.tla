@@ -78,7 +78,7 @@ SeqStuff(U) ==
 
 UpdateExamples ==
   LET r0 == [ a |-> 0, b |-> { 1 } ]
-  f0 == [i \in 1 .. 3 |-> i]
+      f0 == [i \in 1 .. 3 |-> i]
   IN /\ [r0 EXCEPT !.b = @ \cup { 2 }] = [ a |-> 0, b |-> { 1, 2 } ]
      /\ [f0 EXCEPT ![2] = 42, ![3] = @ + 1][3] = 4
      /\ DOMAIN f0 = 1 .. 3
@@ -164,15 +164,16 @@ SumTo(n) == IF n = 0 THEN 0 ELSE n + SumTo(n - 1)
 (* Some numeric/set expressions to touch more operators          *)
 (****************************************************************)
 MoreMath == LET a == N + 1
-  b == ( N \div 2 )
-  c == ( N % 2 ) IN /\ a > N
-                    /\ b \in Nat
-                    /\ c \in { 0, 1 }
+                b == ( N \div 2 )
+                c == ( N % 2 ) IN /\ a > N
+                                  /\ b \in Nat
+                                  /\ c \in { 0, 1 }
 
-SetCalcs == LET A == {i \in 1 .. N: i % 2 = 0}
-  B == {i \in 1 .. N: i % 2 = 1} IN /\ A \cap B = {}
-                                    /\ A \cup B = 1 .. N
-                                    /\ A \ B \subseteq A
-                                    /\ Cardinality(SUBSET { 1, 2 }) = 4
+SetCalcs ==
+  LET A == {i \in 1 .. N: i % 2 = 0}
+      B == {i \in 1 .. N: i % 2 = 1} IN /\ A \cap B = {}
+                                        /\ A \cup B = 1 .. N
+                                        /\ A \ B \subseteq A
+                                        /\ Cardinality(SUBSET { 1, 2 }) = 4
 
 ====

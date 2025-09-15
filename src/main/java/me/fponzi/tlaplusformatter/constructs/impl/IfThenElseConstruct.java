@@ -32,14 +32,15 @@ public class IfThenElseConstruct implements TlaConstruct {
         // zero[3]: then expression
         // zero[4]: ELSE keyword (kind=45)
         // zero[5]: else expression
+        var indentIfSize = "IF".length();
         Doc ifKey = context.buildChild(node.zero()[0]);
-        Doc condition = Doc.group(context.buildChild(node.zero()[1]));
+        Doc condition = Doc.group(context.buildChild(node.zero()[1])).indent(indentIfSize);
         Doc thenKey = context.buildChild(node.zero()[2]);
-        Doc thenExpr = Doc.group(context.buildChild(node.zero()[3]));
+        Doc thenExpr = Doc.group(context.buildChild(node.zero()[3])).indent(indentIfSize);
         Doc elseKey = context.buildChild(node.zero()[4]);
-        Doc elseExpr = Doc.group(context.buildChild(node.zero()[5]));
-        return Doc.group(ifKey.appendSpace(condition))
-                .appendLineOrSpace(thenKey.indent("IF".length())).appendSpace(thenExpr)
-                .appendLineOrSpace(elseKey.indent("IF".length()).appendSpace(elseExpr));
+        Doc elseExpr = Doc.group(context.buildChild(node.zero()[5])).indent(indentIfSize);
+        return Doc.group(ifKey.appendSpace(condition)
+                .appendLineOrSpace(thenKey.appendSpace(thenExpr)
+                        .appendLineOrSpace(elseKey.appendSpace(elseExpr))));
     }
 }
