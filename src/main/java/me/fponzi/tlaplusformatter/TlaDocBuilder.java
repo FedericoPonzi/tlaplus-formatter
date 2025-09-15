@@ -48,6 +48,7 @@ public class TlaDocBuilder {
         registry.register(new VariableConstruct());
         registry.register(new OperatorConstruct());
         registry.register(new ConstantConstruct());
+        registry.register(new InfixLhsConstruct());
 
         // Basic elements
         registry.register(new IdentifierConstruct());
@@ -103,6 +104,7 @@ public class TlaDocBuilder {
         registry.register(new TupleConstruct());
         registry.register(new SetEnumerateConstruct());
         registry.register(new TimesConstruct());
+        registry.register(new IdPrefixConstruct());
 
     }
 

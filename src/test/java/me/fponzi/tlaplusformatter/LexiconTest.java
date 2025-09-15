@@ -90,10 +90,7 @@ public abstract class LexiconTest {
     void compareComments(TreeNode root1, TreeNode root2) {
         boolean hasComments1 = root1.getPreComments() != null && root1.getPreComments().length > 0;
         boolean hasComments2 = root2.getPreComments() != null && root2.getPreComments().length > 0;
-        if (hasComments1 != hasComments2) {
-            System.out.println("Node kind: " + root1.getKind());
-        }
-        assertEquals(hasComments1, hasComments2);
+        assertEquals(hasComments1, hasComments2, "Comments do not match, Node image: " + root1.getHumanReadableImage() + " location: " + root1.getLocation());
         if (hasComments1) {
             assertEquals(root1.getPreComments().length, root2.getPreComments().length);
             for (int i = 0; i < root1.getPreComments().length; i++) {

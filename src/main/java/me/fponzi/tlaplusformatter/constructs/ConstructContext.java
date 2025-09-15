@@ -45,10 +45,14 @@ public class ConstructContext {
      */
     public Doc buildChild(TreeNode child) {
         var childDoc = docBuilder.build(child);
-        var comments = Arrays.stream(child.getPreComments())
+        return addComments(child, childDoc);
+    }
+
+    public static Doc addComments(TreeNode node, Doc mainDoc) {
+        var comments = Arrays.stream(node.getPreComments())
                 .map((v) -> Doc.text(v.trim()))
                 .collect(Collectors.toList());
-        comments.add(childDoc);
+        comments.add(mainDoc);
         return Doc.intersperse(Doc.line(), comments);
     }
 

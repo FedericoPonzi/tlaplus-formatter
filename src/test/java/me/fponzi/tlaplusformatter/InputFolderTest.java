@@ -34,7 +34,6 @@ public class InputFolderTest extends LexiconTest {
     }
 
     @Test
-        // TODO: fix.
     void testSlush() {
         testSpecFiles("Slush");
     }
@@ -42,5 +41,10 @@ public class InputFolderTest extends LexiconTest {
     @Test
     void testAllConstructs() {
         testSpecFiles("AllConstructs");
+    }
+
+    @Test
+    void testTransitiveClosure() {
+        testSpecFiles("TransitiveClosure");
     }
 }
