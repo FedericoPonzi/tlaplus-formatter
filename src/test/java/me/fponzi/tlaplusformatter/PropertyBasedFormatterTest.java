@@ -8,8 +8,7 @@ import tla2sany.st.TreeNode;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static me.fponzi.tlaplusformatter.Utils.idempotency;
 
 class PropertyBasedFormatterTest extends LexiconTest {
     // this is just for debugging purposes
@@ -33,29 +32,9 @@ class PropertyBasedFormatterTest extends LexiconTest {
     }
 
     @Property
-    void formatterPreservesSemantics(@ForAll("validTlaSpecs") String spec)
+    void formatterPreservesSemanticsAndIdempotent(@ForAll("validTlaSpecs") String spec)
             throws IOException, SanyFrontendException {
-        try {
-            String formatted = format(spec);
-            TreeNode originalAst = parse(spec);
-            TreeNode formattedAst = parse(formatted);
-
-            assertTrue(compareAst(originalAst, formattedAst),
-                    "AST should be preserved after formatting");
-        } catch (Exception e) {
-            System.err.println("Failed spec: " + spec);
-            throw e;
-        }
-    }
-
-    @Property
-    void formatterIsIdempotent(@ForAll("validTlaSpecs") String spec)
-            throws IOException, SanyFrontendException {
-        String formatted = format(spec);
-        String doubleFormatted = format(formatted);
-
-        assertEquals(formatted, doubleFormatted,
-                "Formatter should be idempotent");
+        idempotency(spec);
     }
 
     private String format(String spec) throws IOException, SanyFrontendException {

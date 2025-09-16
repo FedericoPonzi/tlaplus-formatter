@@ -7,6 +7,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static me.fponzi.tlaplusformatter.Utils.assertAstEquals;
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class LexiconTest {
@@ -46,7 +47,7 @@ public abstract class LexiconTest {
 
             // the ast of the initial spec should match the ast of the output spec.
             // initial spec is the non-reformatted input. f2 is the parsed ast of the reformat output.
-            assertTrue(compareAst(root1, f2.root));
+            assertTrue(assertAstEquals(root1, f2.root));
 
             // It should be a bit redundant with the compareAst above, but it's just an additional sanity check.
             // might remove later to keep tests fast
@@ -58,43 +59,5 @@ public abstract class LexiconTest {
         }
     }
 
-    boolean compareAst(TreeNode root1, TreeNode root2) {
-        if (root1.zero() != null) {
-            for (int i = 0; i < root1.zero().length; i++) {
-                if (!compareAst(root1.zero()[i], root2.zero()[i])) {
-                    return false;
-                }
-            }
-        }
-        if (root1.one() != null) {
-            for (int i = 0; i < root1.one().length; i++) {
-                if (!compareAst(root1.one()[i], root2.one()[i])) {
-                    return false;
-                }
-            }
-        }
-        compareComments(root1, root2);
-        // cannot use image, because for example `VARIABLE` get replaced with `VARIABLES`.
-        if (root1.getKind() != root2.getKind()) {
-            System.out.println("Node kinds do not match: " + root1.getKind() + " vs " + root2.getKind());
-            System.out.println("Node image: " + root1.getImage() + " vs " + root2.getImage());
-            System.out.println("Node Location" + root1.getLocation() + " vs " + root2.getLocation());
-        }
-        assertEquals(root1.getKind(), root2.getKind(), "Node kinds do not match");
-        //assertEquals(root1.getImage(), root2.getImage());
-        return root1.getKind() == root2.getKind();
-    }
-
-    void compareComments(TreeNode root1, TreeNode root2) {
-        boolean hasComments1 = root1.getPreComments() != null && root1.getPreComments().length > 0;
-        boolean hasComments2 = root2.getPreComments() != null && root2.getPreComments().length > 0;
-        assertEquals(hasComments1, hasComments2, "Comments do not match, Node image: " + root1.getHumanReadableImage() + " location: " + root1.getLocation());
-        if (hasComments1) {
-            assertEquals(root1.getPreComments().length, root2.getPreComments().length);
-            for (int i = 0; i < root1.getPreComments().length; i++) {
-                assertEquals(root1.getPreComments()[i], root2.getPreComments()[i]);
-            }
-        }
-    }
     // TODO: compare AST of pre format and post format.
 }
