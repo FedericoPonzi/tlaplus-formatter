@@ -26,7 +26,7 @@ repositories {
 dependencies {
     implementation("org.lamport:tla2tools:1.8.0-SNAPSHOT")
     implementation("commons-io:commons-io:2.16.1")
-    testImplementation("com.github.FedericoPonzi:tlaplus-smith:main-SNAPSHOT") {
+    testImplementation("com.github.FedericoPonzi:tlaplus-smith:17e32e0915") {
         isChanging = true
     }
 
