@@ -24,9 +24,10 @@ repositories {
 }
 
 dependencies {
-    implementation("org.lamport:tla2tools:1.8.0-SNAPSHOT")
+    // TODO: Replace with a stable release when available:
+    implementation("com.github.FedericoPonzi:tlaplus:0d86214464")
     implementation("commons-io:commons-io:2.16.1")
-    testImplementation("com.github.FedericoPonzi:tlaplus-smith:17e32e0915") {
+    testImplementation("com.github.FedericoPonzi:tlaplus-smith:f5a70e21d1") {
         isChanging = true
     }
 
@@ -39,7 +40,7 @@ dependencies {
 
     // Logging
     implementation("org.slf4j:slf4j-api:2.0.7")
-    implementation("ch.qos.logback:logback-classic:1.5.6")
+    implementation("ch.qos.logback:logback-classic:1.5.13")
 
     implementation("com.opencastsoftware:prettier4j:0.3.2")
 }
