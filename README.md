@@ -29,20 +29,15 @@ formatter config.
 
 To see some examples of current reformatting, compare:
 
-*
-
-HourClock.tla: [before](https://github.com/FedericoPonzi/tlaplus-formatter/blob/main/src/test/resources/inputs/HourClock.tla)
-and [after](https://github.com/FedericoPonzi/tlaplus-formatter/blob/main/src/test/resources/outputs/HourClock.tla)
-
-*
-
-TowerOfHanoi.tla: [before](https://github.com/FedericoPonzi/tlaplus-formatter/blob/main/src/test/resources/inputs/TowerOfHanoi.tla)
-and [after](https://github.com/FedericoPonzi/tlaplus-formatter/blob/main/src/test/resources/outputs/TowerOfHanoi.tla)
-
-*
-
-Stones.tla: [before](https://github.com/FedericoPonzi/tlaplus-formatter/blob/main/src/test/resources/inputs/Stones.tla)
-and [after](https://github.com/FedericoPonzi/tlaplus-formatter/blob/main/src/test/resources/outputs/Stones.tla)
+* HourClock.tla:
+    * [before](https://github.com/FedericoPonzi/tlaplus-formatter/blob/main/src/test/resources/inputs/HourClock.tla)
+      and [after](https://github.com/FedericoPonzi/tlaplus-formatter/blob/main/src/test/resources/outputs/HourClock.tla)
+* TowerOfHanoi.tla:
+    * [before](https://github.com/FedericoPonzi/tlaplus-formatter/blob/main/src/test/resources/inputs/TowerOfHanoi.tla)
+      and [after](https://github.com/FedericoPonzi/tlaplus-formatter/blob/main/src/test/resources/outputs/TowerOfHanoi.tla)
+* Stones.tla:
+    * [before](https://github.com/FedericoPonzi/tlaplus-formatter/blob/main/src/test/resources/inputs/Stones.tla)
+      and [after](https://github.com/FedericoPonzi/tlaplus-formatter/blob/main/src/test/resources/outputs/Stones.tla)
 
 More examples are in the test/java/resources/{inputs|outputs} folders. These sources are taken from the TLA+ Examples
 repo.
@@ -55,7 +50,8 @@ and edge cases.
 
 ## How to run
 
-If you want to try it out, go to the build page of the latest commit, and download the "Package.zip" file from the
+If you want to try it out, go to the build page of the latest commit and download the "tlaplus-formatter-jar.zip" file
+from the
 artifact section at the bottom of the
 page ([Example](https://github.com/FedericoPonzi/tlaplus-formatter/actions/runs/10027954925)).
 
