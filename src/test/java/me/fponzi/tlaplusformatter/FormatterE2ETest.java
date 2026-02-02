@@ -142,6 +142,15 @@ class FormatterE2ETest {
     }
 
     @Test
+    void testNamedTheorem() throws IOException, SanyFrontendException {
+        String spec = "---- MODULE NamedTheoremTest ----\n" +
+                "VARIABLE x\n" +
+                "THEOREM MyTheorem == x = 0\n" +
+                "====\n";
+        assertSpecUnchanged(spec);
+    }
+
+    @Test
     void testEmptyModule() throws IOException, SanyFrontendException {
         String spec = "---- MODULE Empty ----\n" +
                 "====\n";

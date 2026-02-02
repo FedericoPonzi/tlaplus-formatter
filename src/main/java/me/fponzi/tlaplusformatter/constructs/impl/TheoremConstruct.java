@@ -9,6 +9,12 @@ import tla2sany.st.TreeNode;
 
 /**
  * Handles THEOREM declarations.
+ *
+ * Unnamed theorem (THEOREM expr):
+ *   zero[] = [THEOREM keyword, expression]
+ *
+ * Named theorem (THEOREM Name == expr):
+ *   zero[] = [THEOREM keyword, name, ==, expression]
  */
 public class TheoremConstruct implements TlaConstruct {
 
@@ -25,11 +31,27 @@ public class TheoremConstruct implements TlaConstruct {
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         var z = node.zero();
-        assert (z != null && z.length > 0);
-        var theoremName = context.buildChild(z[0]);
-        var expr = context.buildChild(z[1]);
-        return Doc.group(
-                theoremName.appendLineOrSpace(expr)
-        ).indent(z[0].getImage().length() + 1);
+        assert (z != null && z.length >= 2);
+
+        var theoremKeyword = context.buildChild(z[0]);
+
+        if (z.length == 2) {
+            // Unnamed theorem: THEOREM expr
+            var expr = context.buildChild(z[1]);
+            return Doc.group(
+                    theoremKeyword.appendLineOrSpace(expr)
+            ).indent(z[0].getImage().length() + 1);
+        } else {
+            // Named theorem: THEOREM Name == expr
+            assert z.length == 4;
+            var name = context.buildChild(z[1]);
+            var expr = context.buildChild(z[3]);
+            return theoremKeyword
+                    .appendSpace(name)
+                    .appendSpace(Doc.text("=="))
+                    .append(Doc
+                            .group(Doc.lineOrSpace().append(expr))
+                            .indent(indentSize));
+        }
     }
 }
