@@ -1,6 +1,7 @@
 package me.fponzi.tlaplusformatter.constructs.impl;
 
 import com.opencastsoftware.prettier4j.Doc;
+import me.fponzi.tlaplusformatter.TlaDocBuilder;
 import me.fponzi.tlaplusformatter.constructs.ConstructContext;
 import me.fponzi.tlaplusformatter.constructs.TlaConstruct;
 import tla2sany.st.TreeNode;
@@ -18,7 +19,7 @@ public abstract class AbstractAppendImageConstruct implements TlaConstruct {
         var z = node.zero();
         var o = node.one();
         if ((z == null || z.length == 0) && (o == null || o.length == 0)) {
-            return Doc.text(node.getHumanReadableImage());
+            return Doc.text(TlaDocBuilder.getBestImage(node));
         }
         return Optional.ofNullable(buildChildren(node, context, z)).orElse(buildChildren(node, context, o));
     }

@@ -135,6 +135,20 @@ public class TlaDocBuilder {
     }
 
     /**
+     * Get the best available image string from a node.
+     * Uses getHumanReadableImage() if non-empty, otherwise falls back to getImage().
+     * This is needed because SANY returns empty getHumanReadableImage() for certain
+     * keywords/tokens like "Token" even though getImage() has the correct value.
+     */
+    public static String getBestImage(TreeNode node) {
+        String hri = node.getHumanReadableImage();
+        if (hri != null && !hri.isEmpty()) {
+            return hri;
+        }
+        return node.getImage();
+    }
+
+    /**
      * Generic fallback handling for unknown node types.
      * This preserves the original behavior for unhandled nodes.
      */
@@ -147,7 +161,7 @@ public class TlaDocBuilder {
         }
 
         if (image != null && !image.isEmpty() && !image.startsWith("N_")) {
-            return Doc.text(node.getHumanReadableImage());
+            return Doc.text(getBestImage(node));
         }
 
         // If no meaningful image, try to build from children
