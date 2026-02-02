@@ -95,6 +95,7 @@ public class VariableConstruct implements TlaConstruct {
     private Doc formatWithComments(Doc prefix, List<TreeNode> variableNodes, ConstructContext context) {
         Doc result = prefix;
         String indent = "  "; // 2 spaces
+        String commentIndent = "    "; // 4 spaces for block comments
 
         for (int i = 0; i < variableNodes.size(); i++) {
             TreeNode varNode = variableNodes.get(i);
@@ -108,12 +109,19 @@ public class VariableConstruct implements TlaConstruct {
                 // Subsequent variables - add comma to previous line, then comments if any, then variable
                 if (preComments != null && preComments.length > 0) {
                     // The pre-comments of this variable are actually inline comments of the previous variable
-                    // Format: prev_var,    \* comment
-                    //         this_var
-                    for (String comment : preComments) {
-                        result = result.append(Doc.text(",    " + comment.trim()));
+                    // Check if it's a single-line comment (\*) or multi-line block comment
+                    if (preComments.length == 1 && preComments[0].trim().startsWith("\\*")) {
+                        // Single inline comment: prev_var,    \* comment
+                        result = result.append(Doc.text(",    " + preComments[0].trim()));
+                        result = result.appendLine(Doc.text(indent + varName));
+                    } else {
+                        // Multi-line block comments: put comma, then each comment on its own line
+                        result = result.append(Doc.text(","));
+                        for (String comment : preComments) {
+                            result = result.appendLine(Doc.text(commentIndent + comment.trim()));
+                        }
+                        result = result.appendLine(Doc.text(indent + varName));
                     }
-                    result = result.appendLine(Doc.text(indent + varName));
                 } else {
                     result = result.append(Doc.text(",")).appendLine(Doc.text(indent + varName));
                 }

@@ -69,6 +69,39 @@ public class CommentsTest {
     }
 
     @Test
+    public void variablesWithMultiLineBlockComments() {
+        // This tests that multi-line block comments following VARIABLES declarations
+        // are preserved correctly, not joined on a single line with commas between them.
+        // This is a bug that was causing parse errors in specifications/Prisoners/Prisoners.tla
+        var input = "---------- MODULE Test -----\n" +
+                "VARIABLES\n" +
+                "  switchAUp,\n" +
+                "  switchBUp,\n" +
+                "    (***********************************************************************)\n" +
+                "    (* The states of the two switches, represented by boolean-valued       *)\n" +
+                "    (* variables.                                                          *)\n" +
+                "    (***********************************************************************)\n" +
+                "  count\n" +
+                "\n" +
+                "Init == TRUE\n" +
+                "====";
+        // Block comments should be on separate lines, not joined with commas
+        var expected = "---------- MODULE Test -----\n" +
+                "VARIABLES\n" +
+                "  switchAUp,\n" +
+                "  switchBUp,\n" +
+                "    (***********************************************************************)\n" +
+                "    (* The states of the two switches, represented by boolean-valued       *)\n" +
+                "    (* variables.                                                          *)\n" +
+                "    (***********************************************************************)\n" +
+                "  count\n" +
+                "\n" +
+                "Init == TRUE\n" +
+                "====";
+        assertSpecEquals(expected, input);
+    }
+
+    @Test
     public void commentsRespectProperIndentationContext() {
         var input = "---------- MODULE TestModule -----\n" +
                 "EXTENDS Naturals\n" +
