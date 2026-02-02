@@ -45,6 +45,30 @@ public class CommentsTest {
     }
 
     @Test
+    public void variablesWithInlineComments() {
+        // This tests that inline comments on multi-line VARIABLES declarations are preserved.
+        // In SANY's AST, inline comments after a token are stored as pre-comments of the NEXT token.
+        // So "clock, \* local clock" has the comment stored as pre-comment of "req".
+        // The trailing comment after the last variable is attached to the next declaration.
+        var input = "---------- MODULE Test -----\n" +
+                "VARIABLES\n" +
+                "  clock,    \\* local clock\n" +
+                "  req       \\* requests\n" +
+                "\n" +
+                "Init == TRUE\n" +
+                "====";
+        // The formatted output preserves comments, but trailing comment moves to next line
+        var expected = "---------- MODULE Test -----\n" +
+                "VARIABLES\n" +
+                "  clock,    \\* local clock\n" +
+                "  req\n" +
+                "\\* requests\n" +
+                "Init == TRUE\n" +
+                "====";
+        assertSpecEquals(expected, input);
+    }
+
+    @Test
     public void commentsRespectProperIndentationContext() {
         var input = "---------- MODULE TestModule -----\n" +
                 "EXTENDS Naturals\n" +
