@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import tla2sany.st.TreeNode;
 
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,13 +29,130 @@ public class ConstantsConstruct implements TlaConstruct {
 
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
-        List<String> constants = context.extractStringList(node);
         Doc prefix = context.buildChild(node.zero()[0]); // "CONSTANT" or "CONSTANTS" keyword
-        return new ConstantsFormatter(context.getConfig()).format(prefix, constants);
+
+        // Extract child nodes (constant names) with their comments
+        List<TreeNode> constantNodes = extractConstantNodes(node);
+
+        if (constantNodes.isEmpty()) {
+            return prefix;
+        }
+
+        // Check if any constant has comments - if so, use multi-line format
+        boolean hasComments = constantNodes.stream()
+                .anyMatch(n -> n.getPreComments() != null && n.getPreComments().length > 0);
+
+        if (hasComments) {
+            return formatWithComments(prefix, constantNodes, context);
+        } else {
+            // No comments - use simple string extraction for single-line format
+            List<String> constants = context.extractStringList(node);
+            return new ConstantsFormatter(context.getConfig()).format(prefix, constants);
+        }
     }
 
     /**
-     * Dedicated formatter for CONSTANTS declarations.
+     * Extract the constant name TreeNodes from the CONSTANTS declaration.
+     * For CONSTANT declarations, the structure is:
+     * - zero[0]: CONSTANT keyword (kind=342)
+     * - zero[1]: IDENT_DECL wrapper (kind=363) containing the actual identifier
+     * - zero[2]: comma
+     * - etc.
+     *
+     * The comments are attached to the identifier INSIDE the IDENT_DECL, not on the
+     * IDENT_DECL wrapper itself. So we need to return the inner node for comment checking.
+     */
+    private List<TreeNode> extractConstantNodes(TreeNode node) {
+        List<TreeNode> result = new ArrayList<>();
+
+        // Check both zero() and one() arrays for child nodes
+        TreeNode[] children = null;
+        if (node.one() != null && node.one().length > 0) {
+            children = node.one();
+        } else if (node.zero() != null && node.zero().length > 0) {
+            children = node.zero();
+        }
+
+        if (children != null) {
+            for (TreeNode child : children) {
+                if (isValidNode(child) && child.getImage() != null) {
+                    String image = child.getHumanReadableImage();
+                    // Skip separators and keywords
+                    if (!",".equals(image) && !"CONSTANTS".equals(image) && !"CONSTANT".equals(image)) {
+                        // For IDENT_DECL nodes (kind=363), get the inner identifier node
+                        // which has the actual preComments
+                        if (child.getKind() == 363 && child.zero() != null && child.zero().length > 0) {
+                            result.add(child.zero()[0]);
+                        } else {
+                            result.add(child);
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Check if a node is valid (not a placeholder).
+     */
+    private boolean isValidNode(TreeNode node) {
+        return node != null &&
+                node.getLocation() != null &&
+                node.getLocation().beginLine() != Integer.MAX_VALUE;
+    }
+
+    /**
+     * Format CONSTANTS with comments preserved on separate lines.
+     *
+     * Note: In SANY's AST, inline comments that appear after a token (like "Jug, \* comment")
+     * are stored as pre-comments of the NEXT token. So "Jug, \* The set" has the comment
+     * stored as a pre-comment of "Capacity". We need to handle this by treating pre-comments of
+     * constant N as post-comments of constant N-1.
+     */
+    private Doc formatWithComments(Doc prefix, List<TreeNode> constantNodes, ConstructContext context) {
+        Doc result = prefix;
+        String indent = "         "; // Align with "CONSTANT " (9 spaces)
+        String commentIndent = "    "; // 4 spaces for block comments
+
+        for (int i = 0; i < constantNodes.size(); i++) {
+            TreeNode constNode = constantNodes.get(i);
+            String constName = constNode.getHumanReadableImage();
+            String[] preComments = constNode.getPreComments();
+
+            if (i == 0) {
+                // First constant - space after keyword then name
+                result = result.append(Doc.text(" " + constName));
+            } else {
+                // Subsequent constants - add comma to previous line, then comments if any, then constant
+                if (preComments != null && preComments.length > 0) {
+                    // The pre-comments of this constant are actually inline comments of the previous constant
+                    // Check if it's a single-line comment (\*) or multi-line block comment
+                    String normalizedFirst = normalizeCommentWhitespace(preComments[0]);
+                    if (preComments.length == 1 && normalizedFirst.startsWith("\\*")) {
+                        // Single inline comment: prev_const,    \* comment
+                        result = result.append(Doc.text(",    " + normalizedFirst));
+                        result = result.appendLine(Doc.text(indent + constName));
+                    } else {
+                        // Multi-line block comments: put comma, then each comment on its own line
+                        result = result.append(Doc.text(","));
+                        for (String comment : preComments) {
+                            result = result.appendLine(Doc.text(commentIndent + normalizeCommentWhitespace(comment)));
+                        }
+                        result = result.appendLine(Doc.text(indent + constName));
+                    }
+                } else {
+                    result = result.append(Doc.text(",")).appendLine(Doc.text(indent + constName));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Dedicated formatter for CONSTANTS declarations (without comments).
      */
     private static class ConstantsFormatter extends BaseConstructFormatter<String> {
 
@@ -60,5 +178,21 @@ public class ConstantsConstruct implements TlaConstruct {
                         constructName, "breakStrategy", ListFormatStrategy.SMART_BREAK);
             }
         }
+    }
+
+    /**
+     * Strip leading whitespace and trailing newlines from a comment,
+     * but preserve trailing spaces before the newline.
+     */
+    private static String normalizeCommentWhitespace(String s) {
+        int start = 0;
+        while (start < s.length() && Character.isWhitespace(s.charAt(start))) {
+            start++;
+        }
+        int end = s.length();
+        while (end > start && (s.charAt(end - 1) == '\n' || s.charAt(end - 1) == '\r')) {
+            end--;
+        }
+        return s.substring(start, end);
     }
 }

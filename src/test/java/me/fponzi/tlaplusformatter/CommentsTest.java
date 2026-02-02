@@ -121,6 +121,28 @@ public class CommentsTest {
     }
 
     @Test
+    public void constantsWithInlineComments() {
+        // This tests that inline comments on multi-line CONSTANT declarations are preserved.
+        // Similar to VARIABLES, SANY stores inline comments as pre-comments of the NEXT token.
+        var input = "---------- MODULE Test -----\n" +
+                "CONSTANT Jug,      \\* The set of all jugs.\n" +
+                "         Capacity, \\* Capacity of each jug.\n" +
+                "         Goal      \\* The goal amount.\n" +
+                "\n" +
+                "Init == TRUE\n" +
+                "====";
+        // The formatted output preserves comments. The trailing comment moves to the next line.
+        var expected = "---------- MODULE Test -----\n" +
+                "CONSTANT Jug,    \\* The set of all jugs.\n" +
+                "         Capacity,    \\* Capacity of each jug.\n" +
+                "         Goal\n" +
+                "\\* The goal amount.\n" +
+                "Init == TRUE\n" +
+                "====";
+        assertSpecEquals(expected, input);
+    }
+
+    @Test
     public void commentsRespectProperIndentationContext() {
         var input = "---------- MODULE TestModule -----\n" +
                 "EXTENDS Naturals\n" +
