@@ -110,15 +110,16 @@ public class VariableConstruct implements TlaConstruct {
                 if (preComments != null && preComments.length > 0) {
                     // The pre-comments of this variable are actually inline comments of the previous variable
                     // Check if it's a single-line comment (\*) or multi-line block comment
-                    if (preComments.length == 1 && preComments[0].trim().startsWith("\\*")) {
+                    String normalizedFirst = normalizeCommentWhitespace(preComments[0]);
+                    if (preComments.length == 1 && normalizedFirst.startsWith("\\*")) {
                         // Single inline comment: prev_var,    \* comment
-                        result = result.append(Doc.text(",    " + preComments[0].trim()));
+                        result = result.append(Doc.text(",    " + normalizedFirst));
                         result = result.appendLine(Doc.text(indent + varName));
                     } else {
                         // Multi-line block comments: put comma, then each comment on its own line
                         result = result.append(Doc.text(","));
                         for (String comment : preComments) {
-                            result = result.appendLine(Doc.text(commentIndent + comment.trim()));
+                            result = result.appendLine(Doc.text(commentIndent + normalizeCommentWhitespace(comment)));
                         }
                         result = result.appendLine(Doc.text(indent + varName));
                     }
@@ -158,5 +159,21 @@ public class VariableConstruct implements TlaConstruct {
                         constructName, "breakStrategy", ListFormatStrategy.SMART_BREAK);
             }
         }
+    }
+
+    /**
+     * Strip leading whitespace and trailing newlines from a comment,
+     * but preserve trailing spaces before the newline.
+     */
+    private static String normalizeCommentWhitespace(String s) {
+        int start = 0;
+        while (start < s.length() && Character.isWhitespace(s.charAt(start))) {
+            start++;
+        }
+        int end = s.length();
+        while (end > start && (s.charAt(end - 1) == '\n' || s.charAt(end - 1) == '\r')) {
+            end--;
+        }
+        return s.substring(start, end);
     }
 }

@@ -50,10 +50,30 @@ public class ConstructContext {
 
     public static Doc addComments(TreeNode node, Doc mainDoc) {
         var comments = Arrays.stream(node.getPreComments())
-                .map((v) -> Doc.text(v.trim()))
+                .map((v) -> Doc.text(normalizeCommentWhitespace(v)))
                 .collect(Collectors.toList());
         comments.add(mainDoc);
         return Doc.intersperse(Doc.line(), comments);
+    }
+
+    /**
+     * Strip leading whitespace and trailing newlines from a comment,
+     * but preserve trailing spaces before the newline.
+     * SANY's AST preserves trailing whitespace in comments, so we must too
+     * to maintain semantic equality.
+     */
+    private static String normalizeCommentWhitespace(String s) {
+        // Strip leading whitespace
+        int start = 0;
+        while (start < s.length() && Character.isWhitespace(s.charAt(start))) {
+            start++;
+        }
+        // Strip trailing newlines only (preserve trailing spaces)
+        int end = s.length();
+        while (end > start && (s.charAt(end - 1) == '\n' || s.charAt(end - 1) == '\r')) {
+            end--;
+        }
+        return s.substring(start, end);
     }
 
     /**

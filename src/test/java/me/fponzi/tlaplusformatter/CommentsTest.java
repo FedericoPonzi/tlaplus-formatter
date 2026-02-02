@@ -102,6 +102,25 @@ public class CommentsTest {
     }
 
     @Test
+    public void commentsPreserveTrailingWhitespace() {
+        // Trailing whitespace in comments should be preserved because SANY's AST
+        // preserves it, and stripping it changes semantic equality.
+        var input = "---------- MODULE Test -----\n" +
+                "EXTENDS Naturals\n" +
+                "\n" +
+                "\\* Comment with trailing space \n" +
+                "IsTwo(i) == i - 2 = 0\n" +
+                "====";
+        var expected = "---------- MODULE Test -----\n" +
+                "EXTENDS Naturals\n" +
+                "\n" +
+                "\\* Comment with trailing space \n" +
+                "IsTwo(i) == i - 2 = 0\n" +
+                "====";
+        assertSpecEquals(expected, input);
+    }
+
+    @Test
     public void commentsRespectProperIndentationContext() {
         var input = "---------- MODULE TestModule -----\n" +
                 "EXTENDS Naturals\n" +
