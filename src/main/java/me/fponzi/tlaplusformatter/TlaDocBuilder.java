@@ -106,6 +106,8 @@ public class TlaDocBuilder {
         registry.register(new SetEnumerateConstruct());
         registry.register(new TimesConstruct());
         registry.register(new IdPrefixConstruct());
+        registry.register(new InstanceConstruct());
+        registry.register(new InstanceConstruct.NonLocalInstanceConstruct());
 
     }
 

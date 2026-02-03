@@ -166,6 +166,20 @@ public class CommentsTest {
     }
 
     @Test
+    public void localInstanceWithBlockComment() {
+        // This tests that block comments before LOCAL INSTANCE declarations are preserved.
+        var input = "---------- MODULE Test -----\n" +
+                "(* Block comment *)\n" +
+                "LOCAL INSTANCE Naturals\n" +
+                "====";
+        var expected = "---------- MODULE Test -----\n" +
+                "(* Block comment *)\n" +
+                "LOCAL INSTANCE Naturals\n" +
+                "====";
+        assertSpecEquals(expected, input);
+    }
+
+    @Test
     public void commentsRespectProperIndentationContext() {
         var input = "---------- MODULE TestModule -----\n" +
                 "EXTENDS Naturals\n" +
