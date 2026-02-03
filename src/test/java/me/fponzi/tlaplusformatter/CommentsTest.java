@@ -143,6 +143,29 @@ public class CommentsTest {
     }
 
     @Test
+    public void constantsWithOperatorParameters() {
+        // This tests that CONSTANT declarations with operator parameters like Op(_,_)
+        // preserve their parameters when formatted with comments.
+        var input = "---------- MODULE Test -----\n" +
+                "CONSTANTS\n" +
+                "    Hash,                   \\* Comment 1\n" +
+                "    CalculateHash(_,_,_),   \\* Comment 2\n" +
+                "    Other                   \\* Comment 3\n" +
+                "\n" +
+                "ASSUME TRUE\n" +
+                "====";
+        // The operator parameters should be preserved
+        var expected = "---------- MODULE Test -----\n" +
+                "CONSTANTS Hash,    \\* Comment 1\n" +
+                "         CalculateHash(_,_,_),    \\* Comment 2\n" +
+                "         Other\n" +
+                "\\* Comment 3\n" +
+                "ASSUME TRUE\n" +
+                "====";
+        assertSpecEquals(expected, input);
+    }
+
+    @Test
     public void commentsRespectProperIndentationContext() {
         var input = "---------- MODULE TestModule -----\n" +
                 "EXTENDS Naturals\n" +

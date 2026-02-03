@@ -39,8 +39,12 @@ public class ConstantsConstruct implements TlaConstruct {
         }
 
         // Check if any constant has comments - if so, use multi-line format
+        // Comments are on the inner identifier node for IDENT_DECL nodes
         boolean hasComments = constantNodes.stream()
-                .anyMatch(n -> n.getPreComments() != null && n.getPreComments().length > 0);
+                .anyMatch(n -> {
+                    TreeNode commentNode = getCommentNode(n);
+                    return commentNode.getPreComments() != null && commentNode.getPreComments().length > 0;
+                });
 
         if (hasComments) {
             return formatWithComments(prefix, constantNodes, context);
@@ -52,15 +56,15 @@ public class ConstantsConstruct implements TlaConstruct {
     }
 
     /**
-     * Extract the constant name TreeNodes from the CONSTANTS declaration.
+     * Extract the constant TreeNodes from the CONSTANTS declaration.
      * For CONSTANT declarations, the structure is:
      * - zero[0]: CONSTANT keyword (kind=342)
      * - zero[1]: IDENT_DECL wrapper (kind=363) containing the actual identifier
      * - zero[2]: comma
      * - etc.
      *
-     * The comments are attached to the identifier INSIDE the IDENT_DECL, not on the
-     * IDENT_DECL wrapper itself. So we need to return the inner node for comment checking.
+     * Returns the IDENT_DECL nodes so we can use buildChild() to get the full declaration
+     * including operator parameters like Op(_,_).
      */
     private List<TreeNode> extractConstantNodes(TreeNode node) {
         List<TreeNode> result = new ArrayList<>();
@@ -79,13 +83,7 @@ public class ConstantsConstruct implements TlaConstruct {
                     String image = child.getHumanReadableImage();
                     // Skip separators and keywords
                     if (!",".equals(image) && !"CONSTANTS".equals(image) && !"CONSTANT".equals(image)) {
-                        // For IDENT_DECL nodes (kind=363), get the inner identifier node
-                        // which has the actual preComments
-                        if (child.getKind() == 363 && child.zero() != null && child.zero().length > 0) {
-                            result.add(child.zero()[0]);
-                        } else {
-                            result.add(child);
-                        }
+                        result.add(child);
                     }
                 }
             }
@@ -118,12 +116,15 @@ public class ConstantsConstruct implements TlaConstruct {
 
         for (int i = 0; i < constantNodes.size(); i++) {
             TreeNode constNode = constantNodes.get(i);
-            String constName = constNode.getHumanReadableImage();
-            String[] preComments = constNode.getPreComments();
+            // Build the constant declaration string manually to avoid comment duplication
+            String constDecl = buildConstantDeclaration(constNode);
+            // Get comments from the inner identifier node
+            TreeNode commentNode = getCommentNode(constNode);
+            String[] preComments = commentNode.getPreComments();
 
             if (i == 0) {
-                // First constant - space after keyword then name
-                result = result.append(Doc.text(" " + constName));
+                // First constant - space after keyword then declaration
+                result = result.append(Doc.text(" " + constDecl));
             } else {
                 // Subsequent constants - add comma to previous line, then comments if any, then constant
                 if (preComments != null && preComments.length > 0) {
@@ -133,22 +134,58 @@ public class ConstantsConstruct implements TlaConstruct {
                     if (preComments.length == 1 && normalizedFirst.startsWith("\\*")) {
                         // Single inline comment: prev_const,    \* comment
                         result = result.append(Doc.text(",    " + normalizedFirst));
-                        result = result.appendLine(Doc.text(indent + constName));
+                        result = result.appendLine(Doc.text(indent + constDecl));
                     } else {
                         // Multi-line block comments: put comma, then each comment on its own line
                         result = result.append(Doc.text(","));
                         for (String comment : preComments) {
                             result = result.appendLine(Doc.text(commentIndent + normalizeCommentWhitespace(comment)));
                         }
-                        result = result.appendLine(Doc.text(indent + constName));
+                        result = result.appendLine(Doc.text(indent + constDecl));
                     }
                 } else {
-                    result = result.append(Doc.text(",")).appendLine(Doc.text(indent + constName));
+                    result = result.append(Doc.text(",")).appendLine(Doc.text(indent + constDecl));
                 }
             }
         }
 
         return result;
+    }
+
+    /**
+     * Build the constant declaration string including operator parameters.
+     * For simple constants, returns the name. For operator constants like Op(_,_),
+     * returns the full declaration with parameters.
+     */
+    private String buildConstantDeclaration(TreeNode node) {
+        // For IDENT_DECL nodes (kind=363), check for operator parameters
+        if (node.getKind() == 363) {
+            TreeNode[] children = node.zero();
+            if (children != null && children.length > 1) {
+                // Has parameters - build the full declaration
+                StringBuilder sb = new StringBuilder();
+                for (TreeNode child : children) {
+                    if (child != null && child.getImage() != null) {
+                        sb.append(child.getHumanReadableImage());
+                    }
+                }
+                return sb.toString();
+            } else if (children != null && children.length == 1) {
+                return children[0].getHumanReadableImage();
+            }
+        }
+        return node.getHumanReadableImage();
+    }
+
+    /**
+     * Get the node that contains comments for a constant declaration.
+     * For IDENT_DECL nodes (kind=363), comments are on the inner identifier.
+     */
+    private TreeNode getCommentNode(TreeNode node) {
+        if (node.getKind() == 363 && node.zero() != null && node.zero().length > 0) {
+            return node.zero()[0];
+        }
+        return node;
     }
 
     /**
