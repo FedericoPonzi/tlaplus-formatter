@@ -49,24 +49,75 @@ public class ConstructContext {
     }
 
     public static Doc addComments(TreeNode node, Doc mainDoc) {
-        var comments = Arrays.stream(node.getPreComments())
-                .map((v) -> Doc.text(normalizeCommentWhitespace(v)))
-                .collect(Collectors.toList());
-        comments.add(mainDoc);
-        return Doc.intersperse(Doc.line(), comments);
+        String[] preComments = node.getPreComments();
+        if (preComments == null || preComments.length == 0) {
+            return mainDoc;
+        }
+
+        // Build comments, handling continuations properly.
+        // SANY splits multi-line block comments at nested (* markers.
+        // Continuation preComments (those not starting with (* or \*) should be
+        // appended directly without adding a line break.
+        Doc result = Doc.empty();
+        boolean first = true;
+
+        for (String comment : preComments) {
+            boolean isContinuation = !isCommentStart(comment);
+            String normalized = normalizeCommentWhitespace(comment, isContinuation);
+
+            if (first) {
+                result = Doc.text(normalized);
+                first = false;
+            } else if (isContinuation) {
+                // Continuation: append directly without line break
+                result = result.append(Doc.text(normalized));
+            } else {
+                // New comment: add line break first
+                result = result.appendLine(Doc.text(normalized));
+            }
+        }
+
+        // Add the main doc with a line break
+        return result.appendLine(mainDoc);
     }
 
     /**
-     * Strip leading whitespace and trailing newlines from a comment,
-     * but preserve trailing spaces before the newline.
-     * SANY's AST preserves trailing whitespace in comments, so we must too
-     * to maintain semantic equality.
+     * Check if a preComment string starts a new comment (vs being a continuation).
+     * A new comment starts with (* (block) or \* (line).
      */
-    private static String normalizeCommentWhitespace(String s) {
-        // Strip leading whitespace
+    private static boolean isCommentStart(String s) {
+        // Skip leading whitespace to find the actual comment start
+        int i = 0;
+        while (i < s.length() && Character.isWhitespace(s.charAt(i))) {
+            i++;
+        }
+        if (i >= s.length()) {
+            return false;
+        }
+        // Check for block comment start (*
+        if (i + 1 < s.length() && s.charAt(i) == '(' && s.charAt(i + 1) == '*') {
+            return true;
+        }
+        // Check for line comment start \*
+        if (i + 1 < s.length() && s.charAt(i) == '\\' && s.charAt(i + 1) == '*') {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Normalize comment whitespace.
+     * For new comments (starting with (* or \*): strip leading whitespace and trailing newlines.
+     * For continuations: only strip trailing newlines, preserve leading whitespace.
+     * Always preserve trailing spaces before the newline (SANY's AST preserves them).
+     */
+    private static String normalizeCommentWhitespace(String s, boolean isContinuation) {
         int start = 0;
-        while (start < s.length() && Character.isWhitespace(s.charAt(start))) {
-            start++;
+        // Only strip leading whitespace for new comments, not continuations
+        if (!isContinuation) {
+            while (start < s.length() && Character.isWhitespace(s.charAt(start))) {
+                start++;
+            }
         }
         // Strip trailing newlines only (preserve trailing spaces)
         int end = s.length();
