@@ -218,4 +218,25 @@ public class CommentsTest {
         assertSpecEquals(expected, input);
     }
 
+    @Test
+    public void constantsWithCommentBeforeFirstConstant() {
+        // This tests that a comment BEFORE the first constant is preserved.
+        // The comment appears as preComment on the constant node.
+        var input = "---------- MODULE Test -----\n" +
+                "CONSTANTS\n" +
+                "    \\* Number of philosophers\n" +
+                "    NP\n" +
+                "\n" +
+                "ASSUME TRUE\n" +
+                "====";
+        var expected = "---------- MODULE Test -----\n" +
+                "CONSTANTS\n" +
+                "    \\* Number of philosophers\n" +
+                "    NP\n" +
+                "\n" +
+                "ASSUME TRUE\n" +
+                "====";
+        assertSpecEquals(expected, input);
+    }
+
 }

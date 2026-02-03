@@ -123,8 +123,17 @@ public class ConstantsConstruct implements TlaConstruct {
             String[] preComments = commentNode.getPreComments();
 
             if (i == 0) {
-                // First constant - space after keyword then declaration
-                result = result.append(Doc.text(" " + constDecl));
+                // First constant - check for comments BEFORE the constant
+                if (preComments != null && preComments.length > 0) {
+                    // Comments before first constant: put on separate lines
+                    for (String comment : preComments) {
+                        result = result.appendLine(Doc.text(commentIndent + normalizeCommentWhitespace(comment)));
+                    }
+                    result = result.appendLine(Doc.text(commentIndent + constDecl));
+                } else {
+                    // No comments - space after keyword then declaration
+                    result = result.append(Doc.text(" " + constDecl));
+                }
             } else {
                 // Subsequent constants - add comma to previous line, then comments if any, then constant
                 if (preComments != null && preComments.length > 0) {
