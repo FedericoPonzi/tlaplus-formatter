@@ -201,5 +201,21 @@ public class CommentsTest {
         assertSpecEquals(expected, input);
     }
 
+    @Test
+    public void tupleWithPrecedingComments() {
+        // This tests that line comments before a tuple expression are preserved.
+        // The comments are attached to the opening << bracket in SANY's AST.
+        var input = "---------- MODULE Test -----\n" +
+                "Foo ==\n" +
+                "\\* Comment before tuple\n" +
+                "<<1, 2>>\n" +
+                "====";
+        // Comment is preserved but formatting puts it inline after ==
+        var expected = "---------- MODULE Test -----\n" +
+                "Foo == \\* Comment before tuple\n" +
+                "  << 1, 2 >>\n" +
+                "====";
+        assertSpecEquals(expected, input);
+    }
 
 }

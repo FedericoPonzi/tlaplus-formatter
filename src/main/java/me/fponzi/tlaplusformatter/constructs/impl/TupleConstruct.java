@@ -29,6 +29,11 @@ public class TupleConstruct implements TlaConstruct {
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         List<Doc> elementDocs = new ArrayList<>();
         assert (node.zero() != null && node.zero().length >= 2);
+
+        // Check for comments on the opening << bracket
+        TreeNode openBracket = node.zero()[0];
+        Doc openDoc = ConstructContext.addComments(openBracket, Doc.text("<<"));
+
         // Skip first and last elements - they are << and >> brackets
         for (int i = 1; i < node.zero().length - 1; i++) {
             TreeNode child = node.zero()[i];
@@ -41,7 +46,7 @@ public class TupleConstruct implements TlaConstruct {
         }
 
         if (elementDocs.isEmpty()) {
-            return Doc.text("<<>>");
+            return ConstructContext.addComments(openBracket, Doc.text("<<>>"));
         }
 
         // Build the tuple with proper formatting
@@ -51,7 +56,7 @@ public class TupleConstruct implements TlaConstruct {
         }
 
         return Doc.group(
-                Doc.text("<<")
+                openDoc
                         .appendSpace(content.indent("<< ".length()))
                         .appendLineOrSpace(Doc.text(">>"))
         );
