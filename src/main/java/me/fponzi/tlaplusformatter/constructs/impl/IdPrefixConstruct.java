@@ -7,8 +7,8 @@ import me.fponzi.tlaplusformatter.constructs.TlaConstruct;
 import tla2sany.st.TreeNode;
 
 /**
- * So far, I've always seen this used with an empty image.
- * it's a bit annoyng because Doc.empty() will still cause an extra space to be added.
+ * Handles module prefixes like "R!" in "R!Nat" where R is an INSTANCE alias.
+ * The prefix includes the "!" separator.
  */
 public class IdPrefixConstruct implements TlaConstruct {
     @Override
@@ -18,8 +18,12 @@ public class IdPrefixConstruct implements TlaConstruct {
 
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
-        assert (node.getHumanReadableImage().isEmpty()); // not sure when this would not be empty
-        return Doc.empty();
+        String image = node.getHumanReadableImage();
+        if (image == null || image.isEmpty()) {
+            return Doc.empty();
+        }
+        // Return the prefix (e.g., "R!")
+        return Doc.text(image);
     }
 
     @Override

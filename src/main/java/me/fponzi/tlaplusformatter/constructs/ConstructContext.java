@@ -48,17 +48,6 @@ public class ConstructContext {
         return addComments(child, childDoc);
     }
 
-    /**
-     * Build a Doc for a child node without adding comments.
-     * Use this when you handle comments manually.
-     *
-     * @param child The child tree node
-     * @return Doc object for the child node without comments
-     */
-    public Doc buildChildWithoutComments(TreeNode child) {
-        return docBuilder.build(child);
-    }
-
     public static Doc addComments(TreeNode node, Doc mainDoc) {
         var comments = Arrays.stream(node.getPreComments())
                 .map((v) -> Doc.text(normalizeCommentWhitespace(v)))

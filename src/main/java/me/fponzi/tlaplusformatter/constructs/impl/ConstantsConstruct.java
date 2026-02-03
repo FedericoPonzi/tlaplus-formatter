@@ -56,15 +56,15 @@ public class ConstantsConstruct implements TlaConstruct {
     }
 
     /**
-     * Extract the constant TreeNodes from the CONSTANTS declaration.
+     * Extract the constant name TreeNodes from the CONSTANTS declaration.
      * For CONSTANT declarations, the structure is:
      * - zero[0]: CONSTANT keyword (kind=342)
      * - zero[1]: IDENT_DECL wrapper (kind=363) containing the actual identifier
      * - zero[2]: comma
      * - etc.
      *
-     * Returns the IDENT_DECL nodes so we can use buildChild() to get the full declaration
-     * including operator parameters like Op(_,_).
+     * The comments are attached to the identifier INSIDE the IDENT_DECL, not on the
+     * IDENT_DECL wrapper itself. So we need to return the inner node for comment checking.
      */
     private List<TreeNode> extractConstantNodes(TreeNode node) {
         List<TreeNode> result = new ArrayList<>();

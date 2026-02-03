@@ -36,8 +36,12 @@ public abstract class AbstractAppendImageConstruct implements TlaConstruct {
             } else if (nextChildDoc != null && nextChildDoc != Doc.empty()) {
                 // don't add space before or after , ] ) } [ ( {
                 var skipSpace = List.of(",", "]", ")", "}", "(", "[", "{");
-                var shouldSkipSpace = skipSpace.contains(c[i].getHumanReadableImage())
-                        || skipSpace.contains(c[i - 1].getHumanReadableImage()); // to format `f(_)`
+                var prevImage = c[i - 1].getHumanReadableImage();
+                var currImage = c[i].getHumanReadableImage();
+                // Skip space after module prefix (e.g., "R!" in "R!Nat")
+                var shouldSkipSpace = skipSpace.contains(currImage)
+                        || skipSpace.contains(prevImage) // to format `f(_)`
+                        || (prevImage != null && prevImage.endsWith("!")); // module prefix like R!
                 if (shouldSkipSpace) {
                     childDoc = childDoc.append(nextChildDoc);
                 } else {
