@@ -202,6 +202,27 @@ public class CommentsTest {
     }
 
     @Test
+    public void variablesWithCommentBeforeFirstVariable() {
+        // This tests that a comment BEFORE the first variable is preserved.
+        // The comment appears as preComment on the first variable node.
+        var input = "---------- MODULE Test -----\n" +
+                "VARIABLES\n" +
+                "    \\* type annotation\n" +
+                "    x\n" +
+                "\n" +
+                "Init == TRUE\n" +
+                "====";
+        var expected = "---------- MODULE Test -----\n" +
+                "VARIABLES\n" +
+                "    \\* type annotation\n" +
+                "  x\n" +
+                "\n" +
+                "Init == TRUE\n" +
+                "====";
+        assertSpecEquals(expected, input);
+    }
+
+    @Test
     public void tupleWithPrecedingComments() {
         // This tests that line comments before a tuple expression are preserved.
         // The comments are attached to the opening << bracket in SANY's AST.

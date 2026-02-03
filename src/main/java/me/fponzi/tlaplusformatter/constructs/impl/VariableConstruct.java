@@ -103,8 +103,17 @@ public class VariableConstruct implements TlaConstruct {
             String[] preComments = varNode.getPreComments();
 
             if (i == 0) {
-                // First variable - newline then indented name
-                result = result.appendLine(Doc.text(indent + varName));
+                // First variable - check for comments BEFORE the variable
+                if (preComments != null && preComments.length > 0) {
+                    // Comments before first variable: put on separate lines
+                    for (String comment : preComments) {
+                        result = result.appendLine(Doc.text(commentIndent + normalizeCommentWhitespace(comment)));
+                    }
+                    result = result.appendLine(Doc.text(indent + varName));
+                } else {
+                    // No comments - newline then indented name
+                    result = result.appendLine(Doc.text(indent + varName));
+                }
             } else {
                 // Subsequent variables - add comma to previous line, then comments if any, then variable
                 if (preComments != null && preComments.length > 0) {
