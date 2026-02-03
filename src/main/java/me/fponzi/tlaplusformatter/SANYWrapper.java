@@ -104,7 +104,7 @@ public class SANYWrapper {
 
         private static List<String> getAdditionalModulePaths() {
             List<String> paths = new ArrayList<>();
-            // Check for community modules and TLAPS in common locations
+            // Check for community modules, TLAPS, and Apalache in common locations
             String[] possiblePaths = {
                 // Community modules
                 System.getenv("TLA_COMMUNITY_MODULES"),
@@ -114,7 +114,11 @@ public class SANYWrapper {
                 System.getenv("TLAPS_LIBRARY"),
                 "/tmp/tlapm/library",
                 System.getProperty("user.home") + "/.tlaplus/tlaps/library",
-                "/usr/local/lib/tlaps/library"
+                "/usr/local/lib/tlaps/library",
+                // Apalache modules
+                System.getenv("APALACHE_HOME") != null ? System.getenv("APALACHE_HOME") + "/src/tla" : null,
+                "/tmp/apalache/src/tla",
+                System.getProperty("user.home") + "/.tlaplus/apalache/src/tla"
             };
             for (String path : possiblePaths) {
                 if (path != null) {
