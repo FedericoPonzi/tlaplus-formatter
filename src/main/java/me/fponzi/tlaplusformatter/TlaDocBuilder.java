@@ -53,6 +53,7 @@ public class TlaDocBuilder {
         // Basic elements
         registry.register(new IdentifierConstruct());
         registry.register(new NumberConstruct());
+        registry.register(new StringConstruct());
         registry.register(new TheoremConstruct());
         registry.register(new FcnApplConstruct());
         registry.register(new QuantBoundConstruct());
