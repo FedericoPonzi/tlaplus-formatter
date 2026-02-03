@@ -145,7 +145,9 @@ public class SANYWrapper {
                 }
             }
 
-            return null;
+            // Return the result from parent resolver (non-existent TLAFile, not null)
+            // to preserve SANY's expected behavior
+            return sourceFile;
         }
     }
 }
