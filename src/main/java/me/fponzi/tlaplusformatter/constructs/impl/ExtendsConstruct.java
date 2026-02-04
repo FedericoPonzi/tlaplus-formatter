@@ -1,9 +1,11 @@
 package me.fponzi.tlaplusformatter.constructs.impl;
 
 import com.opencastsoftware.prettier4j.Doc;
+import me.fponzi.tlaplusformatter.TlaDocBuilder;
 import me.fponzi.tlaplusformatter.constructs.*;
 import tla2sany.st.TreeNode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,8 +26,19 @@ public class ExtendsConstruct implements TlaConstruct {
 
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
-        List<String> modules = context.extractStringList(node);
-        Doc prefix = context.buildChild(node.zero()[0]); // "EXTENDS" keyword
+        // Extract module names using getBestImage() because SANY returns empty
+        // getHumanReadableImage() for certain local module names (e.g., "TokenRing").
+        List<String> modules = new ArrayList<>();
+        TreeNode[] children = node.zero();
+        if (children != null) {
+            for (TreeNode child : children) {
+                String image = TlaDocBuilder.getBestImage(child);
+                if (image != null && !image.equals("EXTENDS") && !image.equals(",")) {
+                    modules.add(image);
+                }
+            }
+        }
+        Doc prefix = context.buildChild(children[0]); // "EXTENDS" keyword
         return new ExtendsFormatter(context.getConfig()).format(prefix, modules);
     }
 

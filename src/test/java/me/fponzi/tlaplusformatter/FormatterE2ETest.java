@@ -3,12 +3,14 @@ package me.fponzi.tlaplusformatter;
 import me.fponzi.tlaplusformatter.exceptions.SanyFrontendException;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static me.fponzi.tlaplusformatter.Utils.assertSpecEquals;
 import static me.fponzi.tlaplusformatter.Utils.assertSpecUnchanged;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * End-to-end tests for the TLA+ formatter.
@@ -221,6 +223,35 @@ class FormatterE2ETest {
                 "Init == x = 0\n" +
                 "====\n";
         assertSpecUnchanged(spec);
+    }
+
+    @Test
+    void testExtendsLocalModuleWithOtherModules() throws IOException, SanyFrontendException {
+        // SANY returns empty getHumanReadableImage() for certain local module names
+        // in EXTENDS, even though getImage() has the correct value.
+        // This caused "EXTENDS , TLC" instead of "EXTENDS TokenRing, TLC".
+        Path tmpDir = Files.createTempDirectory("tlatest");
+        try {
+            String baseModule = "---- MODULE TokenRing ----\n" +
+                    "EXTENDS Naturals\n" +
+                    "VARIABLE x\n" +
+                    "====\n";
+            Files.writeString(tmpDir.resolve("TokenRing.tla"), baseModule);
+
+            String mainModule = "---- MODULE Main ----\n" +
+                    "EXTENDS TokenRing, TLC\n" +
+                    "====\n";
+            File mainFile = tmpDir.resolve("Main.tla").toFile();
+            Files.writeString(mainFile.toPath(), mainModule);
+
+            TLAPlusFormatter formatter = new TLAPlusFormatter(mainFile);
+            String output = formatter.getOutput();
+            assertTrue(output.contains("EXTENDS TokenRing, TLC"),
+                    "EXTENDS should preserve local module name, got: " + output);
+        } finally {
+            Files.walk(tmpDir).sorted(java.util.Comparator.reverseOrder())
+                    .map(Path::toFile).forEach(File::delete);
+        }
     }
 
     @Test
