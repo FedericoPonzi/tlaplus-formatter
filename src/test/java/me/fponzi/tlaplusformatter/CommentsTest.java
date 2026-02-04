@@ -265,6 +265,25 @@ public class CommentsTest {
     }
 
     @Test
+    public void recordConstructorWithCommentOnComma() throws Exception {
+        // Comments attached to comma separators in record constructors should be preserved.
+        // In comma-first style, SANY attaches the comment to the comma node as a preComment.
+        var input = "---- MODULE Test ----\n" +
+                "Foo == [ a |-> 1\n" +
+                "  \\* comment on comma\n" +
+                "  , b |-> 2 ]\n" +
+                "====";
+        var formatter = new TLAPlusFormatter(input);
+        var formatted = formatter.getOutput();
+        assertTrue(formatted.contains("\\* comment on comma"),
+                "Comment on comma in record constructor should be preserved. Got:\n" + formatted);
+        // Verify semantic preservation: AST of formatted output matches original
+        var reformatter = new TLAPlusFormatter(formatted);
+        assertTrue(Utils.assertAstEquals(formatter.root, reformatter.root),
+                "AST should be preserved after formatting");
+    }
+
+    @Test
     public void constantsWithCommentBeforeFirstConstant() {
         // This tests that a comment BEFORE the first constant is preserved.
         // The comment appears as preComment on the constant node.
