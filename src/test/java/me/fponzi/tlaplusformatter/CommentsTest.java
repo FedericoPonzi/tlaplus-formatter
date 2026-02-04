@@ -3,6 +3,7 @@ package me.fponzi.tlaplusformatter;
 import org.junit.jupiter.api.Test;
 
 import static me.fponzi.tlaplusformatter.Utils.assertSpecEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class CommentsTest {
@@ -235,6 +236,30 @@ public class CommentsTest {
         var expected = "---------- MODULE Test -----\n" +
                 "Foo == \\* Comment before tuple\n" +
                 "  << 1, 2 >>\n" +
+                "====";
+        assertSpecEquals(expected, input);
+    }
+
+    @Test
+    public void constantsWithCommaFirstComments() {
+        // In comma-first style, inline comments after a constant end up as preComments
+        // on the comma node (not the next constant). Comma-first formatting is preserved
+        // so that SANY re-attaches comments to the same AST nodes.
+        var input = "---------- MODULE Test -----\n" +
+                "CONSTANTS\n" +
+                "    N \\* comment on N\n" +
+                ",   R \\* comment on R\n" +
+                ",   M\n" +
+                "\n" +
+                "Init == TRUE\n" +
+                "====";
+        var expected = "---------- MODULE Test -----\n" +
+                "CONSTANTS\n" +
+                "    N    \\* comment on N\n" +
+                ",   R    \\* comment on R\n" +
+                ",   M\n" +
+                "\n" +
+                "Init == TRUE\n" +
                 "====";
         assertSpecEquals(expected, input);
     }

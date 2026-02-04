@@ -8,7 +8,9 @@ import tla2sany.st.TreeNode;
 
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Construct implementation for CONSTANTS declarations.
@@ -38,16 +40,19 @@ public class ConstantsConstruct implements TlaConstruct {
             return prefix;
         }
 
+        // Extract comments from comma separators (for comma-first style)
+        Map<Integer, String[]> commaComments = extractCommaPreComments(node);
+
         // Check if any constant has comments - if so, use multi-line format
         // Comments are on the inner identifier node for IDENT_DECL nodes
-        boolean hasComments = constantNodes.stream()
+        boolean hasComments = !commaComments.isEmpty() || constantNodes.stream()
                 .anyMatch(n -> {
                     TreeNode commentNode = getCommentNode(n);
                     return commentNode.getPreComments() != null && commentNode.getPreComments().length > 0;
                 });
 
         if (hasComments) {
-            return formatWithComments(prefix, constantNodes, context);
+            return formatWithComments(prefix, constantNodes, context, commaComments);
         } else {
             // No comments - use simple string extraction for single-line format
             List<String> constants = context.extractStringList(node);
@@ -93,6 +98,45 @@ public class ConstantsConstruct implements TlaConstruct {
     }
 
     /**
+     * Extract preComments from comma separator nodes within the CONSTANTS declaration.
+     * In comma-first style, inline comments after a constant end up as preComments of
+     * the following comma. Returns a map from constant index to the comma preComments
+     * that should be treated as post-comments of the constant at that index.
+     */
+    private Map<Integer, String[]> extractCommaPreComments(TreeNode node) {
+        Map<Integer, String[]> result = new HashMap<>();
+
+        TreeNode[] children = null;
+        if (node.one() != null && node.one().length > 0) {
+            children = node.one();
+        } else if (node.zero() != null && node.zero().length > 0) {
+            children = node.zero();
+        }
+
+        if (children != null) {
+            int constIndex = -1;
+            for (TreeNode child : children) {
+                if (isValidNode(child) && child.getImage() != null) {
+                    String image = child.getHumanReadableImage();
+                    if (",".equals(image)) {
+                        String[] comments = child.getPreComments();
+                        if (comments != null && comments.length > 0) {
+                            // Comma after const[constIndex] has comments that are
+                            // post-comments of const[constIndex]. Map to constIndex+1
+                            // so formatWithComments can merge them.
+                            result.put(constIndex + 1, comments);
+                        }
+                    } else if (!"CONSTANTS".equals(image) && !"CONSTANT".equals(image)) {
+                        constIndex++;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Check if a node is valid (not a placeholder).
      */
     private boolean isValidNode(TreeNode node) {
@@ -108,17 +152,83 @@ public class ConstantsConstruct implements TlaConstruct {
      * are stored as pre-comments of the NEXT token. So "Jug, \* The set" has the comment
      * stored as a pre-comment of "Capacity". We need to handle this by treating pre-comments of
      * constant N as post-comments of constant N-1.
+     *
+     * When the input uses comma-first style, comments end up on comma nodes instead.
+     * In that case we preserve comma-first formatting so SANY re-attaches comments
+     * to the same AST nodes.
      */
-    private Doc formatWithComments(Doc prefix, List<TreeNode> constantNodes, ConstructContext context) {
+    private Doc formatWithComments(Doc prefix, List<TreeNode> constantNodes, ConstructContext context, Map<Integer, String[]> commaComments) {
+        if (!commaComments.isEmpty()) {
+            return formatCommaFirstWithComments(prefix, constantNodes, commaComments);
+        }
+        return formatCommaLastWithComments(prefix, constantNodes);
+    }
+
+    /**
+     * Comma-first formatting: preserves comment attachment on comma nodes.
+     * Output format:
+     *     CONSTANTS
+     *         N    \* comment on N
+     *     ,   R    \* comment on R
+     *     ,   M
+     */
+    private Doc formatCommaFirstWithComments(Doc prefix, List<TreeNode> constantNodes, Map<Integer, String[]> commaComments) {
+        Doc result = prefix;
+        String indent = "    "; // 4 spaces for constants
+        String commaPrefix = ",   "; // comma + 3 spaces
+
+        for (int i = 0; i < constantNodes.size(); i++) {
+            TreeNode constNode = constantNodes.get(i);
+            String constDecl = buildConstantDeclaration(constNode);
+            TreeNode commentNode = getCommentNode(constNode);
+            String[] nodePreComments = commentNode.getPreComments();
+
+            if (i == 0) {
+                // Handle any pre-comments before the first constant
+                if (nodePreComments != null && nodePreComments.length > 0) {
+                    for (String comment : nodePreComments) {
+                        result = result.appendLine(Doc.text(indent + normalizeCommentWhitespace(comment)));
+                    }
+                }
+                result = result.appendLine(Doc.text(indent + constDecl));
+            } else {
+                // Handle pre-comments on the constant itself (rare in comma-first, but possible)
+                if (nodePreComments != null && nodePreComments.length > 0) {
+                    for (String comment : nodePreComments) {
+                        result = result.appendLine(Doc.text(indent + normalizeCommentWhitespace(comment)));
+                    }
+                }
+                result = result.appendLine(Doc.text(commaPrefix + constDecl));
+            }
+
+            // Post-comments: from the comma AFTER this constant (commaComments keyed by next index)
+            String[] postComments = commaComments.get(i + 1);
+            if (postComments != null && postComments.length > 0) {
+                String normalized = normalizeCommentWhitespace(postComments[0]);
+                if (postComments.length == 1 && normalized.startsWith("\\*")) {
+                    result = result.append(Doc.text("    " + normalized));
+                } else {
+                    for (String comment : postComments) {
+                        result = result.append(Doc.text("    " + normalizeCommentWhitespace(comment)));
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Comma-last formatting: the standard format when comments are on constant nodes.
+     */
+    private Doc formatCommaLastWithComments(Doc prefix, List<TreeNode> constantNodes) {
         Doc result = prefix;
         String indent = "         "; // Align with "CONSTANT " (9 spaces)
         String commentIndent = "    "; // 4 spaces for block comments
 
         for (int i = 0; i < constantNodes.size(); i++) {
             TreeNode constNode = constantNodes.get(i);
-            // Build the constant declaration string manually to avoid comment duplication
             String constDecl = buildConstantDeclaration(constNode);
-            // Get comments from the inner identifier node
             TreeNode commentNode = getCommentNode(constNode);
             String[] preComments = commentNode.getPreComments();
 
@@ -224,6 +334,21 @@ public class ConstantsConstruct implements TlaConstruct {
                         constructName, "breakStrategy", ListFormatStrategy.SMART_BREAK);
             }
         }
+    }
+
+    /**
+     * Merge two comment arrays (either may be null/empty).
+     */
+    private static String[] mergeComments(String[] a, String[] b) {
+        boolean aEmpty = a == null || a.length == 0;
+        boolean bEmpty = b == null || b.length == 0;
+        if (aEmpty && bEmpty) return null;
+        if (aEmpty) return b;
+        if (bEmpty) return a;
+        List<String> merged = new ArrayList<>();
+        for (String s : a) merged.add(s);
+        for (String s : b) merged.add(s);
+        return merged.toArray(new String[0]);
     }
 
     /**
