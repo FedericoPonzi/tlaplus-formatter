@@ -284,6 +284,32 @@ public class CommentsTest {
     }
 
     @Test
+    public void infixConjunctionWithComments() throws Exception {
+        // When conjunction /\ items are NOT aligned at the same column, SANY parses them
+        // as infix operators (N_InfixExpr) rather than a bulleted list (N_ConjList).
+        // Comments on infix /\ operators are attached to the inner INFIX_OP token (kind=373)
+        // inside the N_GenInfixOp wrapper (kind=359). GenInfixOpConstruct must process
+        // its children to preserve these comments.
+        var input = "---- MODULE Test ----\n" +
+                "EXTENDS Naturals\n" +
+                "VARIABLES a, b, c\n" +
+                "Op == /\\ a = 1 \\* comment1\n" +
+                "        /\\ b = 2 \\* comment2\n" +
+                "        /\\ c = 3\n" +
+                "====";
+        var formatter = new TLAPlusFormatter(input);
+        var formatted = formatter.getOutput();
+        assertTrue(formatted.contains("\\* comment1"),
+                "Comment on infix conjunction should be preserved. Got:\n" + formatted);
+        assertTrue(formatted.contains("\\* comment2"),
+                "Comment on infix conjunction should be preserved. Got:\n" + formatted);
+        // Verify semantic preservation: AST of formatted output matches original
+        var reformatter = new TLAPlusFormatter(formatted);
+        assertTrue(Utils.assertAstEquals(formatter.root, reformatter.root),
+                "AST should be preserved after formatting");
+    }
+
+    @Test
     public void constantsWithCommentBeforeFirstConstant() {
         // This tests that a comment BEFORE the first constant is preserved.
         // The comment appears as preComment on the constant node.
