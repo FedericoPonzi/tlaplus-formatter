@@ -310,6 +310,62 @@ public class CommentsTest {
     }
 
     @Test
+    public void recordConstructorBracketWithPreComment() throws Exception {
+        // When a comment appears between { and [ in a set containing a record constructor,
+        // SANY attaches it to the [ as a pre-comment. The RcdConstructorConstruct must
+        // use buildChild for brackets to preserve these comments.
+        var input = "---- MODULE Test ----\n" +
+                "Foo == { \\* comment on bracket\n" +
+                "    [a |-> 1, b |-> 2] }\n" +
+                "====";
+        var formatter = new TLAPlusFormatter(input);
+        var formatted = formatter.getOutput();
+        assertTrue(formatted.contains("\\* comment on bracket"),
+                "Comment on record constructor bracket should be preserved. Got:\n" + formatted);
+        var reformatter = new TLAPlusFormatter(formatted);
+        assertTrue(Utils.assertAstEquals(formatter.root, reformatter.root),
+                "AST should be preserved after formatting");
+    }
+
+    @Test
+    public void setEnumerateClosingBraceWithPreComment() throws Exception {
+        // When a comment appears before } in a set enumeration,
+        // SANY attaches it to the } as a pre-comment. SetEnumerateConstruct must
+        // use buildChild for braces to preserve these comments.
+        var input = "---- MODULE Test ----\n" +
+                "Foo == { 1, 2 \\* comment on brace\n" +
+                "       }\n" +
+                "====";
+        var formatter = new TLAPlusFormatter(input);
+        var formatted = formatter.getOutput();
+        assertTrue(formatted.contains("\\* comment on brace"),
+                "Comment on closing brace should be preserved. Got:\n" + formatted);
+        var reformatter = new TLAPlusFormatter(formatted);
+        assertTrue(Utils.assertAstEquals(formatter.root, reformatter.root),
+                "AST should be preserved after formatting");
+    }
+
+    @Test
+    public void parenExprClosingParenWithPreComment() throws Exception {
+        // When a comment appears before ) in a parenthesized expression,
+        // SANY attaches it to the ) as a pre-comment. ParenExprConstruct must
+        // use buildChild for parens to preserve these comments.
+        var input = "---- MODULE Test ----\n" +
+                "EXTENDS Naturals\n" +
+                "VARIABLE x\n" +
+                "Foo == ( x = 1 \\* comment on paren\n" +
+                "       )\n" +
+                "====";
+        var formatter = new TLAPlusFormatter(input);
+        var formatted = formatter.getOutput();
+        assertTrue(formatted.contains("\\* comment on paren"),
+                "Comment on closing paren should be preserved. Got:\n" + formatted);
+        var reformatter = new TLAPlusFormatter(formatted);
+        assertTrue(Utils.assertAstEquals(formatter.root, reformatter.root),
+                "AST should be preserved after formatting");
+    }
+
+    @Test
     public void constantsWithCommentBeforeFirstConstant() {
         // This tests that a comment BEFORE the first constant is preserved.
         // The comment appears as preComment on the constant node.

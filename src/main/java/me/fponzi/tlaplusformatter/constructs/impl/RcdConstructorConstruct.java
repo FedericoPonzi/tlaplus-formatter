@@ -66,9 +66,9 @@ public class RcdConstructorConstruct implements TlaConstruct {
             }
         }
         return Doc.group(
-                Doc.text("[")
+                context.buildChild(node.zero()[0]) // [
                         .appendSpace(content.indent("[ ".length()))
-                        .appendLineOrSpace(Doc.text("]")));
+                        .appendLineOrSpace(context.buildChild(node.zero()[node.zero().length - 1]))); // ]
     }
 
     private static String normalizeComment(String s) {

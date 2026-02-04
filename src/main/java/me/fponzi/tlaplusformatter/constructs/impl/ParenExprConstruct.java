@@ -31,8 +31,8 @@ public class ParenExprConstruct implements TlaConstruct {
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         assert (node.zero() != null && node.zero().length >= 3);
         Doc innerExpr = context.buildChild(node.zero()[1]);
-        return Doc.group(Doc.text("(")
+        return Doc.group(context.buildChild(node.zero()[0]) // (
                 .appendSpace(innerExpr.indent("( ".length()))
-                .appendLineOrSpace(Doc.text(")")));
+                .appendLineOrSpace(context.buildChild(node.zero()[node.zero().length - 1]))); // )
     }
 }
