@@ -62,10 +62,10 @@ public class FcnConstConstruct implements TlaConstruct {
         // z[mapSymbolIndex + 2] = ]
 
         return Doc.group(
-                Doc.text("[")
+                context.buildChild(z[0]) // [
                         .append(qBounds)
                         .appendSpace(mapSymbol)
                         .appendLineOrSpace(mapExpr).indent(indentSize)
-        ).appendLineOrEmpty(Doc.text("]"));
+        ).appendLineOrEmpty(context.buildChild(z[mapSymbolIndex + 2])); // ]
     }
 }

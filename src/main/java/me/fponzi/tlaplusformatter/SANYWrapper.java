@@ -109,6 +109,7 @@ public class SANYWrapper {
                 // Community modules
                 System.getenv("TLA_COMMUNITY_MODULES"),
                 "/tmp/CommunityModules/modules",
+                "/tmp/CommunityModules",
                 System.getProperty("user.home") + "/.tlaplus/CommunityModules/modules",
                 // TLAPS library
                 System.getenv("TLAPS_LIBRARY"),
