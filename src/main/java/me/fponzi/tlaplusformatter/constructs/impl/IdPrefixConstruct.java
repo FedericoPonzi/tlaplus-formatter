@@ -22,8 +22,28 @@ public class IdPrefixConstruct implements TlaConstruct {
         if (image == null || image.isEmpty()) {
             return Doc.empty();
         }
-        // Return the prefix (e.g., "R!")
-        return Doc.text(image);
+        Doc mainDoc = Doc.text(image);
+        // Check descendants for preComments that need to be preserved.
+        // Comments on module prefix identifiers (e.g., "EWD998" in "EWD998!op")
+        // are attached to inner identifier nodes that would be skipped by Doc.text().
+        return addDescendantComments(node, mainDoc);
+    }
+
+    private static Doc addDescendantComments(TreeNode node, Doc mainDoc) {
+        TreeNode[][] childArrays = {node.zero(), node.one()};
+        for (TreeNode[] children : childArrays) {
+            if (children == null) continue;
+            for (TreeNode child : children) {
+                if (child.getPreComments() != null && child.getPreComments().length > 0) {
+                    return ConstructContext.addComments(child, mainDoc);
+                }
+                Doc result = addDescendantComments(child, mainDoc);
+                if (result != mainDoc) {
+                    return result;
+                }
+            }
+        }
+        return mainDoc;
     }
 
     @Override

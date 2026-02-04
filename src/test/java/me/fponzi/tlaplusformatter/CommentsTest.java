@@ -366,6 +366,26 @@ public class CommentsTest {
     }
 
     @Test
+    public void modulePrefixWithPreComments() throws Exception {
+        // When comments appear before a module-prefixed reference like N!Nat,
+        // SANY attaches them to the ID_PREFIX_ELEMENT child of ID_PREFIX.
+        // IdPrefixConstruct must process children to preserve these comments.
+        var input = "---- MODULE Test ----\n" +
+                "LOCAL N == INSTANCE Naturals\n" +
+                "Op ==\n" +
+                "  \\* comment on module ref\n" +
+                "  N!Nat\n" +
+                "====";
+        var formatter = new TLAPlusFormatter(input);
+        var formatted = formatter.getOutput();
+        assertTrue(formatted.contains("\\* comment on module ref"),
+                "Comment on module prefix reference should be preserved. Got:\n" + formatted);
+        var reformatter = new TLAPlusFormatter(formatted);
+        assertTrue(Utils.assertAstEquals(formatter.root, reformatter.root),
+                "AST should be preserved after formatting");
+    }
+
+    @Test
     public void constantsWithCommentBeforeFirstConstant() {
         // This tests that a comment BEFORE the first constant is preserved.
         // The comment appears as preComment on the constant node.
