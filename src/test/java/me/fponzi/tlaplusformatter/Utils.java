@@ -21,6 +21,9 @@ public class Utils {
 
     static boolean assertAstEquals(TreeNode root1, TreeNode root2) {
         if (root1.zero() != null) {
+            assertNotNull(root2.zero(), "Node zero[] is null in formatted AST but not in original. Node: " + root1.getImage());
+            assertEquals(root1.zero().length, root2.zero().length,
+                    "Node zero[] length mismatch. Node: " + root1.getImage() + " at " + root1.getLocation());
             for (int i = 0; i < root1.zero().length; i++) {
                 if (!assertAstEquals(root1.zero()[i], root2.zero()[i])) {
                     return false;
@@ -28,6 +31,9 @@ public class Utils {
             }
         }
         if (root1.one() != null) {
+            assertNotNull(root2.one(), "Node one[] is null in formatted AST but not in original. Node: " + root1.getImage());
+            assertEquals(root1.one().length, root2.one().length,
+                    "Node one[] length mismatch. Node: " + root1.getImage() + " at " + root1.getLocation());
             for (int i = 0; i < root1.one().length; i++) {
                 if (!assertAstEquals(root1.one()[i], root2.one()[i])) {
                     return false;
