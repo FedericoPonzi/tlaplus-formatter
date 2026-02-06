@@ -35,7 +35,8 @@ Support(R) == {r[1]: r \in R} \cup {r[2]: r \in R}
 (***************************************************************************)
 TC(R) ==
   LET S == Support(R)
-  IN {<<s ,t>> \in S \X S: \E p \in Seq(S):
+  IN {<<s ,t>> \in S \X S:
+        \E p \in Seq(S):
           /\ Len(p) > 1
           /\ p[1] = s
           /\ p[Len(p)] = t
@@ -54,7 +55,8 @@ TC(R) ==
 TC1(R) ==
   LET BoundedSeq(S, n) == UNION {[1 .. i -> S]: i \in 0 .. n}
       S == Support(R)
-  IN {<<s ,t>> \in S \X S: \E p \in BoundedSeq(S, Cardinality(S) + 1):
+  IN {<<s ,t>> \in S \X S:
+        \E p \in BoundedSeq(S, Cardinality(S) + 1):
           /\ Len(p) > 1
           /\ p[1] = s
           /\ p[Len(p)] = t
@@ -71,7 +73,8 @@ TC1(R) ==
 R ** T ==
   LET SR == Support(R)
       ST == Support(T)
-  IN {<<r ,t>> \in SR \X ST: \E s \in SR \cap ST: ( << r, s >> \in R ) /\ ( << s, t >> \in T )
+  IN {<<r ,t>> \in SR \X ST:
+        \E s \in SR \cap ST: ( << r, s >> \in R ) /\ ( << s, t >> \in T )
       }
 
 (***************************************************************************)
