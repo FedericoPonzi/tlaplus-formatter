@@ -109,6 +109,11 @@ public class TlaDocBuilder {
         registry.register(new InstanceConstruct());
         registry.register(new InstanceConstruct.NonLocalInstanceConstruct());
 
+        // Proofs
+        registry.register(new ProofConstruct());
+        registry.register(new ProofConstruct.InnerProofConstruct());
+        registry.register(new ProofConstruct.ProofStepConstruct());
+
     }
 
     /**
@@ -173,7 +178,7 @@ public class TlaDocBuilder {
         if (node.zero() != null) {
             for (TreeNode child : node.zero()) {
                 if (isValidNode(child)) {
-                    Doc childDoc = build(child);
+                    Doc childDoc = context.buildChild(child);
                     children.add(childDoc);
                 }
             }
@@ -182,7 +187,7 @@ public class TlaDocBuilder {
         if (node.one() != null) {
             for (TreeNode child : node.one()) {
                 if (isValidNode(child)) {
-                    Doc childDoc = build(child);
+                    Doc childDoc = context.buildChild(child);
                     children.add(childDoc);
                 }
             }

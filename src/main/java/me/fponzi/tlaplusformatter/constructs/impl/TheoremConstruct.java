@@ -34,24 +34,32 @@ public class TheoremConstruct implements TlaConstruct {
         assert (z != null && z.length >= 2);
 
         var theoremKeyword = context.buildChild(z[0]);
+        Doc proof = Doc.empty();
 
-        if (z.length == 2) {
-            // Unnamed theorem: THEOREM expr
+        if (z.length == 2 || z.length == 3) {
+            // Unnamed theorem: THEOREM expr [proof]
             var expr = context.buildChild(z[1]);
+            if (z.length == 3) {
+                proof = Doc.line().append(context.buildChild(z[2]));
+            }
             return Doc.group(
                     theoremKeyword.appendLineOrSpace(expr)
-            ).indent(z[0].getImage().length() + 1);
+            ).indent(z[0].getImage().length() + 1).append(proof);
         } else {
-            // Named theorem: THEOREM Name == expr
-            assert z.length == 4;
+            // Named theorem: THEOREM Name == expr [proof]
+            assert z.length == 4 || z.length == 5;
             var name = context.buildChild(z[1]);
             var expr = context.buildChild(z[3]);
+            if (z.length == 5) {
+                proof = Doc.line().append(context.buildChild(z[4]));
+            }
             return theoremKeyword
                     .appendSpace(name)
                     .appendSpace(Doc.text("=="))
                     .append(Doc
                             .group(Doc.lineOrSpace().append(expr))
-                            .indent(indentSize));
+                            .indent(indentSize))
+                    .append(proof);
         }
     }
 }
