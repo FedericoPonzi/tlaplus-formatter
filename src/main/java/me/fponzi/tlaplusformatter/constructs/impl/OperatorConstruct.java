@@ -31,13 +31,21 @@ public class OperatorConstruct implements TlaConstruct {
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         var o = node.one();
         assert (o != null && o.length >= 3);
-        // QueryReplyLoop
+
+        // zero[] contains qualifiers like LOCAL
+        Doc qualifier = Doc.empty();
+        if (node.zero() != null && node.zero().length > 0) {
+            for (TreeNode z : node.zero()) {
+                qualifier = qualifier.append(context.buildChild(z)).appendSpace(Doc.empty());
+            }
+        }
+
         var name = context.buildChild(o[0]);
         var exprNode = context.buildChild(o[2]);
-        return name
+        return qualifier.append(name
                 .appendSpace(Doc.text("=="))
                 .append(Doc
                         .group(Doc.lineOrSpace().append(exprNode))
-                        .indent(indentSize));
+                        .indent(indentSize)));
     }
 }
