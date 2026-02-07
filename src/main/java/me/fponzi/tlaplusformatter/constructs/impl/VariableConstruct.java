@@ -1,6 +1,7 @@
 package me.fponzi.tlaplusformatter.constructs.impl;
 
 import com.opencastsoftware.prettier4j.Doc;
+import me.fponzi.tlaplusformatter.TlaDocBuilder;
 import me.fponzi.tlaplusformatter.constructs.*;
 import tla2sany.st.TreeNode;
 
@@ -99,7 +100,7 @@ public class VariableConstruct implements TlaConstruct {
 
         for (int i = 0; i < variableNodes.size(); i++) {
             TreeNode varNode = variableNodes.get(i);
-            String varName = varNode.getHumanReadableImage();
+            String varName = TlaDocBuilder.getBestImage(varNode);
             String[] preComments = varNode.getPreComments();
 
             if (i == 0) {

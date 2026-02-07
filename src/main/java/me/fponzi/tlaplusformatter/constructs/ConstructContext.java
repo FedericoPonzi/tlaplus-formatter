@@ -207,7 +207,7 @@ public class ConstructContext {
             if (children != null) {
                 for (TreeNode child : children) {
                     if (isValid(child) && child.getImage() != null) {
-                        String image = child.getHumanReadableImage();
+                        String image = TlaDocBuilder.getBestImage(child);
                         // Skip common separators and keywords
                         var toSkip = List.of(",", "EXTENDS", "VARIABLES", "VARIABLE", "CONSTANT", "CONSTANTS");
                         if (toSkip.contains(image)) {

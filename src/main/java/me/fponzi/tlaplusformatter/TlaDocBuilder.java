@@ -168,7 +168,12 @@ public class TlaDocBuilder {
             LOG.debug("Generic node kind: {} image: '{}' hri: '{}'", node.getKind(), image, node.getHumanReadableImage());
         }
 
-        if (image != null && !image.isEmpty() && !image.startsWith("N_")) {
+        // Leaf nodes (no children) are always rendered as text, even if image
+        // starts with "N_" -- user identifiers like "N_Assumption" must not be
+        // confused with SANY internal node kind names.
+        boolean isLeaf = (node.zero() == null || node.zero().length == 0)
+                      && (node.one() == null || node.one().length == 0);
+        if (image != null && !image.isEmpty() && (isLeaf || !image.startsWith("N_"))) {
             return Doc.text(getBestImage(node));
         }
 

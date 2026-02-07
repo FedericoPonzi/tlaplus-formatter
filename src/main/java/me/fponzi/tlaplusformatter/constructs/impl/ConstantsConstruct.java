@@ -1,6 +1,7 @@
 package me.fponzi.tlaplusformatter.constructs.impl;
 
 import com.opencastsoftware.prettier4j.Doc;
+import me.fponzi.tlaplusformatter.TlaDocBuilder;
 import me.fponzi.tlaplusformatter.constructs.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,8 +55,11 @@ public class ConstantsConstruct implements TlaConstruct {
         if (hasComments) {
             return formatWithComments(prefix, constantNodes, context, commaComments);
         } else {
-            // No comments - use simple string extraction for single-line format
-            List<String> constants = context.extractStringList(node);
+            // No comments - use buildConstantDeclaration which properly unwraps IDENT_DECL
+            List<String> constants = new ArrayList<>();
+            for (TreeNode constNode : constantNodes) {
+                constants.add(buildConstantDeclaration(constNode));
+            }
             return new ConstantsFormatter(context.getConfig()).format(prefix, constants);
         }
     }
@@ -285,15 +289,15 @@ public class ConstantsConstruct implements TlaConstruct {
                 StringBuilder sb = new StringBuilder();
                 for (TreeNode child : children) {
                     if (child != null && child.getImage() != null) {
-                        sb.append(child.getHumanReadableImage());
+                        sb.append(TlaDocBuilder.getBestImage(child));
                     }
                 }
                 return sb.toString();
             } else if (children != null && children.length == 1) {
-                return children[0].getHumanReadableImage();
+                return TlaDocBuilder.getBestImage(children[0]);
             }
         }
-        return node.getHumanReadableImage();
+        return TlaDocBuilder.getBestImage(node);
     }
 
     /**
