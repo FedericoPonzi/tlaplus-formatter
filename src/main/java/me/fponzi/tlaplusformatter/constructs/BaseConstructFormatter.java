@@ -67,6 +67,20 @@ public abstract class BaseConstructFormatter<T> {
     }
 
     /**
+     * Get the length of the last line of a rendered Doc.
+     * When the prefix includes multi-line preComments, only the last line
+     * (containing the keyword like "EXTENDS") should determine indentation.
+     */
+    private static int lastLineLength(Doc doc) {
+        String rendered = doc.render();
+        int lastNewline = rendered.lastIndexOf('\n');
+        if (lastNewline < 0) {
+            return rendered.length();
+        }
+        return rendered.length() - lastNewline - 1;
+    }
+
+    /**
      * Format items with smart line breaking based on line width.
      * Uses prettier4j's line-or-space mechanism for optimal breaking.
      */
@@ -81,7 +95,7 @@ public abstract class BaseConstructFormatter<T> {
 
         return
                 prefix
-                        .appendSpace(Doc.group(itemList).indent(prefix.render().length() + 1));
+                        .appendSpace(Doc.group(itemList).indent(lastLineLength(prefix) + 1));
     }
 
     /**
@@ -94,7 +108,7 @@ public abstract class BaseConstructFormatter<T> {
         for (int i = 1; i < items.size(); i++) {
             result = result
                     .append(Doc.text(","))
-                    .appendLine(itemFormatter.apply(items.get(i)).indent(prefix.render().length()));
+                    .appendLine(itemFormatter.apply(items.get(i)).indent(lastLineLength(prefix)));
         }
 
         return result;
