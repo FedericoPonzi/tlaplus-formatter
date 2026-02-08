@@ -115,6 +115,7 @@ public class TlaDocBuilder {
         registry.register(new ProofConstruct.ProofStepConstruct());
         registry.register(new DefStepConstruct());
         registry.register(new AssumeProveConstruct());
+        registry.register(new PickStepConstruct());
 
     }
 

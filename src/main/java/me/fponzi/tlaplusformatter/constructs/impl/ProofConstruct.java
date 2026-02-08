@@ -112,6 +112,9 @@ public class ProofConstruct implements TlaConstruct {
                 } else if (hasPreComments(lastChild)) {
                     // Terminal proof has comments -- always new line to preserve them
                     result = result.append(Doc.line().append(proof).indent(indentSize));
+                } else if (hasMultiLineStepContent(zero)) {
+                    // Step content contains multi-line constructs (e.g. PICK with conj list)
+                    result = result.append(Doc.line().append(proof).indent(indentSize));
                 } else {
                     // Terminal proofs (OBVIOUS/BY) prefer same line if they fit
                     result = Doc.group(result.append(
@@ -119,6 +122,28 @@ public class ProofConstruct implements TlaConstruct {
                 }
             }
             return result;
+        }
+
+        /** Check if step content nodes produce multi-line output (e.g. PICK with conj/disj body) */
+        private static boolean hasMultiLineStepContent(TreeNode[] zero) {
+            if (zero == null) return false;
+            for (int i = 0; i < zero.length - 1; i++) {
+                if (containsConjOrDisjList(zero[i])) return true;
+            }
+            return false;
+        }
+
+        /** Recursively check if a node or its direct children contain a conjunction/disjunction list */
+        private static boolean containsConjOrDisjList(TreeNode node) {
+            if (node == null) return false;
+            int kind = node.getKind();
+            if (kind == NodeKind.CONJ_LIST.getId() || kind == NodeKind.DISJ_LIST.getId()) return true;
+            if (node.zero() != null) {
+                for (TreeNode child : node.zero()) {
+                    if (containsConjOrDisjList(child)) return true;
+                }
+            }
+            return false;
         }
     }
 }
