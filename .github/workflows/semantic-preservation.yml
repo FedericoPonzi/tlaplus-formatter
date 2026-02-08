@@ -13,22 +13,22 @@ jobs:
 
     steps:
       - name: Checkout formatter repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout tlaplus/Examples repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: tlaplus/Examples
           path: tlaplus-examples
 
       - name: Checkout TLAPS repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: tlaplus/tlapm
           path: tlapm
 
       - name: Checkout Apalache repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: apalache-mc/apalache
           path: apalache
@@ -39,16 +39,16 @@ jobs:
           unzip -o CommunityModules-deps.jar -d CommunityModules
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'temurin'
 
       - name: Validate Gradle wrapper
-        uses: gradle/actions/wrapper-validation@v4
+        uses: gradle/actions/wrapper-validation@v5
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
 
       - name: Run semantic preservation tests
         env:
@@ -58,7 +58,7 @@ jobs:
         run: ./gradlew semanticPreservationTest -Dtlaplus.examples.path=${{ github.workspace }}/tlaplus-examples
 
       - name: Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: semantic-preservation-results
