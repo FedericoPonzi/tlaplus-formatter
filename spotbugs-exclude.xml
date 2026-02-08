@@ -45,11 +45,7 @@
     </Match>
 
     <!-- DLS_DEAD_LOCAL_STORE / UC_USELESS_OBJECT: Dead code in SANYWrapper.load(). -->
-    <Match>
-        <Class name="me.fponzi.tlaplusformatter.SANYWrapper"/>
-        <Method name="load"/>
-        <Bug pattern="DLS_DEAD_LOCAL_STORE,UC_USELESS_OBJECT"/>
-    </Match>
+    <!-- Fixed: dead code removed -->
 
     <!-- Test code exclusions -->
     <Match>

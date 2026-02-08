@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringWriter;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -25,19 +24,9 @@ import java.util.List;
 
 public class SANYWrapper {
     public static TreeNode load(File file) throws IOException, SanyFrontendException {
-        // create a string buffer to write SANY's error messages
-        // use.toString() to retrieve the error messages
         var errBuf = new StringWriter();
 
-        // Construct library lookup path
-        List<String> libraryPaths = new ArrayList<>();
-
-        // 1. Include the file's parent directory
         String parentDirPath = file.getAbsoluteFile().getParent();
-        if (parentDirPath != null) {
-            libraryPaths.add(parentDirPath);
-        }
-        URL tlapsResource = SANYWrapper.class.getClassLoader().getResource("tlaps-lib/TLAPS.tla");
 
         // Resolver for filenames, patched for wired modules.
         var filenameResolver = new CustomFilenameToStream(parentDirPath);
