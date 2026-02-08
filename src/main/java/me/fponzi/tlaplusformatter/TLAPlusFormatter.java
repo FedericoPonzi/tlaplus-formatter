@@ -30,7 +30,7 @@ public final class TLAPlusFormatter {
 
     public TLAPlusFormatter(File specPath, FormatConfig config) throws IOException, SanyFrontendException {
         this.docBuilder = new TlaDocBuilder(config);
-        this.config = config;
+        this.config = config.copy();
         this.root = SANYWrapper.load(specPath);
         this.spec = specPath;
 

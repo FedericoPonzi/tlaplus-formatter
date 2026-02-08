@@ -90,11 +90,6 @@ spotbugs {
     excludeFilter.set(file("spotbugs-exclude.xml"))
 }
 
-// Don't run SpotBugs on test code — only enforce on main sources.
-tasks.named<com.github.spotbugs.snom.SpotBugsTask>("spotbugsTest") {
-    enabled = false
-}
-
 tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
     reports.create("html") {
         required.set(true)

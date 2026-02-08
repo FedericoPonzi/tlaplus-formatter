@@ -17,7 +17,7 @@ public abstract class BaseConstructFormatter<T> {
     protected final FormatConfig config;
 
     public BaseConstructFormatter(FormatConfig config) {
-        this.config = config;
+        this.config = config.copy();
     }
 
     /**

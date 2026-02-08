@@ -1,28 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FindBugsFilter>
-    <!--
-        Baseline exclusions for existing SpotBugs findings.
-        New code must not introduce any of these bug patterns.
-    -->
-
-    <!-- EI_EXPOSE_REP/REP2: FormatConfig and TlaDocBuilder are effectively immutable
-         after construction, so storing/returning references without copying is safe. -->
+    <!-- TlaDocBuilder is an internal class, not publicly exposed.
+         Storing it by reference in ConstructContext is safe. -->
     <Match>
-        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
-        <Or>
-            <Class name="me.fponzi.tlaplusformatter.TLAPlusFormatter"/>
-            <Class name="me.fponzi.tlaplusformatter.constructs.BaseConstructFormatter"/>
-            <Class name="me.fponzi.tlaplusformatter.constructs.ConstructContext"/>
-        </Or>
-    </Match>
-
-    <!-- Test code exclusions -->
-    <Match>
-        <Class name="me.fponzi.tlaplusformatter.LexiconTest"/>
-        <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
-    </Match>
-    <Match>
-        <Class name="me.fponzi.tlaplusformatter.MainTest"/>
-        <Bug pattern="DM_DEFAULT_ENCODING"/>
+        <Class name="me.fponzi.tlaplusformatter.constructs.ConstructContext"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
     </Match>
 </FindBugsFilter>

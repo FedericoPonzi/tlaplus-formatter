@@ -24,16 +24,16 @@ public final class ConstructContext {
     private final NodeAnalyzer nodeAnalyzer;
 
     public ConstructContext(FormatConfig config, TlaDocBuilder docBuilder) {
-        this.config = config;
+        this.config = config.copy();
         this.docBuilder = docBuilder;
         this.nodeAnalyzer = new NodeAnalyzer();
     }
 
     /**
-     * @return The current format configuration
+     * @return A copy of the current format configuration
      */
     public FormatConfig getConfig() {
-        return config;
+        return config.copy();
     }
 
     /**
