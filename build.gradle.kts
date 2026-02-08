@@ -1,6 +1,7 @@
 plugins {
     id("java")
     id("io.ktor.plugin") version "2.3.12"
+    id("com.github.spotbugs") version "6.0.7"
 }
 
 group = "me.fponzi"
@@ -78,5 +79,27 @@ application {
 ktor {
     fatJar {
         archiveFileName.set("tlaplus-formatter.jar")
+    }
+}
+
+spotbugs {
+    ignoreFailures.set(false)
+    showStackTraces.set(true)
+    effort.set(com.github.spotbugs.snom.Effort.DEFAULT)
+    reportLevel.set(com.github.spotbugs.snom.Confidence.DEFAULT)
+    excludeFilter.set(file("spotbugs-exclude.xml"))
+}
+
+// Don't run SpotBugs on test code — only enforce on main sources.
+tasks.named<com.github.spotbugs.snom.SpotBugsTask>("spotbugsTest") {
+    enabled = false
+}
+
+tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
+    reports.create("html") {
+        required.set(true)
+    }
+    reports.create("xml") {
+        required.set(true)
     }
 }

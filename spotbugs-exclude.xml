@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!--
+        Baseline exclusions for existing SpotBugs findings.
+        These should be fixed over time and removed from this file.
+        New code must not introduce any of these bug patterns.
+    -->
+
+    <!-- CT_CONSTRUCTOR_THROW: Constructors that throw exceptions.
+         FormatConfig and TLAPlusFormatter are not designed for subclassing. -->
+    <Match>
+        <Class name="me.fponzi.tlaplusformatter.FormatConfig"/>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+    </Match>
+    <Match>
+        <Class name="me.fponzi.tlaplusformatter.TLAPlusFormatter"/>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+    </Match>
+
+    <!-- DM_DEFAULT_ENCODING: Should use explicit charset (UTF-8). -->
+    <Match>
+        <Class name="me.fponzi.tlaplusformatter.SANYWrapper"/>
+        <Method name="loadSpecObject"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
+    <Match>
+        <Class name="me.fponzi.tlaplusformatter.TLAPlusFormatter"/>
+        <Method name="storeToTmp"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
+
+    <!-- EI_EXPOSE_REP / EI_EXPOSE_REP2: Mutable objects stored/returned without copying.
+         FormatConfig is treated as effectively immutable. -->
+    <Match>
+        <Class name="me.fponzi.tlaplusformatter.TLAPlusFormatter"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Class name="me.fponzi.tlaplusformatter.constructs.BaseConstructFormatter"/>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Class name="me.fponzi.tlaplusformatter.constructs.ConstructContext"/>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- DLS_DEAD_LOCAL_STORE / UC_USELESS_OBJECT: Dead code in SANYWrapper.load(). -->
+    <Match>
+        <Class name="me.fponzi.tlaplusformatter.SANYWrapper"/>
+        <Method name="load"/>
+        <Bug pattern="DLS_DEAD_LOCAL_STORE,UC_USELESS_OBJECT"/>
+    </Match>
+
+    <!-- Test code exclusions -->
+    <Match>
+        <Class name="me.fponzi.tlaplusformatter.LexiconTest"/>
+        <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
+    </Match>
+    <Match>
+        <Class name="me.fponzi.tlaplusformatter.MainTest"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
+</FindBugsFilter>
