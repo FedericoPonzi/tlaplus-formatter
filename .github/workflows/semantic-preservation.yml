@@ -44,8 +44,11 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v4
+
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Run semantic preservation tests
         env:

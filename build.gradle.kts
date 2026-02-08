@@ -2,6 +2,7 @@ plugins {
     id("java")
     id("io.ktor.plugin") version "2.3.12"
     id("com.github.spotbugs") version "6.0.7"
+    jacoco
 }
 
 group = "me.fponzi"
@@ -61,6 +62,15 @@ tasks.withType<Copy> {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
 }
 
 tasks.register<Test>("semanticPreservationTest") {
@@ -92,9 +102,6 @@ spotbugs {
 
 tasks.withType<com.github.spotbugs.snom.SpotBugsTask>().configureEach {
     reports.create("html") {
-        required.set(true)
-    }
-    reports.create("xml") {
         required.set(true)
     }
 }
