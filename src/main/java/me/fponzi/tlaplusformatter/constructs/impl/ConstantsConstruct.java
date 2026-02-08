@@ -209,7 +209,7 @@ public class ConstantsConstruct implements TlaConstruct {
             String[] postComments = commaComments.get(i + 1);
             if (postComments != null && postComments.length > 0) {
                 String normalized = normalizeCommentWhitespace(postComments[0]);
-                if (postComments.length == 1 && normalized.startsWith("\\*")) {
+                if (postComments.length == 1 && normalized.trim().startsWith("\\*")) {
                     result = result.append(Doc.text("    " + normalized));
                 } else {
                     for (String comment : postComments) {
@@ -254,7 +254,7 @@ public class ConstantsConstruct implements TlaConstruct {
                     // The pre-comments of this constant are actually inline comments of the previous constant
                     // Check if it's a single-line comment (\*) or multi-line block comment
                     String normalizedFirst = normalizeCommentWhitespace(preComments[0]);
-                    if (preComments.length == 1 && normalizedFirst.startsWith("\\*")) {
+                    if (preComments.length == 1 && normalizedFirst.trim().startsWith("\\*")) {
                         // Single inline comment: prev_const,    \* comment
                         result = result.append(Doc.text(",    " + normalizedFirst));
                         result = result.appendLine(Doc.text(indent + constDecl));
@@ -356,18 +356,10 @@ public class ConstantsConstruct implements TlaConstruct {
     }
 
     /**
-     * Strip leading whitespace and trailing newlines from a comment,
-     * but preserve trailing spaces before the newline.
+     * Normalize a comment: strip leading newlines and trailing newlines,
+     * but preserve indentation spaces before the comment marker.
      */
     private static String normalizeCommentWhitespace(String s) {
-        int start = 0;
-        while (start < s.length() && Character.isWhitespace(s.charAt(start))) {
-            start++;
-        }
-        int end = s.length();
-        while (end > start && (s.charAt(end - 1) == '\n' || s.charAt(end - 1) == '\r')) {
-            end--;
-        }
-        return s.substring(start, end);
+        return ConstructContext.normalizeCommentWhitespace(s, false);
     }
 }

@@ -107,15 +107,17 @@ public class ConstructContext {
 
     /**
      * Normalize comment whitespace.
-     * For new comments (starting with (* or \*): strip leading whitespace and trailing newlines.
+     * For new comments (starting with (* or \*): strip leading newlines only, preserve
+     * indentation spaces. SANY stores the column indentation in preComment strings
+     * (e.g., '\n    (*'), and stripping it changes the AST on re-parse.
      * For continuations: only strip trailing newlines, preserve leading whitespace.
      * Always preserve trailing spaces before the newline (SANY's AST preserves them).
      */
-    private static String normalizeCommentWhitespace(String s, boolean isContinuation) {
+    public static String normalizeCommentWhitespace(String s, boolean isContinuation) {
         int start = 0;
-        // Only strip leading whitespace for new comments, not continuations
+        // Strip leading newlines only (not spaces/tabs) so column indentation is preserved
         if (!isContinuation) {
-            while (start < s.length() && Character.isWhitespace(s.charAt(start))) {
+            while (start < s.length() && (s.charAt(start) == '\n' || s.charAt(start) == '\r')) {
                 start++;
             }
         }

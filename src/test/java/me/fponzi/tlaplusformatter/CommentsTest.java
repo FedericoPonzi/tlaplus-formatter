@@ -421,4 +421,38 @@ public class CommentsTest {
         assertSpecEquals(expected, input);
     }
 
+    @Test
+    public void blockCommentIndentationPreservedInPlusCal() throws Exception {
+        // Block comments inside PlusCal algorithm blocks have indentation that SANY
+        // stores in preComment strings (e.g., '\n    (*'). The formatter must preserve
+        // this indentation to maintain AST equality after re-parsing.
+        // Reproduces the BPConProof.tla failure (Category 4: AST mismatch).
+        var input = "---- MODULE Spec ----\n" +
+                "EXTENDS Naturals\n" +
+                "(**************************************************************************\n" +
+                "  algorithm Alg {\n" +
+                "    variable x = 0;\n" +
+                "  \n" +
+                "    (*********************************************************************)\n" +
+                "    (* Indented block comment with 4 spaces                              *)\n" +
+                "    (*********************************************************************)\n" +
+                "    macro Foo() { x := x + 1 }\n" +
+                "  }\n" +
+                "  \n" +
+                "  Below is the TLA+ translation.\n" +
+                "  **************************************************************************)\n" +
+                "\\* BEGIN TRANSLATION\n" +
+                "VARIABLES x\n" +
+                "\n" +
+                "Init == x = 0\n" +
+                "Next == x' = x + 1\n" +
+                "\\* END TRANSLATION\n" +
+                "====";
+        var formatter = new TLAPlusFormatter(input);
+        var formatted = formatter.getOutput();
+        var reformatter = new TLAPlusFormatter(formatted);
+        assertTrue(Utils.assertAstEquals(formatter.root, reformatter.root),
+                "AST should be preserved after formatting. Formatted output:\n" + formatted);
+    }
+
 }
