@@ -27,15 +27,29 @@ public class DefStepConstruct implements TlaConstruct {
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         var z = node.zero();
-        assert (z != null && z.length >= 2);
+        if (z == null || z.length == 0) {
+            return Doc.empty();
+        }
 
-        // z[0] = DEFINE keyword, z[1..n] = operator definitions
-        Doc keyword = context.buildChild(z[0]);
-        Doc defs = context.buildChild(z[1]);
-        for (int i = 2; i < z.length; i++) {
+        // Implicit DEFINE: z[] = [def1, def2, ...] (no DEFINE keyword)
+        // Explicit DEFINE: z[] = [DEFINE keyword, def1, def2, ...]
+        boolean hasKeyword = z[0].getImage().equals("DEFINE");
+        int firstDef = hasKeyword ? 1 : 0;
+
+        if (firstDef >= z.length) {
+            // DEFINE keyword with no definitions - just render keyword
+            return context.buildChild(z[0]);
+        }
+
+        Doc defs = context.buildChild(z[firstDef]);
+        for (int i = firstDef + 1; i < z.length; i++) {
             defs = defs.appendLine(context.buildChild(z[i]));
         }
-        // Align definitions under the first definition (after "DEFINE ")
-        return keyword.appendSpace(defs.indent(z[0].getImage().length() + 1));
+
+        if (hasKeyword) {
+            Doc keyword = context.buildChild(z[0]);
+            return keyword.appendSpace(defs.indent(z[0].getImage().length() + 1));
+        }
+        return defs;
     }
 }

@@ -259,4 +259,18 @@ public class ProofConstructTest {
                 "====";
         assertSpecEquals(expected, input);
     }
+
+    @Test
+    void testImplicitDefineNoKeyword() {
+        // Implicit DEFINE step (no DEFINE keyword): <1> P(b) == expr
+        var input = "----- MODULE Test -----\n" +
+                "EXTENDS TLAPS\n" +
+                "VARIABLE x\n" +
+                "THEOREM x = x\n" +
+                "<1> P == x = x\n" +
+                "<1>1. P OBVIOUS\n" +
+                "<1>. QED BY <1>1\n" +
+                "====";
+        assertUnchanged(input);
+    }
 }
