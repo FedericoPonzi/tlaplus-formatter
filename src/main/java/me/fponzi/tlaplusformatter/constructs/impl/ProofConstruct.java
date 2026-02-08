@@ -110,7 +110,7 @@ public class ProofConstruct implements TlaConstruct {
                     // Inner proofs always go on new line indented
                     result = result.append(Doc.line().append(proof).indent(indentSize));
                 } else if (hasPreComments(lastChild)) {
-                    // Terminal proof has comments — always new line to preserve them
+                    // Terminal proof has comments -- always new line to preserve them
                     result = result.append(Doc.line().append(proof).indent(indentSize));
                 } else {
                     // Terminal proofs (OBVIOUS/BY) prefer same line if they fit

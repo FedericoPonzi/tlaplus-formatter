@@ -50,7 +50,7 @@ public class InfixExprConstruct implements TlaConstruct {
 
         if (leftIsConjDisjList) {
             // Left is a bulleted list: put operator+right on a new line.
-            // Do NOT use .align() — alignment would place operator+right at the same
+            // Do NOT use .align() -- alignment would place operator+right at the same
             // column as the list items, causing SANY to absorb it into the list.
             return leftOperand
                     .appendLine(operator.appendSpace(rightOperand));
