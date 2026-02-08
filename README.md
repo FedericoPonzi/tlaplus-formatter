@@ -1,5 +1,7 @@
 ## TLA<sup>+</sup> formatter
 
+[![CI](https://github.com/FedericoPonzi/tlaplus-formatter/actions/workflows/ci.yml/badge.svg)](https://github.com/FedericoPonzi/tlaplus-formatter/actions/workflows/ci.yml)
+
 <p align="center"><img alt="temporary tla+ formatter logo" src="assets/tlaplus-formatter-temp-logo.jpg" width="250"></p>
 
 This is a formatter for the TLA<sup>+</sup> language.
@@ -7,16 +9,14 @@ This is a formatter for the TLA<sup>+</sup> language.
 It uses tlaplus tools' SANY library to parse your specification, and it applies some (at the moment) predefined format
 to it.
 
-This is still _ALPHA_ software, feel free to try it out and leave feedback but be aware it might break your specs.
-
 ## Project Goals:
 
-* A formatter for the TLA+ language. Pluscal is currently not a priority.
-* It should be configurable but also provide sane defaults.
-* It should never add useless chars (no extra spaces or extra newlines)
-* It should never break any specs. No user configuration should ever lead to broken specs.
-* The output should be stable. Applying the formatter to the output of a previous formatter run should not change it.
-* It should be fast.
+* A formatter for the TLA+ language. Pluscal is (currently) not a priority.
+* Configurable: provide sane defaults.
+* Minimal: never add useless chars (no extra spaces or extra newlines)
+* Reliable: It should never break any spec nor change its meaning. No configuration permutation should ever lead to a broken specs.
+* Stable: Applying the formatter to the output of a previous formatter run should not change it.
+* Fast.
 
 ## Configurations:
 
@@ -42,20 +42,11 @@ To see some examples of current reformatting, compare:
 More examples are in the test/java/resources/{inputs|outputs} folders. These sources are taken from the TLA+ Examples
 repo.
 
-## Testing with TLA+-Smith
-
-This project integrates [TLA+-Smith](https://github.com/fponzi/tlaplus-smith), a random TLA+ specification generator,
-for comprehensive testing. TLA+-Smith helps ensure the formatter works correctly with a wide variety of TLA+ constructs
-and edge cases.
-
 ## How to run
 
-If you want to try it out, go to the build page of the latest commit and download the "tlaplus-formatter-jar.zip" file
-from the
-artifact section at the bottom of the
-page ([Example](https://github.com/FedericoPonzi/tlaplus-formatter/actions/runs/10027954925)).
+Download the latest JAR from the [Releases](https://github.com/FedericoPonzi/tlaplus-formatter/releases) page, or from the artifacts section of the latest [CI build](https://github.com/FedericoPonzi/tlaplus-formatter/actions/workflows/ci.yml).
 
-You will need at least java 11 (the same requirement as tlatools).
+You will need at least Java 11 (the same requirement as tlatools).
 
 Unzip the file, and you can invoke the formatter like this:
 
@@ -75,11 +66,4 @@ It's a work in progress, see [PR-327](https://github.com/tlaplus/vscode-tlaplus/
 
 Because it uses SANY underneath (TLC's parser), your spec needs to first succeed SANY's
 parsing process; otherwise the formatter won't be able to reformat your file.
-
----
-
-## Development
-
-Some of the `constants` used in the code are coming from SANY's codebase, specifically from this file:
-`src/tla2sany/st/SyntaxTreeConstants.java` (check [tlaplus repo](https://github.com/tlaplus/tlaplus/)).
 
