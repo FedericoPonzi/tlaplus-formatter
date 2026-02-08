@@ -62,6 +62,15 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.register<Test>("semanticPreservationTest") {
+    useJUnitPlatform()
+    filter {
+        includeTestsMatching("me.fponzi.tlaplusformatter.TlaPlusExamplesSemanticPreservationTest")
+    }
+    systemProperties(System.getProperties().filter { (k, _) -> k.toString().startsWith("tlaplus.") }
+        .map { (k, v) -> k.toString() to v.toString() }.toMap())
+}
+
 application {
     mainClass = "me.fponzi.tlaplusformatter.Main"
 }
