@@ -130,6 +130,22 @@ public class ConstructContext {
     }
 
     /**
+     * Normalize a comment by stripping all leading whitespace and trailing newlines.
+     * Use this variant when re-indenting comments (the caller supplies its own indentation).
+     */
+    public static String stripAndNormalizeComment(String s) {
+        int start = 0;
+        while (start < s.length() && Character.isWhitespace(s.charAt(start))) {
+            start++;
+        }
+        int end = s.length();
+        while (end > start && (s.charAt(end - 1) == '\n' || s.charAt(end - 1) == '\r')) {
+            end--;
+        }
+        return s.substring(start, end);
+    }
+
+    /**
      * Extract string values from a tree node's children.
      * Common utility for constructs that work with lists of identifiers.
      *

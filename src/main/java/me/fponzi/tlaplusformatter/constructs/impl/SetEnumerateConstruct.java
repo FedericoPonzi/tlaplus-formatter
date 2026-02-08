@@ -6,7 +6,6 @@ import me.fponzi.tlaplusformatter.constructs.NodeKind;
 import me.fponzi.tlaplusformatter.constructs.TlaConstruct;
 import tla2sany.st.TreeNode;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,35 +26,19 @@ public class SetEnumerateConstruct implements TlaConstruct {
 
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
-        assert (node.zero() != null && node.zero().length >= 2);
-        List<Doc> elementDocs = new ArrayList<>();
+        TreeNode[] z = node.zero();
+        assert (z != null && z.length >= 2);
 
-        // Process children to build set elements
-        // Skip first and last elements - they are { and } braces
-        for (int i = 1; i < node.zero().length - 1; i++) {
-            TreeNode child = node.zero()[i];
-            assert (child != null);
-            if (child.getHumanReadableImage().equals(",")) {
-                continue;
-            }
-            Doc elementDoc = context.buildChild(child);
-            elementDocs.add(elementDoc);
-
-        }
+        List<Doc> elementDocs = BracketedListHelper.collectElements(z, context);
 
         if (elementDocs.isEmpty()) {
             return Doc.text("{}");
         }
 
-        Doc content = elementDocs.get(0);
-        for (int i = 1; i < elementDocs.size(); i++) {
-            content = content.append(Doc.text(",")).appendLineOrSpace(elementDocs.get(i));
-        }
-
-        return Doc.group(
-                context.buildChild(node.zero()[0]) // {
-                        .appendSpace(content.indent("{ ".length()))
-                        .appendLineOrSpace(context.buildChild(node.zero()[node.zero().length - 1])) // }
-        );
+        return BracketedListHelper.wrapInBrackets(
+                context.buildChild(z[0]),
+                BracketedListHelper.joinWithComma(elementDocs),
+                context.buildChild(z[z.length - 1]),
+                "{ ".length());
     }
 }

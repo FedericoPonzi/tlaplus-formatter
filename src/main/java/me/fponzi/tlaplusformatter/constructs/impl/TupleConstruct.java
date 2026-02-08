@@ -6,7 +6,6 @@ import me.fponzi.tlaplusformatter.constructs.NodeKind;
 import me.fponzi.tlaplusformatter.constructs.TlaConstruct;
 import tla2sany.st.TreeNode;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,42 +26,24 @@ public class TupleConstruct implements TlaConstruct {
 
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
-        List<Doc> elementDocs = new ArrayList<>();
-        assert (node.zero() != null && node.zero().length >= 2);
+        TreeNode[] z = node.zero();
+        assert (z != null && z.length >= 2);
 
-        // Check for comments on the opening << bracket
-        TreeNode openBracket = node.zero()[0];
+        TreeNode openBracket = z[0];
         Doc openDoc = ConstructContext.addComments(openBracket, Doc.text("<<"));
 
-        // Skip first and last elements - they are << and >> brackets
-        for (int i = 1; i < node.zero().length - 1; i++) {
-            TreeNode child = node.zero()[i];
-            assert (child != null);
-            if (child.getHumanReadableImage().equals(",")) {
-                continue;
-            }
-            Doc elementDoc = context.buildChild(child);
-            elementDocs.add(elementDoc);
-        }
+        List<Doc> elementDocs = BracketedListHelper.collectElements(z, context);
 
         if (elementDocs.isEmpty()) {
             return ConstructContext.addComments(openBracket, Doc.text("<<>>"));
         }
 
-        // Check for comments on the closing >> bracket
-        TreeNode closeBracket = node.zero()[node.zero().length - 1];
-        Doc closeDoc = ConstructContext.addComments(closeBracket, Doc.text(">>"));
+        Doc closeDoc = ConstructContext.addComments(z[z.length - 1], Doc.text(">>"));
 
-        // Build the tuple with proper formatting
-        Doc content = elementDocs.get(0);
-        for (int i = 1; i < elementDocs.size(); i++) {
-            content = content.append(Doc.text(",")).appendLineOrSpace(elementDocs.get(i));
-        }
-
-        return Doc.group(
-                openDoc
-                        .appendSpace(content.indent("<< ".length()))
-                        .appendLineOrSpace(closeDoc)
-        );
+        return BracketedListHelper.wrapInBrackets(
+                openDoc,
+                BracketedListHelper.joinWithComma(elementDocs),
+                closeDoc,
+                "<< ".length());
     }
 }

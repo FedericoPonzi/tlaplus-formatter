@@ -30,15 +30,14 @@ public class RcdConstructorConstruct implements TlaConstruct {
 
     @Override
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
+        TreeNode[] z = node.zero();
+        assert (z != null && z.length >= 3);
+
         List<Doc> fieldDocs = new ArrayList<>();
-        assert (node.zero() != null && node.zero().length >= 3);
-        // Process children to build field-value pairs
-        // Skip first and last char - they are squared brackets, will readd them manually later.
-        // Track comma preComments by field index so we can preserve comma-first style
         Map<Integer, String[]> commaComments = new HashMap<>();
         int fieldIndex = 0;
-        for (int i = 1; i < node.zero().length - 1; i++) {
-            var child = node.zero()[i];
+        for (int i = 1; i < z.length - 1; i++) {
+            var child = z[i];
             assert (child != null);
             if (child.getHumanReadableImage().equals(",")) {
                 String[] preComments = child.getPreComments();
@@ -47,39 +46,27 @@ public class RcdConstructorConstruct implements TlaConstruct {
                 }
                 continue;
             }
-            Doc fieldDoc = context.buildChild(child);
-            fieldDocs.add(fieldDoc);
+            fieldDocs.add(context.buildChild(child));
             fieldIndex++;
         }
-        // Build the record with proper formatting
+
         Doc content = fieldDocs.get(0);
         for (int i = 1; i < fieldDocs.size(); i++) {
             String[] comments = commaComments.get(i);
             if (comments != null) {
-                // Comma-first: preserve comment on comma so SANY re-attaches it correctly
                 for (String comment : comments) {
-                    content = content.appendLine(Doc.text(normalizeComment(comment)));
+                    content = content.appendLine(Doc.text(ConstructContext.stripAndNormalizeComment(comment)));
                 }
                 content = content.appendLine(Doc.text(", ").append(fieldDocs.get(i)));
             } else {
                 content = content.append(Doc.text(",").appendLineOrSpace(fieldDocs.get(i)));
             }
         }
-        return Doc.group(
-                context.buildChild(node.zero()[0]) // [
-                        .appendSpace(content.indent("[ ".length()))
-                        .appendLineOrSpace(context.buildChild(node.zero()[node.zero().length - 1]))); // ]
-    }
 
-    private static String normalizeComment(String s) {
-        int start = 0;
-        while (start < s.length() && Character.isWhitespace(s.charAt(start))) {
-            start++;
-        }
-        int end = s.length();
-        while (end > start && (s.charAt(end - 1) == '\n' || s.charAt(end - 1) == '\r')) {
-            end--;
-        }
-        return s.substring(start, end);
+        return BracketedListHelper.wrapInBrackets(
+                context.buildChild(z[0]),
+                content,
+                context.buildChild(z[z.length - 1]),
+                "[ ".length());
     }
 }
