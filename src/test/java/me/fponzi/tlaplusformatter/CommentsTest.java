@@ -224,6 +224,21 @@ public class CommentsTest {
     }
 
     @Test
+    public void tupleWithCommentOnClosingBracket() {
+        // Comment after last element before >> is attached as preComment to >> bracket.
+        // The formatter must preserve it.
+        var input = "---------- MODULE Test -----\n" +
+                "Foo == <<1, 2, 3 \\* trailing comment\n" +
+                ">>\n" +
+                "====";
+        var expected = "---------- MODULE Test -----\n" +
+                "Foo == << 1, 2, 3 \\* trailing comment\n" +
+                "  >>\n" +
+                "====";
+        assertSpecEquals(expected, input);
+    }
+
+    @Test
     public void tupleWithPrecedingComments() {
         // This tests that line comments before a tuple expression are preserved.
         // The comments are attached to the opening << bracket in SANY's AST.

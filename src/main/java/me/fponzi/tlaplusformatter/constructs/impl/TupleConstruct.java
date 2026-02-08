@@ -49,6 +49,10 @@ public class TupleConstruct implements TlaConstruct {
             return ConstructContext.addComments(openBracket, Doc.text("<<>>"));
         }
 
+        // Check for comments on the closing >> bracket
+        TreeNode closeBracket = node.zero()[node.zero().length - 1];
+        Doc closeDoc = ConstructContext.addComments(closeBracket, Doc.text(">>"));
+
         // Build the tuple with proper formatting
         Doc content = elementDocs.get(0);
         for (int i = 1; i < elementDocs.size(); i++) {
@@ -58,7 +62,7 @@ public class TupleConstruct implements TlaConstruct {
         return Doc.group(
                 openDoc
                         .appendSpace(content.indent("<< ".length()))
-                        .appendLineOrSpace(Doc.text(">>"))
+                        .appendLineOrSpace(closeDoc)
         );
     }
 }
