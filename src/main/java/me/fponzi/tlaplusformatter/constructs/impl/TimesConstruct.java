@@ -23,20 +23,16 @@ public class TimesConstruct implements TlaConstruct {
         var z = node.zero();
         assert (z != null);
         assert (z.length >= 3);
-        // Expected structure:
-        // zero[0]: A
-        // zero[1]: \X
-        // zero[2]: B
-        // example: A \X B
+        // Expected structure (chained):
+        // zero[0]: A, zero[1]: \X, zero[2]: B [, zero[3]: \X, zero[4]: C ...]
 
-        Doc leftOperand = context.buildChild(z[0]);
-        Doc operator = context.buildChild(z[1]);
-        Doc rightOperand = context.buildChild(z[2]);
+        Doc result = context.buildChild(z[0]);
+        for (int i = 1; i + 1 < z.length; i += 2) {
+            Doc operator = context.buildChild(z[i]);
+            Doc operand = context.buildChild(z[i + 1]);
+            result = result.appendSpace(operator).appendLineOrSpace(operand);
+        }
 
-        return Doc.group(
-                leftOperand
-                        .appendSpace(operator)
-                        .appendLineOrSpace(rightOperand).indent(indentSize)
-        );
+        return Doc.group(result.indent(indentSize));
     }
 }
