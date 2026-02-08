@@ -52,7 +52,7 @@ public class SANYWrapper {
             SANY.frontEndMain(
                     specObj,
                     file.getAbsolutePath(),
-                    new PrintStream(outStream)
+                    new PrintStream(outStream, false, StandardCharsets.UTF_8)
             );
         } catch (FrontEndException e) {
             throw new SanyFrontendException(e);

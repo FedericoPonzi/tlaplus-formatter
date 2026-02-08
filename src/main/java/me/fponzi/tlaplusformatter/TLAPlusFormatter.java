@@ -9,6 +9,7 @@ import tla2sany.st.TreeNode;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.regex.Matcher;
@@ -88,7 +89,7 @@ public class TLAPlusFormatter {
         File tmpFolder = Files.createTempDirectory("sanyimp").toFile();
         var fileName = getModuleName(spec) + ".tla";
         File tmpFile = new File(tmpFolder, fileName);
-        try (java.io.FileWriter writer = new java.io.FileWriter(tmpFile)) {
+        try (java.io.FileWriter writer = new java.io.FileWriter(tmpFile, StandardCharsets.UTF_8)) {
             writer.write(spec);
         }
         return tmpFile;

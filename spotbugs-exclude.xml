@@ -17,17 +17,7 @@
         <Bug pattern="CT_CONSTRUCTOR_THROW"/>
     </Match>
 
-    <!-- DM_DEFAULT_ENCODING: Should use explicit charset (UTF-8). -->
-    <Match>
-        <Class name="me.fponzi.tlaplusformatter.SANYWrapper"/>
-        <Method name="loadSpecObject"/>
-        <Bug pattern="DM_DEFAULT_ENCODING"/>
-    </Match>
-    <Match>
-        <Class name="me.fponzi.tlaplusformatter.TLAPlusFormatter"/>
-        <Method name="storeToTmp"/>
-        <Bug pattern="DM_DEFAULT_ENCODING"/>
-    </Match>
+    <!-- DM_DEFAULT_ENCODING: Fixed — now uses explicit UTF-8 charset. -->
 
     <!-- EI_EXPOSE_REP / EI_EXPOSE_REP2: Mutable objects stored/returned without copying.
          FormatConfig is treated as effectively immutable. -->
