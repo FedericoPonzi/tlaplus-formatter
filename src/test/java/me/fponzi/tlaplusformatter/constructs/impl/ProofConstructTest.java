@@ -160,4 +160,103 @@ public class ProofConstructTest {
                 "====";
         assertSpecEquals(expected, input);
     }
+
+    @Test
+    void testDefineWithMultipleDefinitions() {
+        var input = "----- MODULE Test -----\n" +
+                "EXTENDS TLAPS\n" +
+                "VARIABLE x\n" +
+                "THEOREM x = x\n" +
+                "<1>. DEFINE P == x = x\n" +
+                "            Q == x # x\n" +
+                "<1>1. P OBVIOUS\n" +
+                "<1>. QED BY <1>1\n" +
+                "====";
+        var expected = "----- MODULE Test -----\n" +
+                "EXTENDS TLAPS\n" +
+                "VARIABLE x\n" +
+                "THEOREM x = x\n" +
+                "<1>. DEFINE P == x = x\n" +
+                "         Q == x # x\n" +
+                "<1>1. P OBVIOUS\n" +
+                "<1>. QED BY <1>1\n" +
+                "====";
+        assertSpecEquals(expected, input);
+    }
+
+    @Test
+    void testDefineWithSingleDefinition() {
+        var input = "----- MODULE Test -----\n" +
+                "EXTENDS TLAPS\n" +
+                "VARIABLE x\n" +
+                "THEOREM x = x\n" +
+                "<1>. DEFINE P == x = x\n" +
+                "<1>1. P OBVIOUS\n" +
+                "<1>. QED BY <1>1\n" +
+                "====";
+        assertUnchanged(input);
+    }
+
+    @Test
+    void testAssumeProveInLemma() {
+        var input = "----- MODULE Test -----\n" +
+                "EXTENDS TLAPS\n" +
+                "CONSTANT S\n" +
+                "LEMMA Test ==\n" +
+                "  ASSUME NEW f \\in S\n" +
+                "  PROVE f = f\n" +
+                "PROOF OMITTED\n" +
+                "====";
+        var expected = "----- MODULE Test -----\n" +
+                "EXTENDS TLAPS\n" +
+                "CONSTANT S\n" +
+                "LEMMA Test == ASSUME NEW f \\in S PROVE f = f\n" +
+                "PROOF OMITTED\n" +
+                "====";
+        assertSpecEquals(expected, input);
+    }
+
+    @Test
+    void testAssumeProveWithMultipleAssumptions() {
+        var input = "----- MODULE Test -----\n" +
+                "EXTENDS TLAPS\n" +
+                "CONSTANT S\n" +
+                "LEMMA Test ==\n" +
+                "  ASSUME NEW f \\in S,\n" +
+                "         NEW g \\in S\n" +
+                "  PROVE f = g\n" +
+                "PROOF OMITTED\n" +
+                "====";
+        var expected = "----- MODULE Test -----\n" +
+                "EXTENDS TLAPS\n" +
+                "CONSTANT S\n" +
+                "LEMMA Test == ASSUME NEW f \\in S , NEW g \\in S PROVE f = g\n" +
+                "PROOF OMITTED\n" +
+                "====";
+        assertSpecEquals(expected, input);
+    }
+
+    @Test
+    void testAssumeProveWrapsWhenLong() {
+        // When the ASSUME/PROVE is too long, it should wrap
+        var input = "----- MODULE Test -----\n" +
+                "EXTENDS TLAPS\n" +
+                "CONSTANT SomeLongVariableName\n" +
+                "LEMMA Test ==\n" +
+                "  ASSUME NEW f \\in SomeLongVariableName,\n" +
+                "         NEW g \\in SomeLongVariableName,\n" +
+                "         NEW h \\in SomeLongVariableName\n" +
+                "  PROVE f = g\n" +
+                "PROOF OMITTED\n" +
+                "====";
+        var expected = "----- MODULE Test -----\n" +
+                "EXTENDS TLAPS\n" +
+                "CONSTANT SomeLongVariableName\n" +
+                "LEMMA Test ==\n" +
+                "  ASSUME NEW f \\in SomeLongVariableName , NEW g \\in SomeLongVariableName , NEW h \\in SomeLongVariableName\n" +
+                "  PROVE f = g\n" +
+                "PROOF OMITTED\n" +
+                "====";
+        assertSpecEquals(expected, input);
+    }
 }
