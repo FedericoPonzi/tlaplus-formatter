@@ -15,7 +15,7 @@ import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TLAPlusFormatter {
+public final class TLAPlusFormatter {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     final TreeNode root;

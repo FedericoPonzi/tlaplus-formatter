@@ -2,40 +2,19 @@
 <FindBugsFilter>
     <!--
         Baseline exclusions for existing SpotBugs findings.
-        These should be fixed over time and removed from this file.
         New code must not introduce any of these bug patterns.
     -->
 
-    <!-- CT_CONSTRUCTOR_THROW: Constructors that throw exceptions.
-         FormatConfig and TLAPlusFormatter are not designed for subclassing. -->
+    <!-- EI_EXPOSE_REP/REP2: FormatConfig and TlaDocBuilder are effectively immutable
+         after construction, so storing/returning references without copying is safe. -->
     <Match>
-        <Class name="me.fponzi.tlaplusformatter.FormatConfig"/>
-        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
-    </Match>
-    <Match>
-        <Class name="me.fponzi.tlaplusformatter.TLAPlusFormatter"/>
-        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
-    </Match>
-
-    <!-- DM_DEFAULT_ENCODING: Fixed — now uses explicit UTF-8 charset. -->
-
-    <!-- EI_EXPOSE_REP / EI_EXPOSE_REP2: Mutable objects stored/returned without copying.
-         FormatConfig is treated as effectively immutable. -->
-    <Match>
-        <Class name="me.fponzi.tlaplusformatter.TLAPlusFormatter"/>
-        <Bug pattern="EI_EXPOSE_REP2"/>
-    </Match>
-    <Match>
-        <Class name="me.fponzi.tlaplusformatter.constructs.BaseConstructFormatter"/>
-        <Bug pattern="EI_EXPOSE_REP2"/>
-    </Match>
-    <Match>
-        <Class name="me.fponzi.tlaplusformatter.constructs.ConstructContext"/>
         <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+        <Or>
+            <Class name="me.fponzi.tlaplusformatter.TLAPlusFormatter"/>
+            <Class name="me.fponzi.tlaplusformatter.constructs.BaseConstructFormatter"/>
+            <Class name="me.fponzi.tlaplusformatter.constructs.ConstructContext"/>
+        </Or>
     </Match>
-
-    <!-- DLS_DEAD_LOCAL_STORE / UC_USELESS_OBJECT: Dead code in SANYWrapper.load(). -->
-    <!-- Fixed: dead code removed -->
 
     <!-- Test code exclusions -->
     <Match>

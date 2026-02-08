@@ -10,7 +10,7 @@ import java.util.Map;
  * Contains formatting preferences like line width and indentation,
  * as well as construct-specific formatting settings.
  */
-public class FormatConfig {
+public final class FormatConfig {
 
     public static final int DEFAULT_LINE_WIDTH = 80;
     public static final int DEFAULT_INDENT_SIZE = 2;
@@ -87,7 +87,7 @@ public class FormatConfig {
      * @param settingName   Name of the setting
      * @param value         Setting value
      */
-    public void setConstructSetting(String constructName, String settingName, Object value) {
+    private void setConstructSetting(String constructName, String settingName, Object value) {
         String key = constructName + "." + settingName;
         constructSettings.put(key, value);
     }

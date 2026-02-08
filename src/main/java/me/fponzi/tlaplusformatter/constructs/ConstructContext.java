@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * Context object that provides access to shared services and utilities
  * for construct implementations.
  */
-public class ConstructContext {
+public final class ConstructContext {
 
     private final FormatConfig config;
     private final TlaDocBuilder docBuilder;
