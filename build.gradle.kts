@@ -82,6 +82,37 @@ tasks.register<Test>("semanticPreservationTest") {
         .map { (k, v) -> k.toString() to v.toString() }.toMap())
 }
 
+tasks.register("generateVersionProperties") {
+    val outputDir = layout.buildDirectory.dir("generated-resources/version")
+    outputs.dir(outputDir)
+    doLast {
+        val dir = outputDir.get().asFile
+        dir.mkdirs()
+        val commitId = try {
+            providers.exec {
+                commandLine("git", "rev-parse", "--short", "HEAD")
+            }.standardOutput.asText.get().trim()
+        } catch (e: Exception) {
+            "unknown"
+        }
+        File(dir, "version.properties").writeText(
+            "version=${project.version}\ngit.commit=$commitId\n"
+        )
+    }
+}
+
+sourceSets {
+    getByName("main") {
+        resources {
+            srcDir(layout.buildDirectory.dir("generated-resources/version"))
+        }
+    }
+}
+
+tasks.named("processResources") {
+    dependsOn("generateVersionProperties")
+}
+
 application {
     mainClass = "me.fponzi.tlaplusformatter.Main"
 }
