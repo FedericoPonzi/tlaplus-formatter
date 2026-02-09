@@ -1,6 +1,7 @@
 package me.fponzi.tlaplusformatter;
 
 import com.opencastsoftware.prettier4j.Doc;
+import me.fponzi.tlaplusformatter.exceptions.AstVerificationException;
 import me.fponzi.tlaplusformatter.exceptions.SanyFrontendException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,14 +24,20 @@ public final class TLAPlusFormatter {
     private final TlaDocBuilder docBuilder;
     private String output;
     private final FormatConfig config;
+    private final boolean verifyAst;
 
     public TLAPlusFormatter(File specPath) throws IOException, SanyFrontendException {
-        this(specPath, new FormatConfig());
+        this(specPath, new FormatConfig(), true);
     }
 
     public TLAPlusFormatter(File specPath, FormatConfig config) throws IOException, SanyFrontendException {
+        this(specPath, config, true);
+    }
+
+    public TLAPlusFormatter(File specPath, FormatConfig config, boolean verifyAst) throws IOException, SanyFrontendException {
         this.docBuilder = new TlaDocBuilder(config);
         this.config = config.copy();
+        this.verifyAst = verifyAst;
         this.root = SANYWrapper.load(specPath);
         this.spec = specPath;
 
@@ -52,11 +59,15 @@ public final class TLAPlusFormatter {
      * @throws IOException
      */
     public TLAPlusFormatter(String spec) throws IOException, SanyFrontendException {
-        this(storeToTmp(spec), new FormatConfig());
+        this(storeToTmp(spec), new FormatConfig(), true);
     }
 
     public TLAPlusFormatter(String spec, FormatConfig config) throws IOException, SanyFrontendException {
-        this(storeToTmp(spec), config);
+        this(storeToTmp(spec), config, true);
+    }
+
+    public TLAPlusFormatter(String spec, FormatConfig config, boolean verifyAst) throws IOException, SanyFrontendException {
+        this(storeToTmp(spec), config, verifyAst);
     }
 
     private void format() throws IOException {
@@ -70,6 +81,59 @@ public final class TLAPlusFormatter {
         this.output = extraSections[0] +
                 moduleDoc.render(this.config.getLineWidth()) +
                 extraSections[1];
+
+        if (verifyAst) {
+            verifyAstPreservation();
+        }
+    }
+
+    /**
+     * Re-parses the formatted output and compares its AST to the original.
+     * Throws AstVerificationException if the ASTs differ.
+     */
+    private void verifyAstPreservation() throws IOException {
+        File tmpFile = null;
+        try {
+            // Write to the same directory as the original spec so SANY can resolve EXTENDS
+            tmpFile = storeForVerification(this.output, this.spec);
+            TreeNode formattedRoot = SANYWrapper.load(tmpFile);
+            AstComparator.Result result = AstComparator.compare(this.root, formattedRoot);
+            if (!result.isMatch()) {
+                throw new AstVerificationException(result);
+            }
+        } catch (SanyFrontendException e) {
+            throw new AstVerificationException(new AstComparator.Result(
+                    "Formatted output failed to parse: " + e.getMessage()));
+        } finally {
+            if (tmpFile != null && !tmpFile.delete()) {
+                LOG.debug("Failed to delete temporary verification file: {}", tmpFile);
+            }
+        }
+    }
+
+    /**
+     * Writes spec content to a temp directory with copies of sibling .tla files,
+     * so that SANY can resolve EXTENDS to sibling modules.
+     */
+    private static File storeForVerification(String content, File originalSpec) throws IOException {
+        File parentDir = originalSpec.getAbsoluteFile().getParentFile();
+        File tmpDir = java.nio.file.Files.createTempDirectory("sany-verify").toFile();
+        // Copy sibling .tla files so SANY can resolve EXTENDS
+        File[] siblings = parentDir.listFiles((dir, name) -> name.endsWith(".tla"));
+        if (siblings != null) {
+            for (File sibling : siblings) {
+                java.nio.file.Files.copy(
+                        sibling.toPath(),
+                        new File(tmpDir, sibling.getName()).toPath(),
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+        // Write the formatted output with the original filename (SANY requires module name = filename)
+        File verifyFile = new File(tmpDir, originalSpec.getName());
+        try (java.io.FileWriter writer = new java.io.FileWriter(verifyFile, StandardCharsets.UTF_8)) {
+            writer.write(content);
+        }
+        return verifyFile;
     }
 
     static String getModuleName(String spec) {

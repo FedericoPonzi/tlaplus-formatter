@@ -1,6 +1,7 @@
 package me.fponzi.tlaplusformatter;
 
 import ch.qos.logback.classic.LoggerContext;
+import me.fponzi.tlaplusformatter.exceptions.AstVerificationException;
 import me.fponzi.tlaplusformatter.exceptions.SanyFrontendException;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
@@ -27,6 +28,8 @@ public class Main {
         options.addOption(VERBOSITY_OPTION, "verbosity", true, "Set the verbosity level (ERROR, WARN, *INFO, DEBUG)");
         options.addOption("w", "width", true, "Set the target line width for formatting (default: 80)");
         options.addOption("i", "indent", true, "Set the number of spaces for indentation (default: 4)");
+        options.addOption(null, "skip-ast-verification", false,
+                "Skip AST verification after formatting (not recommended, verification is enabled by default)");
 
         CommandLine cmd;
         try {
@@ -90,7 +93,20 @@ public class Main {
             }
 
             FormatConfig config = new FormatConfig(lineWidth, indentSize);
-            TLAPlusFormatter formatter = new TLAPlusFormatter(inputFile, config);
+            boolean verifyAst = !cmd.hasOption("skip-ast-verification");
+            TLAPlusFormatter formatter;
+            try {
+                formatter = new TLAPlusFormatter(inputFile, config, verifyAst);
+            } catch (AstVerificationException e) {
+                // AST verification failed: print original input to stdout, diagnostics to stderr
+                System.out.print(Files.readString(inputFile.toPath()));
+                System.err.println("AST verification failed after formatting.");
+                System.err.println("tlaplus-formatter version: " + VersionInfo.getFullVersion());
+                System.err.println(e.getResult().formatDiagnostic());
+                System.err.println("This is a bug in the formatter. Please report it at:");
+                System.err.println("  https://github.com/FedericoPonzi/tlaplus-formatter/issues");
+                return 1;
+            }
             String formattedOutput = formatter.getOutput();
 
             if (remainingArgs.length == 2) {
