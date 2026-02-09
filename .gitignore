@@ -42,3 +42,6 @@ bin/
 ### Mac OS ###
 .DS_Store
 .jqwik-database
+
+# Built JAR in web directory (build artifact)
+web/tlaplus-formatter-web.jar

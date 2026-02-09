@@ -92,6 +92,21 @@ ktor {
     }
 }
 
+tasks.register<Jar>("buildWebJar") {
+    description = "Build a fat JAR for CheerpJ (excludes classes incompatible with Java 11)"
+    dependsOn("buildFatJar")
+    archiveFileName.set("tlaplus-formatter-web.jar")
+    destinationDirectory.set(layout.buildDirectory.dir("libs"))
+    // Use provider to ensure lazy evaluation after buildFatJar completes
+    from(provider { zipTree(layout.buildDirectory.file("libs/tlaplus-formatter.jar")) }) {
+        exclude("META-INF/versions/**")
+        exclude("**/module-info.class")
+    }
+    manifest {
+        attributes("Main-Class" to "me.fponzi.tlaplusformatter.Main")
+    }
+}
+
 spotbugs {
     ignoreFailures.set(false)
     showStackTraces.set(true)
