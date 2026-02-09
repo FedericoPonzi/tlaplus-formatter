@@ -67,3 +67,7 @@ It's a work in progress, see [PR-327](https://github.com/tlaplus/vscode-tlaplus/
 Because it uses SANY underneath (TLC's parser), your spec needs to first succeed SANY's
 parsing process; otherwise the formatter won't be able to reformat your file.
 
+## Acknowledgments
+
+This project uses [prettier4j](https://github.com/opencastsoftware/prettier4j) by Opencast Software, which does the heavy lifting of implementing the Wadler-Lindig pretty-printing algorithm in Java.
+
