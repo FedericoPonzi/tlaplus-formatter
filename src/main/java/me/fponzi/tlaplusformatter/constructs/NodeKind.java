@@ -3,6 +3,7 @@ package me.fponzi.tlaplusformatter.constructs;
 /**
  * Enum representing SANY node kinds with metadata.
  */
+@SuppressWarnings("unused")
 public enum NodeKind {
 
     NULL_ID(327, "Null ID"),
@@ -139,11 +140,6 @@ public enum NodeKind {
         this.description = description;
     }
 
-    /**
-     * Get all node kind IDs handled by this NodeKind.
-     *
-     * @return Set of all node kind IDs
-     */
     public int getId() {
         return id;
     }

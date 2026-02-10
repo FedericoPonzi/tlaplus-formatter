@@ -3,15 +3,10 @@ package me.fponzi.tlaplusformatter.constructs;
 import com.opencastsoftware.prettier4j.Doc;
 import me.fponzi.tlaplusformatter.FormatConfig;
 import me.fponzi.tlaplusformatter.TlaDocBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tla2sany.st.TreeNode;
 
-import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Context object that provides access to shared services and utilities
@@ -99,10 +94,7 @@ public final class ConstructContext {
             return true;
         }
         // Check for line comment start \*
-        if (i + 1 < s.length() && s.charAt(i) == '\\' && s.charAt(i + 1) == '*') {
-            return true;
-        }
-        return false;
+        return i + 1 < s.length() && s.charAt(i) == '\\' && s.charAt(i + 1) == '*';
     }
 
     /**
@@ -167,19 +159,6 @@ public final class ConstructContext {
     }
 
     /**
-     * Get a construct-specific configuration setting.
-     *
-     * @param constructName Name of the construct
-     * @param settingName   Name of the setting
-     * @param defaultValue  Default value if setting is not found
-     * @param <T>           Type of the setting value
-     * @return The setting value or default value
-     */
-    public <T> T getConstructSetting(String constructName, String settingName, T defaultValue) {
-        return config.getConstructSetting(constructName, settingName, defaultValue);
-    }
-
-    /**
      * Get preserved spacing after a node based on original source.
      *
      * @param node The tree node to get spacing after
@@ -193,8 +172,6 @@ public final class ConstructContext {
      * Helper class for common node analysis operations.
      */
     private static class NodeAnalyzer {
-        private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
         /**
          * Check if a node is valid (has a real location, not a placeholder).
          */

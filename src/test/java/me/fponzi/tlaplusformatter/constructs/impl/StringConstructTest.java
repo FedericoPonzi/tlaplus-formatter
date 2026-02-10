@@ -2,7 +2,6 @@ package me.fponzi.tlaplusformatter.constructs.impl;
 
 import org.junit.jupiter.api.Test;
 
-import static me.fponzi.tlaplusformatter.Utils.assertSpecEquals;
 import static me.fponzi.tlaplusformatter.Utils.assertUnchanged;
 
 class StringConstructTest {

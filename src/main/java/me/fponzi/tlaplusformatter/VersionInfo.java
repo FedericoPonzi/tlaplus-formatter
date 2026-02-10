@@ -21,14 +21,7 @@ public final class VersionInfo {
         COMMIT_ID = props.getProperty("git.commit", "unknown");
     }
 
-    private VersionInfo() {}
-
-    public static String getVersion() {
-        return VERSION;
-    }
-
-    public static String getCommitId() {
-        return COMMIT_ID;
+    private VersionInfo() {
     }
 
     public static String getFullVersion() {

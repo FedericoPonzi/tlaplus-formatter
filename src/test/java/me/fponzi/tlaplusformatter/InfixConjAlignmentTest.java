@@ -2,8 +2,6 @@ package me.fponzi.tlaplusformatter;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Tests that infix conjunction/disjunction expressions preserve their AST structure
  * after formatting. When /\ or \/ is used as an infix operator (not in a bulleted list),
@@ -17,8 +15,7 @@ class InfixConjAlignmentTest {
         var f = new TLAPlusFormatter(spec, config);
         String output = f.getOutput();
         var f2 = new TLAPlusFormatter(output, config);
-        assertTrue(Utils.assertAstEquals(f.root, f2.root),
-                "AST structure changed after formatting");
+        Utils.assertAstEquals(f.root, f2.root);
     }
 
     private void assertAstPreserved(String spec) throws Exception {

@@ -55,8 +55,6 @@ public final class TLAPlusFormatter {
      * <p>
      * Safety: The input spec should be called "Spec" otherwise SANY will complain.
      *
-     * @param spec
-     * @throws IOException
      */
     public TLAPlusFormatter(String spec) throws IOException, SanyFrontendException {
         this(storeToTmp(spec), new FormatConfig(), true);

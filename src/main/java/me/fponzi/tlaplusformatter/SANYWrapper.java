@@ -4,12 +4,14 @@ import me.fponzi.tlaplusformatter.exceptions.SanyException;
 import me.fponzi.tlaplusformatter.exceptions.SanyFrontendException;
 import me.fponzi.tlaplusformatter.exceptions.SanySemanticException;
 import me.fponzi.tlaplusformatter.exceptions.SanySyntaxException;
-import tla2sany.st.TreeNode;
 import org.apache.commons.io.output.WriterOutputStream;
 import tla2sany.drivers.FrontEndException;
 import tla2sany.drivers.SANY;
 import tla2sany.modanalyzer.ParseUnit;
 import tla2sany.modanalyzer.SpecObj;
+import tla2sany.output.LogLevel;
+import tla2sany.output.SimpleSanyOutput;
+import tla2sany.st.TreeNode;
 import util.SimpleFilenameToStream;
 
 import java.io.File;
@@ -52,7 +54,7 @@ public class SANYWrapper {
             SANY.frontEndMain(
                     specObj,
                     file.getAbsolutePath(),
-                    new PrintStream(outStream, false, StandardCharsets.UTF_8)
+                    new SimpleSanyOutput(new PrintStream(outStream, false, StandardCharsets.UTF_8), LogLevel.INFO)
             );
         } catch (FrontEndException e) {
             throw new SanyFrontendException(e);
@@ -95,20 +97,20 @@ public class SANYWrapper {
             List<String> paths = new ArrayList<>();
             // Check for community modules, TLAPS, and Apalache in common locations
             String[] possiblePaths = {
-                // Community modules
-                System.getenv("TLA_COMMUNITY_MODULES"),
-                "/tmp/CommunityModules/modules",
-                "/tmp/CommunityModules",
-                System.getProperty("user.home") + "/.tlaplus/CommunityModules/modules",
-                // TLAPS library
-                System.getenv("TLAPS_LIBRARY"),
-                "/tmp/tlapm/library",
-                System.getProperty("user.home") + "/.tlaplus/tlaps/library",
-                "/usr/local/lib/tlaps/library",
-                // Apalache modules
-                System.getenv("APALACHE_HOME") != null ? System.getenv("APALACHE_HOME") + "/src/tla" : null,
-                "/tmp/apalache/src/tla",
-                System.getProperty("user.home") + "/.tlaplus/apalache/src/tla"
+                    // Community modules
+                    System.getenv("TLA_COMMUNITY_MODULES"),
+                    "/tmp/CommunityModules/modules",
+                    "/tmp/CommunityModules",
+                    System.getProperty("user.home") + "/.tlaplus/CommunityModules/modules",
+                    // TLAPS library
+                    System.getenv("TLAPS_LIBRARY"),
+                    "/tmp/tlapm/library",
+                    System.getProperty("user.home") + "/.tlaplus/tlaps/library",
+                    "/usr/local/lib/tlaps/library",
+                    // Apalache modules
+                    System.getenv("APALACHE_HOME") != null ? System.getenv("APALACHE_HOME") + "/src/tla" : null,
+                    "/tmp/apalache/src/tla",
+                    System.getProperty("user.home") + "/.tlaplus/apalache/src/tla"
             };
             for (String path : possiblePaths) {
                 if (path != null) {

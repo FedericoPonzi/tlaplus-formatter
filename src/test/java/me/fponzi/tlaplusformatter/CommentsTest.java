@@ -3,7 +3,7 @@ package me.fponzi.tlaplusformatter;
 import org.junit.jupiter.api.Test;
 
 import static me.fponzi.tlaplusformatter.Utils.assertSpecEquals;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class CommentsTest {
@@ -294,8 +294,7 @@ public class CommentsTest {
                 "Comment on comma in record constructor should be preserved. Got:\n" + formatted);
         // Verify semantic preservation: AST of formatted output matches original
         var reformatter = new TLAPlusFormatter(formatted);
-        assertTrue(Utils.assertAstEquals(formatter.root, reformatter.root),
-                "AST should be preserved after formatting");
+        Utils.assertAstEquals(formatter.root, reformatter.root);
     }
 
     @Test
@@ -320,8 +319,7 @@ public class CommentsTest {
                 "Comment on infix conjunction should be preserved. Got:\n" + formatted);
         // Verify semantic preservation: AST of formatted output matches original
         var reformatter = new TLAPlusFormatter(formatted);
-        assertTrue(Utils.assertAstEquals(formatter.root, reformatter.root),
-                "AST should be preserved after formatting");
+        Utils.assertAstEquals(formatter.root, reformatter.root);
     }
 
     @Test
@@ -338,8 +336,7 @@ public class CommentsTest {
         assertTrue(formatted.contains("\\* comment on bracket"),
                 "Comment on record constructor bracket should be preserved. Got:\n" + formatted);
         var reformatter = new TLAPlusFormatter(formatted);
-        assertTrue(Utils.assertAstEquals(formatter.root, reformatter.root),
-                "AST should be preserved after formatting");
+        Utils.assertAstEquals(formatter.root, reformatter.root);
     }
 
     @Test
@@ -356,8 +353,7 @@ public class CommentsTest {
         assertTrue(formatted.contains("\\* comment on brace"),
                 "Comment on closing brace should be preserved. Got:\n" + formatted);
         var reformatter = new TLAPlusFormatter(formatted);
-        assertTrue(Utils.assertAstEquals(formatter.root, reformatter.root),
-                "AST should be preserved after formatting");
+        Utils.assertAstEquals(formatter.root, reformatter.root);
     }
 
     @Test
@@ -376,8 +372,7 @@ public class CommentsTest {
         assertTrue(formatted.contains("\\* comment on paren"),
                 "Comment on closing paren should be preserved. Got:\n" + formatted);
         var reformatter = new TLAPlusFormatter(formatted);
-        assertTrue(Utils.assertAstEquals(formatter.root, reformatter.root),
-                "AST should be preserved after formatting");
+        Utils.assertAstEquals(formatter.root, reformatter.root);
     }
 
     @Test
@@ -396,8 +391,7 @@ public class CommentsTest {
         assertTrue(formatted.contains("\\* comment on module ref"),
                 "Comment on module prefix reference should be preserved. Got:\n" + formatted);
         var reformatter = new TLAPlusFormatter(formatted);
-        assertTrue(Utils.assertAstEquals(formatter.root, reformatter.root),
-                "AST should be preserved after formatting");
+        Utils.assertAstEquals(formatter.root, reformatter.root);
     }
 
     @Test
@@ -451,8 +445,7 @@ public class CommentsTest {
         var formatter = new TLAPlusFormatter(input);
         var formatted = formatter.getOutput();
         var reformatter = new TLAPlusFormatter(formatted);
-        assertTrue(Utils.assertAstEquals(formatter.root, reformatter.root),
-                "AST should be preserved after formatting. Formatted output:\n" + formatted);
+        Utils.assertAstEquals(formatter.root, reformatter.root);
     }
 
 }

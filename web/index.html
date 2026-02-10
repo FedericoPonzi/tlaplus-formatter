@@ -1,166 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TLA+ Formatter</title>
-  <script src="https://cjrtnc.leaningtech.com/4.2/loader.js"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>TLA+ Formatter</title>
+    <script src="https://cjrtnc.leaningtech.com/4.2/loader.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: #f5f5f5;
-      color: #333;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    header {
-      background: #1a1a2e;
-      color: #eee;
-      padding: 12px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-    }
+        header {
+            background: #1a1a2e;
+            color: #eee;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
 
-    header h1 {
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
+        header h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
 
-    .controls {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
 
-    .controls label {
-      font-size: 0.85rem;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+        .controls label {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
 
-    .controls input[type="number"] {
-      width: 60px;
-      padding: 4px 6px;
-      border: 1px solid #555;
-      border-radius: 4px;
-      background: #2a2a4a;
-      color: #eee;
-      font-size: 0.85rem;
-    }
+        .controls input[type="number"] {
+            width: 60px;
+            padding: 4px 6px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background: #2a2a4a;
+            color: #eee;
+            font-size: 0.85rem;
+        }
 
-    #formatBtn {
-      background: #4361ee;
-      color: white;
-      border: none;
-      padding: 8px 20px;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
+        #formatBtn {
+            background: #4361ee;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
 
-    #formatBtn:hover:not(:disabled) { background: #3a56d4; }
-    #formatBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+        #formatBtn:hover:not(:disabled) {
+            background: #3a56d4;
+        }
 
-    .editor-container {
-      display: flex;
-      flex: 1;
-      gap: 1px;
-      background: #ddd;
-      min-height: 0;
-    }
+        #formatBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
 
-    .pane {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: #fff;
-    }
+        .editor-container {
+            display: flex;
+            flex: 1;
+            gap: 1px;
+            background: #ddd;
+            min-height: 0;
+        }
 
-    .pane-header {
-      padding: 8px 16px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #666;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      border-bottom: 1px solid #eee;
-      flex-shrink: 0;
-    }
+        .pane {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
 
-    textarea {
-      flex: 1;
-      border: none;
-      padding: 16px;
-      font-family: "JetBrains Mono", "Fira Code", "Consolas", "Courier New", monospace;
-      font-size: 14px;
-      line-height: 1.5;
-      resize: none;
-      outline: none;
-      tab-size: 2;
-    }
+        .pane-header {
+            padding: 8px 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #eee;
+            flex-shrink: 0;
+        }
 
-    #output {
-      background: #fafafa;
-    }
+        textarea {
+            flex: 1;
+            border: none;
+            padding: 16px;
+            font-family: "JetBrains Mono", "Fira Code", "Consolas", "Courier New", monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+            tab-size: 2;
+        }
 
-    #statusBar {
-      background: #1a1a2e;
-      color: #aaa;
-      padding: 6px 24px;
-      font-size: 0.75rem;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+        #output {
+            background: #fafafa;
+        }
 
-    .spinner {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border: 2px solid #555;
-      border-top-color: #4361ee;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
+        #statusBar {
+            background: #1a1a2e;
+            color: #aaa;
+            padding: 6px 24px;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #555;
+            border-top-color: #4361ee;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
 
-    .status-ready { color: #4ade80; }
-    .status-error { color: #f87171; }
-    .status-loading { color: #facc15; }
-  </style>
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .status-ready {
+            color: #4ade80;
+        }
+
+        .status-error {
+            color: #f87171;
+        }
+
+        .status-loading {
+            color: #facc15;
+        }
+    </style>
 </head>
 <body>
 
 <header>
-  <h1>TLA+ Formatter</h1>
-  <div class="controls">
-    <label>
-      Width
-      <input type="number" id="lineWidth" value="80" min="40" max="200" />
-    </label>
-    <label>
-      Indent
-      <input type="number" id="indentSize" value="2" min="1" max="8" />
-    </label>
-    <button id="formatBtn" disabled>Loading…</button>
-  </div>
+    <h1>TLA+ Formatter</h1>
+    <div class="controls">
+        <label>
+            Width
+            <input type="number" id="lineWidth" value="80" min="40" max="200"/>
+        </label>
+        <label>
+            Indent
+            <input type="number" id="indentSize" value="2" min="1" max="8"/>
+        </label>
+        <button id="formatBtn" disabled>Loading…</button>
+    </div>
 </header>
 
 <div class="editor-container">
-  <div class="pane">
-    <div class="pane-header">Input</div>
-    <textarea id="input" spellcheck="false" placeholder="Paste your TLA+ spec here…">---- MODULE RecordsWithNestedRecordsAndSequences -----
+    <div class="pane">
+        <div class="pane-header">Input</div>
+        <label for="input"></label><textarea id="input" spellcheck="false" placeholder="Paste your TLA+ spec here…">---- MODULE RecordsWithNestedRecordsAndSequences -----
 EXTENDS TLC, Sequences
 
 CONSTANTS n1, n2, n3
@@ -169,116 +191,117 @@ Foo ==
     [action |-> {<<<<1, [counter |-> (n1 :> (n1 :> 0 @@ n2 :> 0) @@ n2 :> (n1 :> 0 @@ n2 :> 0))]>>, [name |-> "S!Next", location |-> [beginLine |-> 46, beginColumn |-> 1, endLine |-> 46, endColumn |-> 18, module |-> "MCCRDT"]], <<2, [counter |-> (n1 :> (n1 :> 0 @@ n2 :> 0) @@ n2 :> (n1 :> 0 @@ n2 :> 1))]>>>>, <<<<2, [counter |-> (n1 :> (n1 :> 0 @@ n2 :> 0) @@ n2 :> (n1 :> 0 @@ n2 :> 1))]>>, [name |-> "S!Next", location |-> [beginLine |-> 46, beginColumn |-> 1, endLine |-> 46, endColumn |-> 18, module |-> "MCCRDT"]], <<3, [counter |-> (n1 :> (n1 :> 0 @@ n2 :> 0) @@ n2 :> (n1 :> 0 @@ n2 :> 2))]>>>>}, state |-> {<<1, [counter |-> (n1 :> (n1 :> 0 @@ n2 :> 0) @@ n2 :> (n1 :> 0 @@ n2 :> 0))]>>, <<2, [counter |-> (n1 :> (n1 :> 0 @@ n2 :> 0) @@ n2 :> (n1 :> 0 @@ n2 :> 1))]>>, <<3, [counter |-> (n1 :> (n1 :> 0 @@ n2 :> 0) @@ n2 :> (n1 :> 0 @@ n2 :> 2))]>>}]
 
 =====</textarea>
-  </div>
-  <div class="pane">
-    <div class="pane-header">Output</div>
-    <textarea id="output" readonly spellcheck="false" placeholder="Formatted output will appear here…"></textarea>
-  </div>
+    </div>
+    <div class="pane">
+        <div class="pane-header">Output</div>
+        <label for="output"></label><textarea id="output" readonly spellcheck="false"
+                                              placeholder="Formatted output will appear here…"></textarea>
+    </div>
 </div>
 
 <div id="statusBar">
-  <span id="statusIcon"></span>
-  <span id="statusText">Initializing CheerpJ…</span>
+    <span id="statusIcon"></span>
+    <span id="statusText">Initializing CheerpJ…</span>
 </div>
 
 <script>
-(async function () {
-  const inputEl = document.getElementById("input");
-  const outputEl = document.getElementById("output");
-  const formatBtn = document.getElementById("formatBtn");
-  const statusText = document.getElementById("statusText");
-  const statusIcon = document.getElementById("statusIcon");
-  const lineWidthEl = document.getElementById("lineWidth");
-  const indentSizeEl = document.getElementById("indentSize");
+    (async function () {
+        const inputEl = document.getElementById("input");
+        const outputEl = document.getElementById("output");
+        const formatBtn = document.getElementById("formatBtn");
+        const statusText = document.getElementById("statusText");
+        const statusIcon = document.getElementById("statusIcon");
+        const lineWidthEl = document.getElementById("lineWidth");
+        const indentSizeEl = document.getElementById("indentSize");
 
-  let lib = null;
+        let lib = null;
 
-  function setStatus(text, type) {
-    statusText.textContent = text;
-    statusText.className = "status-" + type;
-    if (type === "loading") {
-      statusIcon.innerHTML = '<span class="spinner"></span>';
-    } else {
-      statusIcon.innerHTML = "";
-    }
-  }
+        function setStatus(text, type) {
+            statusText.textContent = text;
+            statusText.className = "status-" + type;
+            if (type === "loading") {
+                statusIcon.innerHTML = '<span class="spinner"></span>';
+            } else {
+                statusIcon.innerHTML = "";
+            }
+        }
 
-  async function getErrorMessage(err) {
-    // CheerpJ wraps Java exceptions as JS objects with a getMessage() method
-    try {
-      if (err && typeof err.getMessage === "function") {
-        const msg = await err.getMessage();
-        if (msg) return String(msg);
-      }
-      if (err && typeof err.toString === "function") {
-        const s = await err.toString();
-        if (s) return String(s);
-      }
-    } catch (_) {}
-    return err?.message || String(err);
-  }
+        async function getErrorMessage(err) {
+            // CheerpJ wraps Java exceptions as JS objects with a getMessage() method
+            try {
+                if (err && typeof err.getMessage === "function") {
+                    const msg = await err.getMessage();
+                    if (msg) return String(msg);
+                }
+                if (err && typeof err.toString === "function") {
+                    const s = err.toString();
+                    if (s) return String(s);
+                }
+            } catch (_) {
+            }
+            return err?.message || String(err);
+        }
 
-  // Initialize CheerpJ
-  try {
-    setStatus("Initializing CheerpJ runtime…", "loading");
-    await cheerpjInit({ version: 11 });
+        // Initialize CheerpJ
+        try {
+            setStatus("Initializing CheerpJ runtime…", "loading");
+            await cheerpjInit({version: 11});
 
-    setStatus("Loading TLA+ Formatter JAR…", "loading");
-    // Derive JAR path from page location so it works at any subpath
-    const basePath = window.location.pathname.replace(/\/[^/]*$/, "");
-    lib = await cheerpjRunLibrary("/app" + basePath + "/tlaplus-formatter-web.jar");
+            setStatus("Loading TLA+ Formatter JAR…", "loading");
+            // Derive JAR path from page location so it works at any subpath
+            const basePath = window.location.pathname.replace(/\/[^/]*$/, "");
+            lib = await cheerpjRunLibrary("/app" + basePath + "/tlaplus-formatter-web.jar");
 
-    formatBtn.disabled = false;
-    formatBtn.textContent = "Format";
-    setStatus("Ready", "ready");
-  } catch (err) {
-    const msg = await getErrorMessage(err);
-    setStatus("Failed to initialize: " + msg, "error");
-    console.error("CheerpJ init error:", err);
-    return;
-  }
+            formatBtn.disabled = false;
+            formatBtn.textContent = "Format";
+            setStatus("Ready", "ready");
+        } catch (err) {
+            const msg = await getErrorMessage(err);
+            setStatus("Failed to initialize: " + msg, "error");
+            console.error("CheerpJ init error:", err);
+            return;
+        }
 
-  formatBtn.addEventListener("click", async () => {
-    const spec = inputEl.value;
-    if (!spec.trim()) {
-      setStatus("Input is empty", "error");
-      return;
-    }
+        formatBtn.addEventListener("click", async () => {
+            const spec = inputEl.value;
+            if (!spec.trim()) {
+                setStatus("Input is empty", "error");
+                return;
+            }
 
-    formatBtn.disabled = true;
-    formatBtn.textContent = "Formatting…";
-    outputEl.value = "";
-    setStatus("Formatting…", "loading");
+            formatBtn.disabled = true;
+            formatBtn.textContent = "Formatting…";
+            outputEl.value = "";
+            setStatus("Formatting…", "loading");
 
-    try {
-      const FormatConfig = await lib.me.fponzi.tlaplusformatter.FormatConfig;
-      const TLAPlusFormatter = await lib.me.fponzi.tlaplusformatter.TLAPlusFormatter;
-      const lineWidth = parseInt(lineWidthEl.value) || 80;
-      const indentSize = parseInt(indentSizeEl.value) || 2;
-      const config = await new FormatConfig(lineWidth, indentSize);
-      const formatter = await new TLAPlusFormatter(spec, config);
-      const result = await formatter.getOutput();
-      outputEl.value = result;
-      setStatus("Formatted successfully", "ready");
-    } catch (err) {
-      const msg = await getErrorMessage(err);
-      outputEl.value = "Error: " + msg;
-      setStatus("Formatting failed — see output", "error");
-      console.error("Format error:", err);
-    } finally {
-      formatBtn.disabled = false;
-      formatBtn.textContent = "Format";
-    }
-  });
+            try {
+                const FormatConfig = await lib.me.fponzi.tlaplusformatter.FormatConfig;
+                const TLAPlusFormatter = await lib.me.fponzi.tlaplusformatter.TLAPlusFormatter;
+                const lineWidth = parseInt(lineWidthEl.value) || 80;
+                const indentSize = parseInt(indentSizeEl.value) || 2;
+                const config = await new FormatConfig(lineWidth, indentSize);
+                const formatter = await new TLAPlusFormatter(spec, config);
+                outputEl.value = await formatter.getOutput();
+                setStatus("Formatted successfully", "ready");
+            } catch (err) {
+                const msg = await getErrorMessage(err);
+                outputEl.value = "Error: " + msg;
+                setStatus("Formatting failed — see output", "error");
+                console.error("Format error:", err);
+            } finally {
+                formatBtn.disabled = false;
+                formatBtn.textContent = "Format";
+            }
+        });
 
-  // Ctrl+Enter shortcut
-  inputEl.addEventListener("keydown", (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
-      e.preventDefault();
-      formatBtn.click();
-    }
-  });
-})();
+        // Ctrl+Enter shortcut
+        inputEl.addEventListener("keydown", (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                e.preventDefault();
+                formatBtn.click();
+            }
+        });
+    })();
 </script>
 
 </body>

@@ -2,10 +2,14 @@ package me.fponzi.tlaplusformatter.constructs.impl;
 
 import com.opencastsoftware.prettier4j.Doc;
 import me.fponzi.tlaplusformatter.TlaDocBuilder;
-import me.fponzi.tlaplusformatter.constructs.*;
+import me.fponzi.tlaplusformatter.constructs.ConstructContext;
+import me.fponzi.tlaplusformatter.constructs.NodeKind;
 import tla2sany.st.TreeNode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Construct implementation for CONSTANTS declarations.
@@ -34,8 +38,7 @@ public class ConstantsConstruct extends AbstractDeclarationListConstruct {
         return buildConstantDeclaration(node);
     }
 
-    @Override
-    protected TreeNode getCommentNode(TreeNode node) {
+    private TreeNode getCommentNode(TreeNode node) {
         if (node.getKind() == 363 && node.zero() != null && node.zero().length > 0) {
             return node.zero()[0];
         }

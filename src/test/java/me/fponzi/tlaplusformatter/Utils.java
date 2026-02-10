@@ -19,10 +19,9 @@ public class Utils {
         }
     }
 
-    static boolean assertAstEquals(TreeNode root1, TreeNode root2) {
+    static void assertAstEquals(TreeNode root1, TreeNode root2) {
         AstComparator.Result result = AstComparator.compare(root1, root2);
         assertTrue(result.isMatch(), result.formatDiagnostic());
-        return result.isMatch();
     }
 
     /**
@@ -37,7 +36,7 @@ public class Utils {
         String output2 = formatter2.getOutput();
         // Verify idempotency
         assertEquals(output1, output2, "Formatter should be idempotent");
-        assertTrue(assertAstEquals(formatter1.root, formatter2.root));
+        assertAstEquals(formatter1.root, formatter2.root);
     }
 
     public static void assertSpecEquals(String expected, String input, FormatConfig config) {
@@ -60,7 +59,6 @@ public class Utils {
      * Verify that formatting the input spec does not change it.
      * Idempotency is also checked.
      *
-     * @param input
      */
     public static void assertSpecUnchanged(String input) {
         assertSpecEquals(input, input, new FormatConfig());

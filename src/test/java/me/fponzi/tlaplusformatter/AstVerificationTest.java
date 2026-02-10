@@ -65,7 +65,7 @@ class AstVerificationTest {
     }
 
     @Test
-    void testAstVerificationExceptionContainsResult() throws Exception {
+    void testAstVerificationExceptionContainsResult() {
         AstComparator.Result failResult = new AstComparator.Result("test failure");
         AstVerificationException ex = new AstVerificationException(failResult);
         assertSame(failResult, ex.getResult());

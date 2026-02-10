@@ -3,7 +3,9 @@ package me.fponzi.tlaplusformatter.constructs.impl;
 import com.opencastsoftware.prettier4j.Doc;
 import me.fponzi.tlaplusformatter.FormatConfig;
 import me.fponzi.tlaplusformatter.TlaDocBuilder;
-import me.fponzi.tlaplusformatter.constructs.*;
+import me.fponzi.tlaplusformatter.constructs.BaseConstructFormatter;
+import me.fponzi.tlaplusformatter.constructs.ListFormatStrategy;
+import me.fponzi.tlaplusformatter.constructs.TlaConstruct;
 import tla2sany.st.TreeNode;
 
 import java.util.*;
@@ -15,7 +17,9 @@ import java.util.*;
  */
 public abstract class AbstractDeclarationListConstruct implements TlaConstruct {
 
-    /** Keywords to skip when extracting item nodes (e.g., "CONSTANTS", "CONSTANT"). */
+    /**
+     * Keywords to skip when extracting item nodes (e.g., "CONSTANTS", "CONSTANT").
+     */
     protected abstract Set<String> getKeywords();
 
     /**
@@ -32,14 +36,11 @@ public abstract class AbstractDeclarationListConstruct implements TlaConstruct {
         return null;
     }
 
-    /** Get the display name for an item node. Override for special handling (e.g., IDENT_DECL). */
+    /**
+     * Get the display name for an item node. Override for special handling (e.g., IDENT_DECL).
+     */
     protected String getItemName(TreeNode node) {
         return TlaDocBuilder.getBestImage(node);
-    }
-
-    /** Get the node that holds comments for an item. Override for wrapped nodes (e.g., IDENT_DECL). */
-    protected TreeNode getCommentNode(TreeNode node) {
-        return node;
     }
 
     /**
@@ -115,8 +116,7 @@ public abstract class AbstractDeclarationListConstruct implements TlaConstruct {
             return formatList(items, prefix, stringFormatter(), strategy);
         }
 
-        @Override
-        protected ListFormatStrategy determineStrategy(String name, int itemCount) {
+        private ListFormatStrategy determineStrategy(String name, int itemCount) {
             if (itemCount <= 3) {
                 return ListFormatStrategy.SINGLE_LINE;
             } else {

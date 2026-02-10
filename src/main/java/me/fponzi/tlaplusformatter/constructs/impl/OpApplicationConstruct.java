@@ -24,9 +24,6 @@ public class OpApplicationConstruct implements TlaConstruct {
     public Doc buildDoc(TreeNode node, ConstructContext context, int indentSize) {
         var z = node.zero();
         assert (z != null && z.length == 2);
-        //
-        // z[0].format(f); // Head - GeneralId
-        //z[1].format(f); // N_OpArgs
         return context.buildChild(z[0])
                 .append(context.buildChild(z[1]));
     }

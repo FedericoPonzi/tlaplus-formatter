@@ -57,7 +57,7 @@ class FormatterE2ETest {
     }
 
     @Test
-    void testComplexExpression() throws IOException, SanyFrontendException {
+    void testComplexExpression() {
         String spec = "---- MODULE ComplexTest ----\n" +
                 "VARIABLE state\n" +
                 "NextState == state' = IF state = \"ready\" THEN \"running\" ELSE \"done\"\n" +
@@ -66,7 +66,7 @@ class FormatterE2ETest {
     }
 
     @Test
-    void testLineWidthConfiguration() throws IOException, SanyFrontendException {
+    void testLineWidthConfiguration() {
         String spec = "---- MODULE WidthTest ----\n" +
                 "VARIABLES verylongvariablename, anotherlongname, yetanothername, abc\n" +
                 "====\n";
@@ -98,7 +98,7 @@ class FormatterE2ETest {
     }
 
     @Test
-    void testShortVsLongOperatorFormatting() throws IOException, SanyFrontendException {
+    void testShortVsLongOperatorFormatting() {
         // Short operator should stay on one line
         String shortSpec = "---- MODULE ShortOp ----\n" +
                 "EXTENDS Naturals\n" +
@@ -124,7 +124,7 @@ class FormatterE2ETest {
     }
 
     @Test
-    void testPreAndPostModuleContent() throws IOException, SanyFrontendException {
+    void testPreAndPostModuleContent() {
         String spec = "This is a comment before the module.\n" +
                 "---- MODULE TestModule ----\n" +
                 "VARIABLE x\n" +
@@ -134,7 +134,7 @@ class FormatterE2ETest {
     }
 
     @Test
-    void testTheorem() throws IOException, SanyFrontendException {
+    void testTheorem() {
         String spec = "---- MODULE TheoremTest ----\n" +
                 "EXTENDS Naturals\n" +
                 "VARIABLE x\n" +
@@ -144,7 +144,7 @@ class FormatterE2ETest {
     }
 
     @Test
-    void testNamedTheorem() throws IOException, SanyFrontendException {
+    void testNamedTheorem() {
         String spec = "---- MODULE NamedTheoremTest ----\n" +
                 "VARIABLE x\n" +
                 "THEOREM MyTheorem == x = 0\n" +
@@ -153,7 +153,7 @@ class FormatterE2ETest {
     }
 
     @Test
-    void testEmptyModule() throws IOException, SanyFrontendException {
+    void testEmptyModule() {
         String spec = "---- MODULE Empty ----\n" +
                 "====\n";
         assertSpecUnchanged(spec);
@@ -170,7 +170,7 @@ class FormatterE2ETest {
     }
 
     @Test
-    void testComplexModuleStructure() throws IOException, SanyFrontendException {
+    void testComplexModuleStructure() {
         String spec = "---- MODULE ComplexStructure ----\n" +
                 "EXTENDS Naturals\n" +
                 "VARIABLES x, y, z\n" +
@@ -187,7 +187,7 @@ class FormatterE2ETest {
     }
 
     @Test
-    void testNewlinePreservation() throws IOException, SanyFrontendException {
+    void testNewlinePreservation() {
         String spec = "---- MODULE NewlineTest ----\n" +
                 //"\n" + TODO: currently removing leading newlines
                 "VARIABLE x\n" +
@@ -200,7 +200,7 @@ class FormatterE2ETest {
     }
 
     @Test
-    void testMultipleNewlinePatterns() throws IOException, SanyFrontendException {
+    void testMultipleNewlinePatterns() {
         String spec = "---- MODULE MultiNewline ----\n" +
                 "EXTENDS Naturals\n" +
                 "\n" +
@@ -217,7 +217,7 @@ class FormatterE2ETest {
     }
 
     @Test
-    void testSingleNewlinesRemainSingle() throws IOException, SanyFrontendException {
+    void testSingleNewlinesRemainSingle() {
         String spec = "---- MODULE SingleNewlines ----\n" +
                 "VARIABLE x\n" +
                 "Init == x = 0\n" +
@@ -255,7 +255,7 @@ class FormatterE2ETest {
     }
 
     @Test
-    void testModuleWithExtendsBreak() throws IOException, SanyFrontendException {
+    void testModuleWithExtendsBreak() {
         String spec = "---- MODULE TestWithExtends ----\n" +
                 "EXTENDS Naturals, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC, TLC\n" +
                 "VARIABLE counter\n" +

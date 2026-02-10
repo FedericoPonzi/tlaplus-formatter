@@ -8,7 +8,7 @@ import tla2sany.st.TreeNode;
 
 /**
  * Handles ASSUME/PROVE blocks in proofs (N_AssumeProve).
- *
+ * <p>
  * Structure: zero[] = [ASSUME, assumption1, comma, assumption2, ..., PROVE, expr]
  * All children are rendered with spaces; line breaks handled by Doc.group.
  */

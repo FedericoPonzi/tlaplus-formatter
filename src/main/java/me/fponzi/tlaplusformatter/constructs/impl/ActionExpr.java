@@ -7,7 +7,7 @@ import me.fponzi.tlaplusformatter.constructs.TlaConstruct;
 import tla2sany.st.TreeNode;
 
 /**
- * Exmaple: `[Next]_vars`
+ * Example: `[Next]_vars`
  */
 public class ActionExpr implements TlaConstruct {
     @Override

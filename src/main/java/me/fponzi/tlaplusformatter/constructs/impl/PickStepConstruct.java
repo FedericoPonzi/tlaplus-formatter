@@ -8,9 +8,9 @@ import tla2sany.st.TreeNode;
 
 /**
  * Handles proof PICK steps (N_PickStep, kind 442).
- *
+ * <p>
  * Structure: zero[] = [PICK, QuantBound, ..., ":", body_expr]
- *
+ * <p>
  * The body expression (often a conjunction list) must start on a new line
  * with consistent indentation to preserve valid TLA+ parsing.
  */

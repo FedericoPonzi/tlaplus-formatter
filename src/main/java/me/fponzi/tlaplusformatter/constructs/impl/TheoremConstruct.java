@@ -9,12 +9,12 @@ import tla2sany.st.TreeNode;
 
 /**
  * Handles THEOREM declarations.
- *
+ * <p>
  * Unnamed theorem (THEOREM expr):
- *   zero[] = [THEOREM keyword, expression]
- *
+ * zero[] = [THEOREM keyword, expression]
+ * <p>
  * Named theorem (THEOREM Name == expr):
- *   zero[] = [THEOREM keyword, name, ==, expression]
+ * zero[] = [THEOREM keyword, name, ==, expression]
  */
 public class TheoremConstruct implements TlaConstruct {
 

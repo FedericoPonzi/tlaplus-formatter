@@ -4,18 +4,13 @@ import com.opencastsoftware.prettier4j.Doc;
 import me.fponzi.tlaplusformatter.constructs.ConstructContext;
 import me.fponzi.tlaplusformatter.constructs.NodeKind;
 import me.fponzi.tlaplusformatter.constructs.TlaConstruct;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tla2sany.st.TreeNode;
-
-import java.lang.invoke.MethodHandles;
 
 /**
  * Construct implementation for parenthesized expressions.
  * Handles formatting of expressions wrapped in parentheses.
  */
 public class ParenExprConstruct implements TlaConstruct {
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Override
     public String getName() {

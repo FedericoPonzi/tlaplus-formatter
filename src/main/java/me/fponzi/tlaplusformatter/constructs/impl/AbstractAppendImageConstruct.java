@@ -21,10 +21,10 @@ public abstract class AbstractAppendImageConstruct implements TlaConstruct {
         if ((z == null || z.length == 0) && (o == null || o.length == 0)) {
             return Doc.text(TlaDocBuilder.getBestImage(node));
         }
-        return Optional.ofNullable(buildChildren(node, context, z)).orElse(buildChildren(node, context, o));
+        return Optional.ofNullable(buildChildren(context, z)).orElse(buildChildren(context, o));
     }
 
-    private Doc buildChildren(TreeNode node, ConstructContext context, TreeNode[] c) {
+    private Doc buildChildren(ConstructContext context, TreeNode[] c) {
         if (c == null) {
             return null;
         }
@@ -35,13 +35,7 @@ public abstract class AbstractAppendImageConstruct implements TlaConstruct {
                 childDoc = nextChildDoc;
             } else if (nextChildDoc != null && nextChildDoc != Doc.empty()) {
                 // don't add space before or after , ] ) } [ ( {
-                var skipSpace = List.of(",", "]", ")", "}", "(", "[", "{");
-                var prevImage = c[i - 1].getHumanReadableImage();
-                var currImage = c[i].getHumanReadableImage();
-                // Skip space after module prefix (e.g., "R!" in "R!Nat")
-                var shouldSkipSpace = skipSpace.contains(currImage)
-                        || skipSpace.contains(prevImage) // to format `f(_)`
-                        || (prevImage != null && prevImage.endsWith("!")); // module prefix like R!
+                var shouldSkipSpace = isShouldSkipSpace(c, i);
                 if (shouldSkipSpace) {
                     childDoc = childDoc.append(nextChildDoc);
                 } else {
@@ -50,5 +44,16 @@ public abstract class AbstractAppendImageConstruct implements TlaConstruct {
             }
         }
         return childDoc;
+    }
+
+    private static boolean isShouldSkipSpace(TreeNode[] c, int i) {
+        var skipSpace = List.of(",", "]", ")", "}", "(", "[", "{");
+        var prevImage = c[i - 1].getHumanReadableImage();
+        var currImage = c[i].getHumanReadableImage();
+        // Skip space after module prefix (e.g., "R!" in "R!Nat")
+        // module prefix like R!
+        return skipSpace.contains(currImage)
+                || skipSpace.contains(prevImage) // to format `f(_)`
+                || (prevImage != null && prevImage.endsWith("!"));
     }
 }

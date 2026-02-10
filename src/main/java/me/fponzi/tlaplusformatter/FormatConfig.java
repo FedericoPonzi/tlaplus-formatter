@@ -93,15 +93,6 @@ public final class FormatConfig {
     }
 
     /**
-     * Get all construct settings.
-     *
-     * @return Unmodifiable map of all construct settings
-     */
-    public Map<String, Object> getAllConstructSettings() {
-        return Map.copyOf(constructSettings);
-    }
-
-    /**
      * Create a copy of this config with the same settings.
      *
      * @return A new FormatConfig instance with the same settings

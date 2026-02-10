@@ -121,25 +121,4 @@ public abstract class BaseConstructFormatter<T> {
         return Doc::text;
     }
 
-    /**
-     * Determine appropriate formatting strategy based on list size and configuration.
-     */
-    protected ListFormatStrategy determineStrategy(String constructName, int itemCount) {
-        // Check construct-specific settings
-        ListFormatStrategy configuredStrategy = config.getConstructSetting(
-                constructName, "breakStrategy", null);
-
-        if (configuredStrategy != null) {
-            return configuredStrategy;
-        }
-
-        // Default strategy based on item count
-        if (itemCount <= 1) {
-            return ListFormatStrategy.SINGLE_LINE;
-        } else if (itemCount <= 3) {
-            return ListFormatStrategy.SINGLE_LINE;
-        } else {
-            return ListFormatStrategy.SMART_BREAK;
-        }
-    }
 }

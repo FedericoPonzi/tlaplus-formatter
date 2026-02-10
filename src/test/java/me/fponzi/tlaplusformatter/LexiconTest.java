@@ -46,7 +46,7 @@ public abstract class LexiconTest {
 
             // the ast of the initial spec should match the ast of the output spec.
             // initial spec is the non-reformatted input. f2 is the parsed ast of the reformat output.
-            assertTrue(assertAstEquals(root1, f2.root));
+            assertAstEquals(root1, f2.root);
 
             // It should be a bit redundant with the compareAst above, but it's just an additional sanity check.
             // might remove later to keep tests fast

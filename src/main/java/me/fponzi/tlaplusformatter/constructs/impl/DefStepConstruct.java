@@ -8,7 +8,7 @@ import tla2sany.st.TreeNode;
 
 /**
  * Handles proof DEFINE steps (N_DefStep).
- *
+ * <p>
  * Structure: zero[] = [DEFINE keyword, def1, def2, ...]
  * Each definition after the first goes on a new line, aligned under the first.
  */

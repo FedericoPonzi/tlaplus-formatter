@@ -9,7 +9,7 @@ import tla2sany.st.TreeNode;
 /**
  * Construct implementation for INSTANCE declarations.
  * Handles both LOCAL INSTANCE and regular INSTANCE.
- *
+ * <p>
  * LOCAL INSTANCE has node kind 375 (N_Instance) and contains a child
  * with kind 376 (N_NonLocalInstance).
  */

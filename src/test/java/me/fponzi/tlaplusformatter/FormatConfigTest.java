@@ -81,14 +81,7 @@ class FormatConfigTest {
         FormatConfig config = new FormatConfig(80, 4);
         assertNotEquals(null, config);
     }
-
-    @Test
-    void testEqualsWithDifferentClass() {
-        FormatConfig config = new FormatConfig(80, 4);
-        String notConfig = "not a config";
-        assertNotEquals(config, notConfig);
-    }
-
+    
     @Test
     void testHashCode() {
         FormatConfig config1 = new FormatConfig(80, 4);

@@ -8,7 +8,7 @@ import tla2sany.st.TreeNode;
 
 /**
  * Handles string literal nodes.
- *
+ * <p>
  * SANY stores strings with escape sequences already interpreted (e.g., "\\b" becomes "\b").
  * We need to re-escape them when outputting to produce valid TLA+ source.
  */

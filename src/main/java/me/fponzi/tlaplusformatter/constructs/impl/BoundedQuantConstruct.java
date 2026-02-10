@@ -37,10 +37,7 @@ public class BoundedQuantConstruct implements TlaConstruct {
             elementDocs.add(elementDoc);
         }
 
-        Doc content = elementDocs.get(0);
-        for (int i = 1; i < elementDocs.size(); i++) {
-            content = content.append(Doc.text(",")).appendLineOrSpace(elementDocs.get(i));
-        }
+        Doc content = BracketedListHelper.joinWithComma(elementDocs);
         return Doc.group(
                 exists.appendSpace(content)
                         .append(Doc.text(":"))
