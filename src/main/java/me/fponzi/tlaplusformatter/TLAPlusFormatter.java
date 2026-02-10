@@ -115,19 +115,23 @@ public final class TLAPlusFormatter {
      */
     private static File storeForVerification(String content, File originalSpec) throws IOException {
         File parentDir = originalSpec.getAbsoluteFile().getParentFile();
-        File tmpDir = java.nio.file.Files.createTempDirectory("sany-verify").toFile();
+        File tmpDir = Files.createTempDirectory("sany-verify").toFile();
+        tmpDir.deleteOnExit();
         // Copy sibling .tla files so SANY can resolve EXTENDS
         File[] siblings = parentDir.listFiles((dir, name) -> name.endsWith(".tla"));
         if (siblings != null) {
             for (File sibling : siblings) {
-                java.nio.file.Files.copy(
+                var dest = new File(tmpDir, sibling.getName());
+                Files.copy(
                         sibling.toPath(),
-                        new File(tmpDir, sibling.getName()).toPath(),
+                        dest.toPath(),
                         java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                dest.deleteOnExit();
             }
         }
         // Write the formatted output with the original filename (SANY requires module name = filename)
         File verifyFile = new File(tmpDir, originalSpec.getName());
+        verifyFile.deleteOnExit();
         try (java.io.FileWriter writer = new java.io.FileWriter(verifyFile, StandardCharsets.UTF_8)) {
             writer.write(content);
         }
@@ -149,11 +153,13 @@ public final class TLAPlusFormatter {
 
     private static File storeToTmp(String spec) throws IOException {
         File tmpFolder = Files.createTempDirectory("sanyimp").toFile();
+        tmpFolder.deleteOnExit();
         var fileName = getModuleName(spec) + ".tla";
         File tmpFile = new File(tmpFolder, fileName);
         try (java.io.FileWriter writer = new java.io.FileWriter(tmpFile, StandardCharsets.UTF_8)) {
             writer.write(spec);
         }
+        tmpFile.deleteOnExit();
         return tmpFile;
     }
 

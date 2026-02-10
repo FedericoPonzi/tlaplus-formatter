@@ -65,7 +65,9 @@ public class SANYWrapper {
 
 
     private static File sanyTempDir() throws IOException {
-        return Files.createTempDirectory("sanyimp").toFile();
+        var tmpDir = Files.createTempDirectory("sanyimp").toFile();
+        tmpDir.deleteOnExit();
+        return tmpDir;
     }
 
     private static void ThrowOnError(SpecObj specObj) {
@@ -91,6 +93,7 @@ public class SANYWrapper {
         public CustomFilenameToStream(String parentDirPath) {
             super(parentDirPath);
             this.additionalPaths = getAdditionalModulePaths();
+            this.tmpDir.toFile().deleteOnExit();
         }
 
         private static List<String> getAdditionalModulePaths() {
