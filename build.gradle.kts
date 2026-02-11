@@ -63,6 +63,7 @@ tasks.withType<Copy> {
 tasks.test {
     useJUnitPlatform()
     finalizedBy(tasks.jacocoTestReport)
+    System.getProperty("TLA-Library")?.let { systemProperty("TLA-Library", it) }
 }
 
 tasks.jacocoTestReport {
@@ -80,6 +81,7 @@ tasks.register<Test>("semanticPreservationTest") {
     }
     systemProperties(System.getProperties().filter { (k, _) -> k.toString().startsWith("tlaplus.") }
         .map { (k, v) -> k.toString() to v.toString() }.toMap())
+    System.getProperty("TLA-Library")?.let { systemProperty("TLA-Library", it) }
 }
 
 tasks.register("generateVersionProperties") {

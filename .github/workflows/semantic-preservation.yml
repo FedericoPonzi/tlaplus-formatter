@@ -51,11 +51,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Run semantic preservation tests
-        env:
-          TLA_COMMUNITY_MODULES: ${{ github.workspace }}/CommunityModules
-          TLAPS_LIBRARY: ${{ github.workspace }}/tlapm/library
-          APALACHE_HOME: ${{ github.workspace }}/apalache
-        run: ./gradlew semanticPreservationTest -Dtlaplus.examples.path=${{ github.workspace }}/tlaplus-examples
+        run: ./gradlew semanticPreservationTest -Dtlaplus.examples.path=${{ github.workspace }}/tlaplus-examples -DTLA-Library="${{ github.workspace }}/tlapm/library:${{ github.workspace }}/CommunityModules:${{ github.workspace }}/apalache/src/tla"
 
       - name: Upload test results
         uses: actions/upload-artifact@v6

@@ -40,10 +40,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Build with Gradle Wrapper
-        env:
-          TLAPS_LIBRARY: ${{ github.workspace }}/tlapm/library
-          TLA_COMMUNITY_MODULES: ${{ github.workspace }}/CommunityModules
-        run: ./gradlew build
+        run: ./gradlew build -DTLA-Library="${{ github.workspace }}/tlapm/library:${{ github.workspace }}/CommunityModules"
 
       - name: Upload SpotBugs report
         if: always()

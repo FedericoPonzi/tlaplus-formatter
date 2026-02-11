@@ -30,8 +30,9 @@ public class SANYWrapper {
 
         String parentDirPath = file.getAbsoluteFile().getParent();
 
-        // Resolver for filenames, patched for wired modules.
-        var filenameResolver = new CustomFilenameToStream(parentDirPath);
+        // Build library paths: parent dir + any paths from -DTLA-Library
+        var libraryPaths = buildLibraryPaths(parentDirPath);
+        var filenameResolver = new CustomFilenameToStream(libraryPaths);
 
         // Set a unique tmpdir to avoid race-condition in SANY
         // TODO: RM once https://github.com/tlaplus/tlaplus/issues/688 is fixed
@@ -41,6 +42,27 @@ public class SANYWrapper {
         loadSpecObject(specObj, file, errBuf);
         Hashtable<String, ParseUnit> parseUnitContext = specObj.parseUnitContext;
         return parseUnitContext.get(specObj.getRootModule().getName().toString()).getParseTree();
+    }
+
+    /**
+     * Builds the array of library paths for SANY's module resolution.
+     * Includes the parent directory of the spec file and any paths
+     * specified via the -DTLA-Library system property.
+     */
+    static String[] buildLibraryPaths(String parentDirPath) {
+        List<String> paths = new ArrayList<>();
+        paths.add(parentDirPath);
+
+        String tlaLibrary = System.getProperty(SimpleFilenameToStream.TLA_LIBRARY);
+        if (tlaLibrary != null && !tlaLibrary.isEmpty()) {
+            for (String p : tlaLibrary.split(File.pathSeparator)) {
+                if (!p.isEmpty()) {
+                    paths.add(p);
+                }
+            }
+        }
+
+        return paths.toArray(new String[0]);
     }
 
     public static void loadSpecObject(SpecObj specObj, File file, StringWriter errBuf) throws IOException, SanyFrontendException {
@@ -88,65 +110,9 @@ public class SANYWrapper {
     }
 
     private static class CustomFilenameToStream extends SimpleFilenameToStream {
-        private final List<String> additionalPaths;
-
-        public CustomFilenameToStream(String parentDirPath) {
-            super(parentDirPath);
-            this.additionalPaths = getAdditionalModulePaths();
+        public CustomFilenameToStream(String[] libraryPaths) {
+            super(libraryPaths);
             this.tmpDir.toFile().deleteOnExit();
-        }
-
-        private static List<String> getAdditionalModulePaths() {
-            List<String> paths = new ArrayList<>();
-            // Check for community modules, TLAPS, and Apalache in common locations
-            String[] possiblePaths = {
-                    // Community modules
-                    System.getenv("TLA_COMMUNITY_MODULES"),
-                    "/tmp/CommunityModules/modules",
-                    "/tmp/CommunityModules",
-                    System.getProperty("user.home") + "/.tlaplus/CommunityModules/modules",
-                    // TLAPS library
-                    System.getenv("TLAPS_LIBRARY"),
-                    "/tmp/tlapm/library",
-                    System.getProperty("user.home") + "/.tlaplus/tlaps/library",
-                    "/usr/local/lib/tlaps/library",
-                    // Apalache modules
-                    System.getenv("APALACHE_HOME") != null ? System.getenv("APALACHE_HOME") + "/src/tla" : null,
-                    "/tmp/apalache/src/tla",
-                    System.getProperty("user.home") + "/.tlaplus/apalache/src/tla"
-            };
-            for (String path : possiblePaths) {
-                if (path != null) {
-                    File dir = new File(path);
-                    if (dir.exists() && dir.isDirectory()) {
-                        paths.add(path);
-                    }
-                }
-            }
-            return paths;
-        }
-
-        @Override
-        public TLAFile resolve(String name, boolean isModule) {
-            // First try with the default resolver.
-            TLAFile sourceFile = super.resolve(name, isModule);
-            if (sourceFile != null && sourceFile.exists()) {
-                return sourceFile;
-            }
-
-            // Try additional paths (community modules, etc.)
-            // name already includes .tla extension when isModule=true
-            String filename = name.endsWith(".tla") ? name : name + ".tla";
-            for (String path : additionalPaths) {
-                File file = new File(path, filename);
-                if (file.exists()) {
-                    return new TLAFile(file.getAbsolutePath(), this);
-                }
-            }
-
-            // Return the result from parent resolver (non-existent TLAFile, not null)
-            // to preserve SANY's expected behavior
-            return sourceFile;
         }
     }
 }

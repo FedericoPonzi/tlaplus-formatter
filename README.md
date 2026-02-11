@@ -58,9 +58,25 @@ It will print your reformatted spec in output. If the optional "OUTFILE" paramet
 output to that file.
 You can use the input file as the output file as well. Run with `-help` parameter for the help text.
 
+### Module search paths
+
+If your spec uses `EXTENDS` to reference modules that are not in the same directory (e.g., TLAPS, Community Modules,
+or custom libraries), you can pass their locations via the `-DTLA-Library` JVM system property:
+
+```
+java -DTLA-Library=/path/to/tlaps/library:/path/to/CommunityModules -jar tlaplus-formatter.jar MySpec.tla
+```
+
+Multiple paths are separated by `:` on Linux/macOS or `;` on Windows. Standard modules (Naturals, Sequences,
+FiniteSets, TLC, etc.) are bundled with the formatter and do not need to be specified.
+
 ## VSCode integration
 
-It's a work in progress, see [PR-327](https://github.com/tlaplus/vscode-tlaplus/pull/327/files) on vscode-tlaplus repo.
+The formatter is integrated into the [TLA+ VSCode extension](https://github.com/tlaplus/vscode-tlaplus). Use the
+standard "Format Document" command (`Shift+Alt+F`) to format TLA+ files. The extension automatically passes your
+configured `tlaplus.moduleSearchPaths` to the formatter.
+
+You can disable the formatter via the `tlaplus.formatter.enabled` setting.
 
 ## Limitations
 
