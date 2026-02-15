@@ -286,7 +286,7 @@ Init ==
 
 QueryReplyLoop(self) ==
   /\ pc[self] = "QueryReplyLoop"
-  /\ IF ~ Terminate
+  /\ IF ~Terminate
      THEN /\ pc' = [pc EXCEPT ![self] = "WaitForQueryMessageOrTermination"]
      ELSE /\ pc' = [pc EXCEPT ![self] = "Done"]
   /\ UNCHANGED << pick, message, sampleSet, loopVariant >>
@@ -424,9 +424,9 @@ Next ==
       ( \E self \in SlushLoopProcess: SlushLoop(self) ) \/
     Terminating
 
-Spec == Init /\ [] [Next]_vars
+Spec == Init /\ [][Next]_vars
 
-Termination == <> ( \A self \in ProcSet: pc[self] = "Done" )
+Termination == <>( \A self \in ProcSet: pc[self] = "Done" )
 
 
 \* END TRANSLATION

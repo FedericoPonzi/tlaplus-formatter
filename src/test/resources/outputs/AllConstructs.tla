@@ -51,7 +51,7 @@ Power(U) == SUBSET U
 BigUnion(A) == UNION A
 
 CaseExample(u) == CASE u \in Nat -> u + 1
-                  [] u \in Int \ Nat -> - u
+                  [] u \in Int \ Nat -> -u
                   [] OTHER-> 0
 
 IfElseExample(b, e1, e2) == IF b THEN e1 ELSE e2
@@ -112,7 +112,7 @@ Init == /\ x = 0
 
 IncX == x' = x + 1
 DecX == x' = x - 1
-ToggleQ == q' = ~ q
+ToggleQ == q' = ~q
 AssignY == \E n \in 0 .. N: y' = n
 UpdateZ == \E e \in S: z' = z \cup { e }
 BumpFAny == \E i \in DOMAIN f: f' = [f EXCEPT ![i] = @ + 1]
@@ -130,13 +130,13 @@ Next == \/ ( IncX /\ UNCHANGED << y, z, f, r, s, q >> )
         \/ ( AppendS /\ UNCHANGED << x, y, z, f, r, q >> )
         \/ Stutter
 
-Spec == Init /\ [] [Next]_vars /\ WF_vars(IncX) /\ SF_vars(AssignY)
+Spec == Init /\ [][Next]_vars /\ WF_vars(IncX) /\ SF_vars(AssignY)
 
-Invariance == [] TypeInv
+Invariance == []TypeInv
 LeadsToExample == ( x < N ) ~> ( x = N )
 
 EnablementExample == /\ ENABLED IncX
-                     /\ ~ ENABLED DecX
+                     /\ ~ENABLED DecX
 
 ---- MODULE SimpleImported ----
 EXTENDS Naturals, Sequences
