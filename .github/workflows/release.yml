@@ -26,8 +26,20 @@ jobs:
       - name: Build fat JAR
         run: ./gradlew buildFatJar
 
+      - name: Extract changelog
+        id: changelog
+        run: |
+          # Extract the section for the current version (between first and second ## headings)
+          changelog=$(awk '/^## /{if(found) exit; found=1; next} found{print}' CHANGELOG.md)
+          # Set as multiline output
+          echo "body<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$changelog" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           files: build/libs/tlaplus-formatter.jar
+          body: ${{ steps.changelog.outputs.body }}
           generate_release_notes: true
+          append_body: true
