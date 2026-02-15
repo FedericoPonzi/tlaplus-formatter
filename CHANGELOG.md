@@ -1,3 +1,7 @@
+## 0.2.1
+* Fix: no longer inserts spurious whitespace after symbolic prefix operators (`[]`, `<>`, `~`, `-`).
+  For example, `[][Next]_vars` was incorrectly formatted as `[] [Next]_vars`.
+
 ## 0.2.0
 * The tlaplus/Examples repo is pulled in for testing.
 * Many fixes that came up after trying to reformat all the tla specs in the Example repo.
