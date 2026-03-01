@@ -44,14 +44,14 @@ jobs:
 
       - name: Upload SpotBugs report
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: spotbugs-report
           path: build/reports/spotbugs/
           retention-days: 30
 
       - name: Upload test results
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-results
@@ -67,7 +67,7 @@ jobs:
           reporter: java-junit
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: coverage-report
@@ -75,7 +75,7 @@ jobs:
           retention-days: 30
 
       - name: Upload JAR artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: tlaplus-formatter-jar
           path: build/libs/tlaplus-formatter.jar
