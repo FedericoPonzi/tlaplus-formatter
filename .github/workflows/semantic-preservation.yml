@@ -54,7 +54,7 @@ jobs:
         run: ./gradlew semanticPreservationTest -Dtlaplus.examples.path=${{ github.workspace }}/tlaplus-examples -DTLA-Library="${{ github.workspace }}/tlapm/library:${{ github.workspace }}/CommunityModules:${{ github.workspace }}/apalache/src/tla"
 
       - name: Upload test results
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: semantic-preservation-results
