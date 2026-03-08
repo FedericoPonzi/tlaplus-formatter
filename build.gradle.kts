@@ -1,7 +1,7 @@
 plugins {
     id("java")
     id("io.ktor.plugin") version "2.3.12"
-    id("com.github.spotbugs") version "6.0.7"
+    id("com.github.spotbugs") version "6.1.3"
     jacoco
 }
 
@@ -16,28 +16,20 @@ java {
 repositories {
     mavenLocal()
     mavenCentral()
-    // Add the repository for the snapshot dependency
+    // Snapshot repository for org.lamport:tla2tools
     maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
-    maven {
-        url = uri("https://jitpack.io")
+        url = uri("https://central.sonatype.com/repository/maven-snapshots/")
     }
 }
 
 dependencies {
-    // TODO: Replace with a stable release when available:
-    implementation("com.github.FedericoPonzi:tlaplus:0d86214464")
+    implementation("org.lamport:tla2tools:1.8.0-SNAPSHOT")
     implementation("commons-io:commons-io:2.16.1")
-    testImplementation("com.github.FedericoPonzi:tlaplus-smith:f5a70e21d1") {
-        isChanging = true
-    }
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.mockito:mockito-core:5.7.0")
     testImplementation("org.mockito:mockito-junit-jupiter:5.7.0")
-    testImplementation("net.jqwik:jqwik:1.8.0")
     implementation("commons-cli:commons-cli:1.8.0")
 
     // Logging
