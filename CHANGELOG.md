@@ -1,3 +1,6 @@
+## Upcoming: 0.3.0
+* Operator definitions with conjunction/disjunction list bodies now break after `==`, improving VS Code code folding.
+
 ## 0.2.1
 * Fix: no longer inserts spurious whitespace after symbolic prefix operators (`[]`, `<>`, `~`, `-`).
   For example, `[][Next]_vars` was incorrectly formatted as `[] [Next]_vars`.
