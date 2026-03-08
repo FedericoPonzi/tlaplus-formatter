@@ -1,7 +1,7 @@
 plugins {
     id("java")
-    id("io.ktor.plugin") version "2.3.12"
-    id("com.github.spotbugs") version "6.1.3"
+    id("io.ktor.plugin") version "3.4.1"
+    id("com.github.spotbugs") version "6.4.8"
     jacoco
 }
 
@@ -24,17 +24,17 @@ repositories {
 
 dependencies {
     implementation("org.lamport:tla2tools:1.8.0-SNAPSHOT")
-    implementation("commons-io:commons-io:2.16.1")
+    implementation("commons-io:commons-io:2.21.0")
 
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation(platform("org.junit:junit-bom:6.0.3"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.mockito:mockito-core:5.7.0")
-    testImplementation("org.mockito:mockito-junit-jupiter:5.7.0")
-    implementation("commons-cli:commons-cli:1.8.0")
+    testImplementation("org.mockito:mockito-core:5.22.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.22.0")
+    implementation("commons-cli:commons-cli:1.11.0")
 
     // Logging
-    implementation("org.slf4j:slf4j-api:2.0.7")
-    implementation("ch.qos.logback:logback-classic:1.5.28")
+    implementation("org.slf4j:slf4j-api:2.0.17")
+    implementation("ch.qos.logback:logback-classic:1.5.32")
 
     implementation("com.opencastsoftware:prettier4j:0.3.2")
 }
