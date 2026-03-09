@@ -249,8 +249,9 @@ Message == QueryMessage \cup QueryReplyMessage \cup TerminationMessage
 
 NoMessage == CHOOSE m : m \notin Message
 
-TypeInvariant == /\ pick \in [Node -> Color \cup { NoColor }]
-                 /\ message \subseteq Message
+TypeInvariant ==
+  /\ pick \in [Node -> Color \cup { NoColor }]
+  /\ message \subseteq Message
 
 PendingQueryMessage(pid) == {m \in message: /\ m.type = QueryMessageType
                                             /\ m.dst = pid}
@@ -416,8 +417,9 @@ AssignColorToNode ==
 ClientRequest == ClientRequestLoop \/ AssignColorToNode
 
 (* Allow infinite stuttering to prevent deadlock on termination. *)
-Terminating == /\ \A self \in ProcSet: pc[self] = "Done"
-               /\ UNCHANGED vars
+Terminating ==
+  /\ \A self \in ProcSet: pc[self] = "Done"
+  /\ UNCHANGED vars
 
 Next ==
   ClientRequest \/ ( \E self \in SlushQueryProcess: SlushQuery(self) ) \/

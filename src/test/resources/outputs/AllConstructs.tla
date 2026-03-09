@@ -83,10 +83,11 @@ UpdateExamples ==
      /\ [f0 EXCEPT ![2] = 42, ![3] = @ + 1][3] = 4
      /\ DOMAIN f0 = 1 .. 3
 
-QuantExamples(U) == /\ \A u \in U: u = u
-                    /\ \E u \in U: u \in U
-                    /\ \A s1 \in SUBSET U: s1 \subseteq U
-                    /\ \A <<a ,b>> \in U \X U: a \in U /\ b \in U
+QuantExamples(U) ==
+  /\ \A u \in U: u = u
+  /\ \E u \in U: u \in U
+  /\ \A s1 \in SUBSET U: s1 \subseteq U
+  /\ \A <<a ,b>> \in U \X U: a \in U /\ b \in U
 
 InfixUse == Equal(1, 1)
 
@@ -94,21 +95,23 @@ InfixUse == Equal(1, 1)
 (****************************************************************)
 (* State predicates and actions                                  *)
 (****************************************************************)
-TypeInv == /\ x \in Nat
-           /\ y \in 0 .. N
-           /\ z \subseteq S
-           /\ DOMAIN f = 1 .. N /\ \A i \in 1 .. N: f[i] \in Int
-           /\ r \in [a:Nat, b:SUBSET S ]
-           /\ s \in Seq(S)
-           /\ q \in BOOLEAN
+TypeInv ==
+  /\ x \in Nat
+  /\ y \in 0 .. N
+  /\ z \subseteq S
+  /\ DOMAIN f = 1 .. N /\ \A i \in 1 .. N: f[i] \in Int
+  /\ r \in [a:Nat, b:SUBSET S ]
+  /\ s \in Seq(S)
+  /\ q \in BOOLEAN
 
-Init == /\ x = 0
-        /\ y \in 0 .. N
-        /\ z \in SUBSET S
-        /\ f = [i \in 1 .. N |-> i]
-        /\ r = [ a |-> 0, b |-> {} ]
-        /\ s = <<>>
-        /\ q = FALSE
+Init ==
+  /\ x = 0
+  /\ y \in 0 .. N
+  /\ z \in SUBSET S
+  /\ f = [i \in 1 .. N |-> i]
+  /\ r = [ a |-> 0, b |-> {} ]
+  /\ s = <<>>
+  /\ q = FALSE
 
 IncX == x' = x + 1
 DecX == x' = x - 1
@@ -121,22 +124,24 @@ AppendS == \E e \in S: s' = Append(s, e)
 
 Stutter == UNCHANGED << x, y, z, f, r, s, q >>
 
-Next == \/ ( IncX /\ UNCHANGED << y, z, f, r, s, q >> )
-        \/ ( ToggleQ /\ UNCHANGED << x, y, z, f, r, s >> )
-        \/ ( AssignY /\ UNCHANGED << x, z, f, r, s, q >> )
-        \/ ( UpdateZ /\ UNCHANGED << x, y, f, r, s, q >> )
-        \/ ( BumpFAny /\ UNCHANGED << x, y, z, r, s, q >> )
-        \/ ( UpdateR /\ UNCHANGED << x, y, z, f, s, q >> )
-        \/ ( AppendS /\ UNCHANGED << x, y, z, f, r, q >> )
-        \/ Stutter
+Next ==
+  \/ ( IncX /\ UNCHANGED << y, z, f, r, s, q >> )
+  \/ ( ToggleQ /\ UNCHANGED << x, y, z, f, r, s >> )
+  \/ ( AssignY /\ UNCHANGED << x, z, f, r, s, q >> )
+  \/ ( UpdateZ /\ UNCHANGED << x, y, f, r, s, q >> )
+  \/ ( BumpFAny /\ UNCHANGED << x, y, z, r, s, q >> )
+  \/ ( UpdateR /\ UNCHANGED << x, y, z, f, s, q >> )
+  \/ ( AppendS /\ UNCHANGED << x, y, z, f, r, q >> )
+  \/ Stutter
 
 Spec == Init /\ [][Next]_vars /\ WF_vars(IncX) /\ SF_vars(AssignY)
 
 Invariance == []TypeInv
 LeadsToExample == ( x < N ) ~> ( x = N )
 
-EnablementExample == /\ ENABLED IncX
-                     /\ ~ENABLED DecX
+EnablementExample ==
+  /\ ENABLED IncX
+  /\ ~ENABLED DecX
 
 ---- MODULE SimpleImported ----
 EXTENDS Naturals, Sequences
