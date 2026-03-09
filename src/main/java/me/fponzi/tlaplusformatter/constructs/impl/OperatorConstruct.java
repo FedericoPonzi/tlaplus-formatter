@@ -42,6 +42,19 @@ public class OperatorConstruct implements TlaConstruct {
 
         var name = context.buildChild(o[0]);
         var exprNode = context.buildChild(o[2]);
+
+        int exprKind = o[2].getKind();
+        boolean isConjDisjList = exprKind == NodeKind.CONJ_LIST.getId()
+                || exprKind == NodeKind.DISJ_LIST.getId();
+
+        if (isConjDisjList) {
+            // Always break after == for conjunction/disjunction lists
+            return qualifier.append(name
+                    .appendSpace(Doc.text("=="))
+                    .append(Doc.line().append(exprNode)
+                            .indent(indentSize)));
+        }
+
         return qualifier.append(name
                 .appendSpace(Doc.text("=="))
                 .append(Doc

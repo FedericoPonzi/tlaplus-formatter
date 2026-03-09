@@ -73,4 +73,44 @@ public class OperatorConstructTest {
                 "====\n";
         Utils.assertSpecUnchanged(spec);
     }
+
+    @Test
+    void testConjListBodyBreaksAfterEquals() {
+        String input = "---- MODULE Spec ----\n" +
+                "CONSTANTS a, b\n" +
+                "TypeInv == /\\ a = 1\n" +
+                "           /\\ b = 2\n" +
+                "====\n";
+        String expected = "---- MODULE Spec ----\n" +
+                "CONSTANTS a, b\n" +
+                "TypeInv ==\n" +
+                "  /\\ a = 1\n" +
+                "  /\\ b = 2\n" +
+                "====\n";
+        Utils.assertSpecEquals(expected, input);
+    }
+
+    @Test
+    void testDisjListBodyBreaksAfterEquals() {
+        String input = "---- MODULE Spec ----\n" +
+                "CONSTANTS a, b\n" +
+                "Next == \\/ a = 1\n" +
+                "        \\/ b = 2\n" +
+                "====\n";
+        String expected = "---- MODULE Spec ----\n" +
+                "CONSTANTS a, b\n" +
+                "Next ==\n" +
+                "  \\/ a = 1\n" +
+                "  \\/ b = 2\n" +
+                "====\n";
+        Utils.assertSpecEquals(expected, input);
+    }
+
+    @Test
+    void testSimpleExpressionStaysOnSameLine() {
+        String spec = "---- MODULE Spec ----\n" +
+                "Zero == 0\n" +
+                "====\n";
+        Utils.assertSpecUnchanged(spec);
+    }
 }

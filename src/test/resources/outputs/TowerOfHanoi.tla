@@ -47,7 +47,8 @@ TypeOK ==
 (* Now we define of the initial predicate, that specifies the initial      *)
 (* values of the variables.                                                *)
 (***************************************************************************)
-Init == /\ towers = [i \in 1 .. N |-> IF i = 1 THEN 2 ^ D - 1 ELSE 0]
+Init ==
+  /\ towers = [i \in 1 .. N |-> IF i = 1 THEN 2 ^ D - 1 ELSE 0]
 \* all towers are empty except all disks are on the first Tower
 (***************************************************************************)
 (* TRUE iff the tower is empty                                             *)
@@ -57,25 +58,29 @@ IsEmptyTower(tower) == tower = 0
 (***************************************************************************)
 (* TRUE iff the disk is located on the given tower                         *)
 (***************************************************************************)
-IsOnTower(tower, disk) == /\ tower & disk = disk
+IsOnTower(tower, disk) ==
+  /\ tower & disk = disk
 
 (***************************************************************************)
 (* TRUE iff disk is the smallest disk on tower                             *)
 (***************************************************************************)
-IsSmallestDisk(tower, disk) == /\ IsOnTower(tower, disk)
-                               /\ tower & ( disk - 1 ) = 0
+IsSmallestDisk(tower, disk) ==
+  /\ IsOnTower(tower, disk)
+  /\ tower & ( disk - 1 ) = 0
 \* All less significant bits are 0
 (***************************************************************************)
 (* TRUE iff disk can be moved off of tower                                 *)
 (***************************************************************************)
-CanMoveOff(tower, disk) == /\ IsOnTower(tower, disk)
-                           /\ IsSmallestDisk(tower, disk)
+CanMoveOff(tower, disk) ==
+  /\ IsOnTower(tower, disk)
+  /\ IsSmallestDisk(tower, disk)
 
 (***************************************************************************)
 (* TRUE iff disk can be moved to the tower                                 *)
 (***************************************************************************)
-CanMoveTo(tower, disk) == \/ tower & ( disk - 1 ) = 0
-                          \/ IsEmptyTower(tower)
+CanMoveTo(tower, disk) ==
+  \/ tower & ( disk - 1 ) = 0
+  \/ IsEmptyTower(tower)
 
 (***************************************************************************)
 (*                                                                         *)
