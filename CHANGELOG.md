@@ -1,4 +1,4 @@
-## Upcoming: 0.3.0
+## 0.3.0
 * Operator definitions with conjunction/disjunction list bodies now break after `==`, improving VS Code code folding.
 
 ## 0.2.1
