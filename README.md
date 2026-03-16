@@ -1,3 +1,5 @@
+# The formatter has been integrated into https://github.com/tlaplus/tlaplus
+
 ## TLA<sup>+</sup> formatter
 
 [![CI](https://github.com/FedericoPonzi/tlaplus-formatter/actions/workflows/ci.yml/badge.svg)](https://github.com/FedericoPonzi/tlaplus-formatter/actions/workflows/ci.yml)
